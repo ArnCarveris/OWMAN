@@ -7,6 +7,8 @@ class Engine;
 #ifndef EVENT_HANDLER
 #define EVENT_HANDLER
 
+#include <entt/locator/locator.hpp>
+
 class EventHandler
 {
 
@@ -29,5 +31,11 @@ public:
 	void poll();
 
 };
+
+namespace service
+{
+    using input = entt::ServiceLocator<EventHandler>;
+}
+
 
 #endif

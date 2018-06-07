@@ -26,8 +26,6 @@ class Engine
 
 	MainCharacter* mainCharacter;
 
-	EventHandler eventHandler;
-
 	bool end;
 	int fps;
 

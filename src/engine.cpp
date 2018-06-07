@@ -15,8 +15,6 @@ using namespace std;
 using namespace rapidxml;
 
 Engine::Engine(std::string initFile, std::string worldFolder)
-:
-eventHandler( this )
 {
 
     end = false;
@@ -66,6 +64,8 @@ eventHandler( this )
 	node = doc.first_node("window_size");
 	int windowSize = atoi( node->value() );
 
+    service::input::set(this);
+    service::resource::set();
     service::world_streamer::set<WorldStreamer>(worldFolder, &entityFactory, cellSize, windowSize);
 
 	entityFactory = EntityFactory(this);
@@ -107,7 +107,6 @@ void Engine::init()
 
     SDL_Init(SDL_INIT_TIMER);
 
-    service::resource::set();
     service::resource::ref().launch();
 
     service::world_streamer::ref().init
@@ -128,7 +127,7 @@ void Engine::mainLoop()
 
         unsigned ticks = SDL_GetTicks();
 
-        eventHandler.poll();
+        service::input::ref().poll();
 
         // update physics
         physicsSystem->update( ticks - prevTicks );
