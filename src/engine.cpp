@@ -66,7 +66,7 @@ eventHandler( this )
 	node = doc.first_node("window_size");
 	int windowSize = atoi( node->value() );
 
-	worldStreamer = new WorldStreamer(worldFolder, &entityFactory, cellSize, windowSize);
+    service::world_streamer::set<WorldStreamer>(worldFolder, &entityFactory, cellSize, windowSize);
 
 	entityFactory = EntityFactory(this);
 
@@ -110,7 +110,7 @@ void Engine::init()
     service::resource::set();
     service::resource::ref().launch();
 
-    worldStreamer->init
+    service::world_streamer::ref().init
     (
         mainCharacter->getCell(),
         mainCharacter->getPosition()
@@ -134,10 +134,11 @@ void Engine::mainLoop()
         physicsSystem->update( ticks - prevTicks );
 
         // update world streamer
-        worldStreamer->update( mainCharacter->getPosition(), mainCharacter );
+
+        service::world_streamer::ref().update( mainCharacter->getPosition(), mainCharacter );
 
         // get list of entities
-        vector<Entity*> entities = worldStreamer->getEntities();
+        vector<Entity*> entities = service::world_streamer::ref().getEntities();
 
         // move graphics components to match physics components
         // (update position of graphics components)
@@ -199,14 +200,12 @@ MainCharacter* Engine::getMainCharacter()
 
 float Engine::getCellSize()const
 {
-
-    return worldStreamer->getCellSize();
-
+    return service::world_streamer::ref().getCellSize();
 }
 
 void Engine::endGame()
 {
-    worldStreamer->end();
+    service::world_streamer::ref().end();
     graphicsSystem->end();
     end = true;
 }
@@ -214,6 +213,8 @@ void Engine::endGame()
 Engine::~Engine()
 {
     if( graphicsSystem ) delete graphicsSystem;
-    if( worldStreamer) delete worldStreamer;
     if( mainCharacter) delete mainCharacter;
+
+    service::resource::reset();
+    service::world_streamer::reset();
 }

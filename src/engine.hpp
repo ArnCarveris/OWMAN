@@ -24,7 +24,6 @@ class Engine
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
-	IWorldStreamer* worldStreamer;
 	MainCharacter* mainCharacter;
 
 	EventHandler eventHandler;

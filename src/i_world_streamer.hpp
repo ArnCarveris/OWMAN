@@ -17,6 +17,8 @@ class EntityFactory;
 #ifndef I_WORLD_STREAMER
 #define I_WORLD_STREAMER
 
+#include <entt/locator/locator.hpp>
+
 class IWorldStreamer
 {
 
@@ -61,5 +63,11 @@ public:
 	virtual ~IWorldStreamer(){}
 
 };
+
+
+namespace service
+{
+    using world_streamer = entt::ServiceLocator<IWorldStreamer>;
+}
 
 #endif
