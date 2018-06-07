@@ -1,0 +1,4 @@
+[submodule "external/entt"]
+	path = external/entt
+	url = git@github.com:ArnCarveris/entt.git
+	branch = experimental/extensions

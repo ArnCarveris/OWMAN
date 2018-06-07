@@ -34,6 +34,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
+include_directories(${owman_SOURCE_DIR}/external/entt/src)
 include_directories(${owman_SOURCE_DIR}/src)
 
 add_subdirectory(src)
