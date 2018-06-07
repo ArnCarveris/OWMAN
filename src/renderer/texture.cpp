@@ -40,8 +40,7 @@ bool Texture::isReady()const
 void Texture::loadResource()
 {
     assert(resourceTexture == 0);
-    ResourceManager* resMan = ResourceManager::getSingleton();
-    resourceTexture = resMan->obtain<ResourceTexture>(texturesPath + "/" + name);
+    resourceTexture = service::resource::ref().obtain<ResourceTexture>(texturesPath + "/" + name);
     status = Status::LOADING;
 }
 
@@ -65,8 +64,7 @@ void Texture::loadToGPU()
 
 void Texture::releaseResource()
 {
-    ResourceManager* resMan = ResourceManager::getSingleton();
-    resMan->release(resourceTexture);
+    service::resource::ref().release(resourceTexture);
 }
 
 void Texture::release()

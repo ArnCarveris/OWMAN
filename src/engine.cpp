@@ -107,8 +107,8 @@ void Engine::init()
 
     SDL_Init(SDL_INIT_TIMER);
 
-    ResourceManager* resourceManager = ResourceManager::getSingleton();
-    resourceManager->launch();
+    service::resource::set();
+    service::resource::ref().launch();
 
     worldStreamer->init
     (

@@ -3,13 +3,6 @@
 
 using namespace std;
 
-ResourceManager ResourceManager::uniqueInstance;
-
-ResourceManager* ResourceManager::getSingleton()
-{
-	return &uniqueInstance;
-}
-
 void ResourceManager::launch()
 {
     _stop = false;

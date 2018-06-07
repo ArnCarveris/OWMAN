@@ -40,8 +40,7 @@ void Sprite::update()
 {
     if(Status::START == status)
     {
-         ResourceManager* resMan = ResourceManager::getSingleton();
-         resourceText = resMan->obtain<ResourceText>(fileName);
+         resourceText = service::resource::ref().obtain<ResourceText>(fileName);
          status = Status::LOADING_XML;
     }
     else if(Status::LOADING_XML == status)
@@ -201,8 +200,7 @@ void Sprite::update()
             }
             while(0 != nodeAnim);
 
-            ResourceManager* resMan = ResourceManager::getSingleton();
-            resMan->release(resourceText);
+            service::resource::ref().release(resourceText);
             doc.clear();
             xmlText.clear();
 

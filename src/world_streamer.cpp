@@ -255,8 +255,7 @@ void WorldStreamer::init(const Vec2i& cell, const Vec2f& offset)
         string fileName = ss.str();
         // cout << fileName << endl;
 
-        ResourceManager* resMan = ResourceManager::getSingleton();
-        ResourceCell* cellResource = resMan->obtain<ResourceCell>(fileName);
+        ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
         loadingCellResources[ Vec2i(x, y) ] = cellResource;
 
     }
@@ -323,8 +322,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
                     string fileName = ss.str();
 
-                    ResourceManager* resMan = ResourceManager::getSingleton();
-                    ResourceCell* cellResource = resMan->obtain<ResourceCell>(fileName);
+                    ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
                     loadingCellResources[ goodCell ] = cellResource;
 
                 }
@@ -413,8 +411,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                     entityFactory->destroyEntity( *it );
                 }
 
-                ResourceManager* resMan = ResourceManager::getSingleton();
-                resMan->release( loadedCellResources[ it->first ] );
+                service::resource::ref().release( loadedCellResources[ it->first ] );
                 loadedCellResources.erase(it->first);
 
                 auto nextIt = it;
@@ -465,8 +462,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
             string fileName = ss.str();
 
-            ResourceManager* resMan = ResourceManager::getSingleton();
-            ResourceCell* cellResource = resMan->obtain<ResourceCell>(fileName);
+            ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
             loadingCellResources[ Vec2i(x, y) ] = cellResource;
 
         }
@@ -625,8 +621,7 @@ void WorldStreamer::end()
             entityFactory->destroyEntity( *it );
         }
 
-        ResourceManager* resMan = ResourceManager::getSingleton();
-        resMan->release( loadedCellResources[ it->first ] );
+        service::resource::ref().release( loadedCellResources[ it->first ] );
         loadedCellResources.erase(it->first);
 
         auto nextIt = it;

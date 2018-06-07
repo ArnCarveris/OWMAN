@@ -7,6 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <string>
+#include <entt/locator/locator.hpp>
 
 class LowLevelRenderer2D;
 
@@ -18,9 +19,6 @@ class LowLevelRenderer2D;
  */
 class ResourceManager
 {
-
-	static ResourceManager uniqueInstance;
-
 	std::thread myThread;
     std::mutex  mutexTable;     //< mutex for accessing the table
 
@@ -29,8 +27,6 @@ class ResourceManager
 	bool _stop;
 
 public:
-
-	static ResourceManager* getSingleton();
 
 	ResourceManager(){}
 
@@ -73,6 +69,11 @@ private:
 	static void* staticLoop(void* object);
 
 };
+
+namespace service
+{
+    using resource = entt::ServiceLocator<ResourceManager>;
+}
 
 #include "resource_manager_templates.hpp"
 

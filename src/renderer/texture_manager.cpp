@@ -86,8 +86,7 @@ void TextureManager::update()
         else if(texture->status == Texture::Status::START)
         {
             // must upload to RAM
-            ResourceManager* resMan = ResourceManager::getSingleton();
-            texture->resourceTexture = resMan->obtain<ResourceTexture>(texture->name);
+            texture->resourceTexture = service::resource::ref().obtain<ResourceTexture>(texture->name);
             texture->status = Texture::Status::LOADING;
         }
     }
