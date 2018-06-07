@@ -3,30 +3,30 @@
 
 Vec2f Camera::getPosition()const
 {
-	return myGraphicsSystem->getRenderer()->getCamera()->getPosition();
+	return service::renderer::ref().getCamera()->getPosition();
 }
 
 void Camera::setPosition(const Vec2f& position)
 {
-	myGraphicsSystem->getRenderer()->getCamera()->setPosition(position);
+	service::renderer::ref().getCamera()->setPosition(position);
 }
 
 float Camera::getWidth()const
 {
-    return myGraphicsSystem->getRenderer()->getCamera()->getWidth();
+    return service::renderer::ref().getCamera()->getWidth();
 }
 
 float Camera::getHeight()const
 {
-    return myGraphicsSystem->getRenderer()->getCamera()->getHeight();
+    return service::renderer::ref().getCamera()->getHeight();
 }
 
 void Camera::setWidth(float width)
 {
-	myGraphicsSystem->getRenderer()->getCamera()->setWidth(width);
+	service::renderer::ref().getCamera()->setWidth(width);
 }
 
 void Camera::setHeight(float height)
 {
-	myGraphicsSystem->getRenderer()->getCamera()->setHeight(height);
+	service::renderer::ref().getCamera()->setHeight(height);
 }

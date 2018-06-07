@@ -50,9 +50,8 @@ void Texture::loadToGPU()
     assert(isLoaded() && resourceTexture->getStatus() == ResourceTexture::Status::LOADED);
 
     GraphicsSystem* gs = textureManager->getGraphicsSystem();
-    LowLevelRenderer2D* llr = gs->getRenderer();
     llTexture =
-    llr->createTexture
+    service::renderer::ref().createTexture
     (
         resourceTexture->getTextureData(),
         resourceTexture->getWidth(),
@@ -73,8 +72,7 @@ void Texture::release()
     {
         // the texture is un VRAM
         GraphicsSystem* gs = textureManager->getGraphicsSystem();
-        LowLevelRenderer2D* llr = gs->getRenderer();
-        llr->destroyTexture(&llTexture);
+        service::renderer::ref().destroyTexture(&llTexture);
     }
     else
     {
@@ -91,8 +89,7 @@ void Texture::draw
     const LowLevelRenderer2D::SpriteVbo& sVbo
 )const
 {
-    LowLevelRenderer2D* ren = textureManager->getGraphicsSystem()->getRenderer();
-    ren->draw(pos, scale, llTexture, sVbo);
+    service::renderer::ref().draw(pos, scale, llTexture, sVbo);
 }
 
 void Texture::draw

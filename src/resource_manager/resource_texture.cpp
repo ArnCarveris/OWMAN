@@ -30,20 +30,6 @@ int ResourceTexture::getHeight()const
     return height;
 }
 
-/*
-void ResourceTexture::loadToGraphicsCard()
-{
-
-	LowLevelRenderer2D* renderer;
-	renderer = myFactory->getRenderer();
-
-	texture = renderer->createTexture(imageData, width, height);
-	status = Resource::Status::READY;
-
-	SOIL_free_image_data(imageData);
-
-}
-*/
 
 // this function is called by the resource manager thread
 void ResourceTexture::load()

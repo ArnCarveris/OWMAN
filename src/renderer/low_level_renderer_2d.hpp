@@ -10,6 +10,8 @@
 #include <array>
 #include "color.hpp"
 
+#include <entt/locator/locator.hpp>
+
 class AARect;
 
 class LowLevelRenderer2D
@@ -100,8 +102,6 @@ public:
 
 private:
 
-	static LowLevelRenderer2D uniqueInstance;
-
 	static const GLuint posAttrib, texAttrib;
 
 	Camera camera;
@@ -155,5 +155,11 @@ public:
 
 typedef LowLevelRenderer2D::Texture::FilterMode LLRFilterMode;
 typedef LowLevelRenderer2D::SpriteVbo LLRSpriteVbo;
+
+
+namespace service
+{
+    using renderer = entt::ServiceLocator<LowLevelRenderer2D>;
+}
 
 #endif

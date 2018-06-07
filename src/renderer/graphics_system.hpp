@@ -23,7 +23,6 @@ class GraphicsSystem
 	SpriteManager spriteManager;
 
 	Camera camera;
-	LowLevelRenderer2D renderer;
 
 	std::set<GraphicsComponent*> components;
 
@@ -57,7 +56,6 @@ public:
 
 	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
 
-	LowLevelRenderer2D* getRenderer();
 	Camera* getCamera();
 	TextureManager* getTextureManager();
 	SpriteManager* getSpriteManager();

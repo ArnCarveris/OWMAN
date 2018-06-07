@@ -10,11 +10,6 @@ class GraphicsSystem;
  */
 class Camera
 {
-
-	friend class GraphicsSystem;
-
-	GraphicsSystem* myGraphicsSystem;
-
 public:
 
 	Camera(){}

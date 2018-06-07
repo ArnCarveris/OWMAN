@@ -17,22 +17,19 @@ GraphicsSystem::GraphicsSystem
 )
 :
 textureManager(this),
-spriteManager(this),
-renderer
-(
-	windowTitle,
-	width, height,
-	fullScreen
-)
+spriteManager(this)
 {
-
-	camera.myGraphicsSystem = this;
-
+    service::renderer::set
+    (
+        windowTitle,
+        width, height,
+        fullScreen
+    );
 }
 
 void GraphicsSystem::setFullScreen(bool b)
 {
-    renderer.setFullScreen(b);
+    service::renderer::ref().setFullScreen(b);
 }
 
 void GraphicsSystem::update(unsigned int delta)
@@ -70,7 +67,7 @@ void GraphicsSystem::draw()
         }
     );
 
-	renderer.clear();
+    service::renderer::ref().clear();
 	vector<GraphicsComponent*>::iterator it;
 	for( it=vec.begin(); it != vec.end(); ++it )
 	{
@@ -87,7 +84,7 @@ void GraphicsSystem::draw()
 void GraphicsSystem::swap()
 {
 
-	renderer.swap();
+    service::renderer::ref().swap();
 
 }
 
@@ -115,11 +112,6 @@ void GraphicsSystem::destroyGraphicsComponent(GraphicsComponent* graphicsCompone
 
 }
 
-LowLevelRenderer2D* GraphicsSystem::getRenderer()
-{
-	return &renderer;
-}
-
 Camera* GraphicsSystem::getCamera()
 {
 	return &camera;
@@ -136,7 +128,5 @@ SpriteManager* GraphicsSystem::getSpriteManager()
 
 void GraphicsSystem::end()
 {
-
-    renderer.end();
-
+    service::renderer::ref().end();
 }
