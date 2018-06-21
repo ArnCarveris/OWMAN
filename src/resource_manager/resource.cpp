@@ -9,7 +9,7 @@ Resource::Resource(const string& name)
 	status = Status::STORED;
 }
 
-string Resource::getName()const
+const string& Resource::getName()const
 {
 	return name;
 }

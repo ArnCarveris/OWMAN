@@ -40,7 +40,7 @@ public:
 
 	Resource(const std::string& name);
 
-	std::string getName()const;
+	const std::string& getName()const;
 	Resource::Status getStatus()const;
 
 	//virtual void destroyDispatcher() = 0;

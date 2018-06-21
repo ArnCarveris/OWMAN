@@ -10,7 +10,7 @@ ResourceText::ResourceText(const string& name)
 {
 }
 
-std::string ResourceText::getText()const
+const std::string& ResourceText::getText()const
 {
 	return text;
 }

@@ -24,7 +24,7 @@ public:
 
 	ResourceText(const std::string& name);
 
-	std::string getText()const;
+	const std::string& getText()const;
 
 	//void destroyDispatcher();
 
