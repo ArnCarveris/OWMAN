@@ -28,10 +28,6 @@ add_executable(
 	resource_manager/resource.cpp
 	resource_manager/resource_cell.cpp
 	resource_manager/resource_manager.cpp
-	resource_manager/resource_request.cpp
-	resource_manager/resource_sprite.cpp
-	resource_manager/resource_table.cpp
-	resource_manager/resource_table_entry.cpp
 	resource_manager/resource_text.cpp
 	resource_manager/resource_texture.cpp
 	resource_manager/work_queue.cpp

@@ -1,5 +1,4 @@
 #include "resource_texture.hpp"
-#include "resource_texture_factory.hpp"
 #include <iostream>
 #include <stb_image.h>
 
@@ -62,10 +61,3 @@ void ResourceTexture::free()
 	stbi_image_free(imageData);
 
 }
-
-/*
-void ResourceTexture::destroyDispatcher()
-{
-    myFactory->destroyResource(this);
-}
-*/

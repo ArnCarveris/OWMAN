@@ -18,27 +18,20 @@ class ResourceManager;
  */
 class ResourceTexture : public Resource
 {
-
-	friend class ResourceTextureFactory;
-	friend class ResourceManager;
-
 	unsigned char* imageData;
 	int width, height;
 
-protected:
-
-	void load();
-	void free();
 
 public:
 
 	ResourceTexture(const std::string& name);
 
+    void load();
+    void free();
+
 	const unsigned char* getTextureData()const;
 	int getWidth()const;
 	int getHeight()const;
-
-	//void destroyDispatcher();
 
 	~ResourceTexture(){}
 

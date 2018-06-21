@@ -70,7 +70,7 @@ void TextureManager::update()
 
         if(texture->status == Texture::Status::LOADING)
         {
-            if(texture->resourceTexture->getStatus() == Resource::Status::LOADED)
+            if(texture->resourceHandle && texture->resourceHandle->getStatus() == Resource::Status::LOADED)
             {
                 texture->status = Texture::Status::LOADED;
             }
@@ -86,7 +86,7 @@ void TextureManager::update()
         else if(texture->status == Texture::Status::START)
         {
             // must upload to RAM
-            texture->resourceTexture = service::resource::ref().obtain<ResourceTexture>(texture->name);
+            texture->resourceHandle = service::resource::ref().obtain<ResourceTexture>(core::resource::ID{ texture->name.c_str() });
             texture->status = Texture::Status::LOADING;
         }
     }

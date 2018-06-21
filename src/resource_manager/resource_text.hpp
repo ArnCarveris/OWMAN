@@ -3,30 +3,22 @@
 
 #include "resource.hpp"
 
-class ResourceTextFactory;
 class ResourceManager;
 
 class ResourceText : public Resource
 {
-
-	friend class ResourceTextFactory;
-	friend class ResourceManager;
-
-	ResourceTextFactory* myFactory;
 	std::string text;
-
-protected:
-
-	void load();
-	void free();
 
 public:
 
-	ResourceText(const std::string& name);
+    ResourceText(const std::string& name);
+
+    void load();
+    void free();
+
 
 	const std::string& getText()const;
 
-	//void destroyDispatcher();
 
 	~ResourceText(){}
 

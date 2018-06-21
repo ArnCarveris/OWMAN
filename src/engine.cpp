@@ -1,4 +1,7 @@
 #include "engine.hpp"
+#include "resource_manager/resource_cell.hpp"
+#include "resource_manager/resource_text.hpp"
+#include "resource_manager/resource_texture.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
@@ -106,7 +109,9 @@ void Engine::init()
 {
 
     SDL_Init(SDL_INIT_TIMER);
-
+    service::resource::ref().deliver<ResourceCell>();
+    service::resource::ref().deliver<ResourceText>();
+    service::resource::ref().deliver<ResourceTexture>();
     service::resource::ref().launch();
 
     service::world_streamer::ref().init

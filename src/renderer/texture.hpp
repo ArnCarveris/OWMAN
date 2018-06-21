@@ -3,6 +3,7 @@
 
 #include "low_level_renderer_2d.hpp"
 #include "../math/aarect.hpp"
+#include "../resource_manager/resource_manager.hpp"
 
 class TextureManager;
 class ResourceTexture;
@@ -116,7 +117,8 @@ private:
     FilterMode filterMode;
 
     LowLevelRenderer2D::Texture llTexture;
-    ResourceTexture* resourceTexture;
+
+    core::resource::Handle<ResourceTexture> resourceHandle;
 
 };
 

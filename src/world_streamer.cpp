@@ -2,7 +2,6 @@
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "math/vec2i.hpp"
-#include "resource_manager/resource_manager.hpp"
 #include "renderer/graphics_component.hpp"
 #include "entity_factory.hpp"
 #include <fstream>
@@ -255,8 +254,7 @@ void WorldStreamer::init(const Vec2i& cell, const Vec2f& offset)
         string fileName = ss.str();
         // cout << fileName << endl;
 
-        ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
-        loadingCellResources[ Vec2i(x, y) ] = cellResource;
+        loadingCellResources[ Vec2i(x, y) ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });
 
     }
 
@@ -321,9 +319,8 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                     << ".xml";
 
                     string fileName = ss.str();
-
-                    ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
-                    loadingCellResources[ goodCell ] = cellResource;
+                    
+                    loadingCellResources[ goodCell ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });;
 
                 }
 
@@ -397,7 +394,8 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
                 // update XML document
                 const WorldCell& wc = it->second;
-                xml_document<>* doc = loadedCellResources[ it->first ]->getDocument();
+                auto loaded_it = loadedCellResources.find(it->first);
+                xml_document<>* doc = const_cast<ResourceCell&>(loaded_it->second.get()).getDocument();
                 cellToXmlDocument( doc, wc, cellSize );
 
                 // release all the entities of the cell
@@ -411,8 +409,8 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                     entityFactory->destroyEntity( *it );
                 }
 
-                service::resource::ref().release( loadedCellResources[ it->first ] );
-                loadedCellResources.erase(it->first);
+                service::resource::ref().release(loaded_it->second);
+                loadedCellResources.erase(loaded_it);
 
                 auto nextIt = it;
                 nextIt++;
@@ -462,8 +460,8 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
             string fileName = ss.str();
 
-            ResourceCell* cellResource = service::resource::ref().obtain<ResourceCell>(fileName);
-            loadingCellResources[ Vec2i(x, y) ] = cellResource;
+            loadingCellResources[ Vec2i(x, y) ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });;
+            
 
         }
 
@@ -471,20 +469,18 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
     }
 
     // parse loaded cell resources
-    map<Vec2i, ResourceCell*>::iterator it;
-    for
-    (
-        it = loadingCellResources.begin();
+    for (
+        auto it = loadingCellResources.begin();
         it != loadingCellResources.end();
         //++it
     )
     {
 
-        ResourceCell* res = it->second;
+        ResourceCell& res = const_cast<ResourceCell&>(it->second.get());
         // the resource file is finally loaded
         if
         (
-            res->getStatus() == Resource::Status::LOADED // finally loaded
+            res.getStatus() == Resource::Status::LOADED // finally loaded
         )
         {
 
@@ -511,7 +507,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
             WorldCell wc;
 
-            xml_node<> *node = res->getNode();
+            xml_node<> *node = res.getNode();
 
             node = node->first_node("entity");
 
@@ -607,7 +603,8 @@ void WorldStreamer::end()
 
         // update XML document
         const WorldCell& wc = it->second;
-        xml_document<>* doc = loadedCellResources[ it->first ]->getDocument();
+        auto loaded_it = loadedCellResources.find(it->first);
+        xml_document<>* doc = const_cast<ResourceCell&>(loaded_it->second.get()).getDocument();
         cellToXmlDocument( doc, wc, cellSize );
 
         // release all the entities of the cell
@@ -621,8 +618,8 @@ void WorldStreamer::end()
             entityFactory->destroyEntity( *it );
         }
 
-        service::resource::ref().release( loadedCellResources[ it->first ] );
-        loadedCellResources.erase(it->first);
+        service::resource::ref().release(loaded_it->second);
+        loadedCellResources.erase(loaded_it);
 
         auto nextIt = it;
         nextIt++;

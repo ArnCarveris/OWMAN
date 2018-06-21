@@ -1,15 +1,122 @@
 #ifndef RESOURCE_MANAGER
 #define RESOURCE_MANAGER
 
-#include "resource_table.hpp"
 #include "work_queue.hpp"
-#include "resource_request.hpp"
 #include <thread>
 #include <mutex>
 #include <string>
+#include <deque>
 #include <entt/locator/locator.hpp>
+#include <entt/resource/registry.hpp>
 
-class LowLevelRenderer2D;
+namespace core::resource
+{
+    struct Request;
+
+    template<typename> class Loader;struct ILoader
+    {
+        virtual void fulfill(const Request&) = 0;
+    };
+
+    using Registry = entt::ResourceRegistry<Loader, ILoader>;
+
+    using ID = Registry::id_t;
+    using TypeID = Registry::type_id_t;
+    
+    template<typename Type>
+    using Cache = entt::ResourceCache<Type>;
+
+    template<typename Type>
+    using Handle = entt::ResourceHandle<Type>;
+
+
+    template<typename Type>
+    inline TypeID GetTypeID()
+    {
+        return Registry::type<Type>();
+    }
+
+    enum ERequest
+    {
+        Obtain,
+        Release,
+        Stop
+    };
+
+    struct Request
+    {
+        ERequest m_type;
+        TypeID m_type_id;
+        ID m_id;
+    };
+
+    struct SharedState
+    {
+        std::mutex         m_mutex;
+        WorkQueue<Request> m_request_queue;
+
+        void stop() { m_request_queue.push({ ERequest::Stop, 0, {""} }); }
+    };
+
+    template<typename Type> 
+    class Loader : public Registry::LoaderBasis<Type>
+    {
+    public:
+        Loader(SharedState* shared_state) :
+            m_shared_state(shared_state)
+        { }
+        Loader(Loader&&) = default;
+        Loader(const Loader&) = delete;
+    public:
+        std::shared_ptr<Type> load(const ID& id)
+        {
+            m_shared_state->m_request_queue.push({ ERequest::Obtain,GetTypeID<Type>(), id });
+
+            return std::shared_ptr<Type>(new Type((const char*)id));
+        }
+        bool unload(const Type& ref)
+        {
+            m_shared_state->m_request_queue.push({ ERequest::Release,GetTypeID<Type>(), identify(ref)});
+
+            return false;
+        }
+
+        ID identify(const Type& ref)
+        {
+            return ID{ ref.getName().c_str()};
+        }
+
+        void fulfill(const Request& request)
+        {
+            m_shared_state->m_mutex.lock();
+            auto handle = cache->handle(request.m_id);
+            auto& ref = const_cast<Type&>(handle.get());
+            m_shared_state->m_mutex.unlock();
+
+            switch (request.m_type)
+            {
+
+            case ERequest::Obtain: {
+                ref.load();
+            } break;
+
+            case ERequest::Release: {
+                ref.free();
+
+                m_shared_state->m_mutex.lock();
+                cache->discard(request.m_id);
+                m_shared_state->m_mutex.unlock();
+            } break;
+
+            default:
+                break;
+            }
+        }
+    private:
+        SharedState* m_shared_state;
+    };
+}
+
 
 /** \brief This is the singleton you should use
  * Requesting resources will deliver a resource pointer
@@ -19,39 +126,35 @@ class LowLevelRenderer2D;
  */
 class ResourceManager
 {
-	std::thread myThread;
-    std::mutex  mutexTable;     //< mutex for accessing the table
 
-	ResourceTable resourceTable;
-	WorkQueue<ResourceRequest> workQueue;
-	bool _stop;
+	std::thread myThread;
+    
+    core::resource::Registry    m_registry;
+    core::resource::SharedState m_shared_state;
+	
+    bool _stop;
 
 public:
 
 	ResourceManager(){}
 
+    template<typename Type>
+    void deliver();
+
+    template<typename Type>
+    core::resource::Handle<Type> obtain(const core::resource::ID& id);
+
+    template<typename Type>
+    void release(core::resource::Handle<Type>& handle);
+
     /**
     * \brief launches the resource manger in its own thread
     */
     void launch();
-
-    /**
-	 * \brief request a pointer to a resource
-	 */
-    template <typename T>
-	T* obtain(std::string name);
-
-    /**
-	 * \brief release a pointer to a resource
-	 */
-	void release(Resource* resource);
-
 	/**
 	 * \brief stop the resource manager thread
 	 */
 	void stop();
-
-	bool hasStopped();
 
 private:
 

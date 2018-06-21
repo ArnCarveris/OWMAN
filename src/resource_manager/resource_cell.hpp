@@ -11,22 +11,15 @@
  */
 class ResourceCell : public Resource
 {
-
-    friend class ResourceCellFactory;
-	friend class ResourceManager;
-
-	char* text;
+    char* text;
 	rapidxml::xml_document<> doc;
 	rapidxml::xml_node<> *node;
 
-protected:
-
-	void load();
-	void free();
-
 public:
-
 	ResourceCell(const std::string& name);
+
+    void load();
+    void free();
 
 	rapidxml::xml_node<>* getNode();
 	rapidxml::xml_document<>* getDocument();

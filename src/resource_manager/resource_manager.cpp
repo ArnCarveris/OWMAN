@@ -18,35 +18,9 @@ void ResourceManager::launch()
 	}
 }
 
-void ResourceManager::release(Resource* resource)
+void ResourceManager::stop()
 {
-
-    string name = resource->getName();
-
-	mutexTable.lock();
-        unsigned int count = resourceTable.getCount(name);
-	mutexTable.unlock();
-
-	// last reference
-	if( count == 1 )
-	{
-
-        mutexTable.lock();
-            resourceTable.decEntry(name);
-        mutexTable.unlock();
-
-        workQueue.push( ResourceRequest( ResourceRequest::Type::RELEASE, name ) );
-
-	}
-
-	// more references
-	else
-	{
-	    mutexTable.lock();
-            resourceTable.decEntry(name);
-		mutexTable.unlock();
-	}
-
+    m_shared_state.stop();
 }
 
 void ResourceManager::loop()
@@ -57,53 +31,22 @@ void ResourceManager::loop()
 	// if the are not elements in the queue
 	while( !_stop )
 	{
+        auto request = m_shared_state.m_request_queue.pop();
 
-		ResourceRequest request;
-		request = workQueue.pop();
+        if (request.m_type == core::resource::ERequest::Stop)
+        {
+            _stop = true;
+        }
+        else
+        {
+            m_registry.loaders()[request.m_type_id]->fulfill(request);
+        }
 
-		// obtain
-		if( request.getType() == ResourceRequest::Type::OBTAIN )
-		{
-
-			string name = request.getName();
-
-			mutexTable.lock();
-                Resource* resource = resourceTable.getResource(name);
-			mutexTable.unlock();
-
-			resource->load();
-
-		}
-
-		// release
-		else if( request.getType() == ResourceRequest::Type::RELEASE )
-		{
-
-            string name = request.getName();
-
-            mutexTable.lock();
-                Resource* resource = resourceTable.getResource(name);
-			mutexTable.unlock();
-
-			resource->free();
-
-            mutexTable.lock();
-                resourceTable.removeEntry(name);
-			mutexTable.unlock();
-
-		}
-
-		// stop
-		else if( request.getType() == ResourceRequest::Type::STOP )
-		{
-			_stop = true;
-		}
 
         std::this_thread::sleep_for(1ms);
 	}
 
 }
-
 void* ResourceManager::staticLoop(void* object)
 {
 

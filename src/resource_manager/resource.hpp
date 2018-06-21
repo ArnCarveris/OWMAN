@@ -31,8 +31,6 @@ protected:
 	std::string name;
 	Status status;
 
-	virtual void load() = 0;
-	virtual void free() = 0;
 
 	void setName(std::string name);
 
@@ -42,8 +40,6 @@ public:
 
 	const std::string& getName()const;
 	Resource::Status getStatus()const;
-
-	//virtual void destroyDispatcher() = 0;
 
 	virtual ~Resource(){};
 

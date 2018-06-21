@@ -2,7 +2,7 @@
 #include "world_window.hpp"
 #include "world_cell.hpp"
 #include "entity.hpp"
-#include "resource_manager/resource_text.hpp"
+#include "resource_manager/resource_manager.hpp"
 #include "resource_manager/resource_cell.hpp"
 #include <string>
 #include <map>
@@ -47,8 +47,8 @@ class WorldStreamer : public IWorldStreamer
 	std::set<Vec2i> availableCells;
 
     // Cells for which we are still loading the .xml file
-	std::map<Vec2i, ResourceCell*> loadingCellResources;
-	std::map<Vec2i, ResourceCell*> loadedCellResources;
+	std::map<Vec2i, core::resource::Handle<ResourceCell>> loadingCellResources;
+	std::map<Vec2i, core::resource::Handle<ResourceCell>> loadedCellResources;
 
 	EntityFactory* entityFactory;
 

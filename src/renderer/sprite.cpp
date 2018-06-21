@@ -40,17 +40,17 @@ void Sprite::update()
 {
     if(Status::START == status)
     {
-         resourceText = service::resource::ref().obtain<ResourceText>(fileName);
-         status = Status::LOADING_XML;
+        resourceHandle = service::resource::ref().obtain<ResourceText>(core::resource::ID{ fileName.c_str() });
+        status = Status::LOADING_XML;
     }
     else if(Status::LOADING_XML == status)
     {
-        if(Resource::Status::LOADED == resourceText->getStatus())
+        if(resourceHandle && Resource::Status::LOADED == resourceHandle->getStatus())
         {
             GraphicsSystem* gs = mySpriteManager->getGraphicsSystem();
             TextureManager* texMan = gs->getTextureManager();
             // parse XML
-            xmlText = resourceText->getText();
+            xmlText = resourceHandle->getText();
             doc.parse<0>((char*)xmlText.c_str());
 
             root = doc.first_node("sprite");
@@ -200,7 +200,7 @@ void Sprite::update()
             }
             while(0 != nodeAnim);
 
-            service::resource::ref().release(resourceText);
+            service::resource::ref().release(resourceHandle);
             doc.clear();
             xmlText.clear();
 

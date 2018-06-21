@@ -44,10 +44,3 @@ void ResourceText::free()
 	status = Resource::Status::STORED;
 
 }
-
-/*
-void ResourceText::destroyDispatcher()
-{
-    myFactory->destroyResource(this);
-}
-*/

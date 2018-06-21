@@ -1,40 +1,30 @@
 #ifndef RESOURCE_MANAGER_TEMPLATES
 #define RESOURCE_MANAGER_TEMPLATES
 
-template <typename T>
-T* ResourceManager::obtain(std::string name)
+template<typename Type>
+void ResourceManager::deliver()
 {
-    mutexTable.lock();
-        unsigned int count = resourceTable.getCount( name );
-	mutexTable.unlock();
-
-	// not loaded
-	if( count == 0 )
-	{
-		T* resource = new T(name);
-
-		mutexTable.lock();
-            resourceTable.addEntry(name, resource);
-		mutexTable.unlock();
-
-		workQueue.push( ResourceRequest( ResourceRequest::Type::OBTAIN, name ) );
-		return resource;
-	}
-
-	// loaded
-	else
-	{
-	   mutexTable.lock();
-            resourceTable.incEntry(name);
-		mutexTable.unlock();
-
-       mutexTable.lock();
-            T* res = (T*)resourceTable.getResource(name);
-        mutexTable.unlock();
-
-		return res;
-	}
+    m_registry.deliver<Type>(&m_shared_state);
 }
+
+template<typename Type>
+core::resource::Handle<Type> ResourceManager::obtain(const core::resource::ID& id)
+{
+    m_shared_state.m_mutex.lock();
+    auto handle = m_registry.obtain<Type>(id);
+    m_shared_state.m_mutex.unlock();
+
+    return handle;
+}
+
+template<typename Type>
+void ResourceManager::release(core::resource::Handle<Type>& handle)
+{
+    m_shared_state.m_mutex.lock();
+    m_registry.release<Type>(handle);
+    m_shared_state.m_mutex.unlock();
+}
+
 
 
 #endif // RESOURCE_MANAGER_TEMPLATES

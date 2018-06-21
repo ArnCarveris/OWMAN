@@ -13,7 +13,6 @@ Texture::Texture(TextureManager* textureManager, const std::string& name)
     this->name = name;
     status = Status::START;
     llTexture = LowLevelRenderer2D::Texture();
-    resourceTexture = 0;
     filterMode = FilterMode::NEAREST;
 }
 
@@ -39,23 +38,25 @@ bool Texture::isReady()const
 
 void Texture::loadResource()
 {
-    assert(resourceTexture == 0);
-    resourceTexture = service::resource::ref().obtain<ResourceTexture>(texturesPath + "/" + name);
+    assert(!resourceHandle);
+    auto id = texturesPath + "/" + name;
+    resourceHandle = service::resource::ref().obtain<ResourceTexture>(core::resource::ID{id.c_str()});
     status = Status::LOADING;
 }
 
 void Texture::loadToGPU()
 {
-    assert(resourceTexture != 0);
-    assert(isLoaded() && resourceTexture->getStatus() == ResourceTexture::Status::LOADED);
+    assert(resourceHandle);
+    auto& res = const_cast<ResourceTexture&>(resourceHandle.get());
+    assert(isLoaded() && res.getStatus() == ResourceTexture::Status::LOADED);
 
     GraphicsSystem* gs = textureManager->getGraphicsSystem();
     llTexture =
     service::renderer::ref().createTexture
     (
-        resourceTexture->getTextureData(),
-        resourceTexture->getWidth(),
-        resourceTexture->getHeight()
+        res.getTextureData(),
+        res.getWidth(),
+        res.getHeight()
     );
     llTexture.setFilterMode(filterMode);
     status = Status::READY;
@@ -63,7 +64,7 @@ void Texture::loadToGPU()
 
 void Texture::releaseResource()
 {
-    service::resource::ref().release(resourceTexture);
+    service::resource::ref().release(resourceHandle);
 }
 
 void Texture::release()

@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include "animation.hpp"
+#include "../resource_manager/resource_manager.hpp"
 
 class SpriteManager;
 class ResourceTexture;
@@ -47,7 +48,7 @@ class Sprite
 	std::vector<Animation> animations;
 
     Status status;
-	ResourceText* resourceText;
+    core::resource::Handle<ResourceText> resourceHandle;
 	std::string xmlText;
 	rapidxml::xml_document<> doc;
 	rapidxml::xml_node<>* root;
