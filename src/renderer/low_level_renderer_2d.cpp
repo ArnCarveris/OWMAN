@@ -62,8 +62,11 @@ LowLevelRenderer2D::Texture::Texture(const unsigned char* image, int width, int 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glGenTextures(1, &textureID);
 	GLenum error = glGetError();
-	cout << "texture: " << textureID << endl;
-	cout << "error: " << error << endl;
+    if (error != GL_NO_ERROR)
+    {
+        cout << "texture: " << textureID << endl;
+        cout << "error: " << error << endl;
+    }
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);

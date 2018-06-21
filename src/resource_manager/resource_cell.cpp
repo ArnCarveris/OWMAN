@@ -27,7 +27,7 @@ void ResourceCell::load()
 	text[length] = '\0';
 	fs.close();
 
-    cout << name << endl;
+   // cout << name << endl;
     /*cout << text << endl;
     cout << fs.gcount() << endl;
     */
