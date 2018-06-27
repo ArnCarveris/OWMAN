@@ -23,13 +23,6 @@ void PhysicsSystem::update(unsigned int delta)
 
 }
 
-// destroyers
-
-void PhysicsSystem::destroyPhysicsComponent( PhysicsComponent* component)
-{
-    component->destroyDispatcher();
-}
-
 b2World* PhysicsSystem::getWorld()
 {
     return world;
@@ -38,7 +31,6 @@ b2World* PhysicsSystem::getWorld()
 PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node<>* node, const bool kinematic)
 {
     PhysicsComponent* component = new PhysicsComponent;
-    component->myPhysicsSystem = this;
 
     xml_node<> *shape_node = node->first_node(xmlstr::shape);
     string sShape(shape_node->value());
@@ -101,6 +93,14 @@ PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node
 
     return component;
 }
+
+void PhysicsSystem::destroyComponent(PhysicsComponent* component)
+{
+    world->DestroyBody(component->body);
+
+    delete component;
+}
+
 
 rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component, rapidxml::xml_document<>* doc)
 {

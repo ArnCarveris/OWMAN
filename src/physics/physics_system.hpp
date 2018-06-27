@@ -16,11 +16,12 @@ public:
 
     void update(unsigned int delta);
 
-    void destroyPhysicsComponent( PhysicsComponent* physicsComponent );
 
     b2World* getWorld();
 
     PhysicsComponent* createComponent(const Vec2f& position, xml_node<>* node, const bool kinematic);
+
+    void destroyComponent(PhysicsComponent* component);
 
     rapidxml::xml_node<>* createXmlNode(PhysicsComponent* component, rapidxml::xml_document<>* doc);
 

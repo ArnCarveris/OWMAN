@@ -14,8 +14,6 @@ class PhysicsComponent
 
 protected:
 
-    PhysicsSystem* myPhysicsSystem;
-
     b2Body* body;
 
 public:
@@ -25,11 +23,6 @@ public:
 
     Vec2f getSpeed()const;
     void setSpeed(const Vec2f& v);
-
-    /** \brief this will call to the corresponding PhysicsSystem function \
-     * in charge of deleting this PhysicsComponent
-     */
-	void destroyDispatcher();
 
 };
 

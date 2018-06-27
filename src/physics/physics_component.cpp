@@ -21,11 +21,3 @@ void PhysicsComponent::setSpeed(const Vec2f& v)
 {
     body->SetLinearVelocity( b2Vec2( v.x, v.y ) );
 }
-
-void PhysicsComponent::destroyDispatcher()
-{
-    b2World* world = myPhysicsSystem->getWorld();
-
-    world->DestroyBody(body);
-    delete this;
-}
