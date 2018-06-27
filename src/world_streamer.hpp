@@ -49,16 +49,11 @@ class WorldStreamer : public IWorldStreamer
     // Cells for which we are still loading the .xml file
 	std::map<Vec2i, core::resource::Handle<ResourceCell>> loadingCellResources;
 	std::map<Vec2i, core::resource::Handle<ResourceCell>> loadedCellResources;
-
-	EntityFactory* entityFactory;
-
 public:
 
-	WorldStreamer(){}
 	WorldStreamer
 	(
 		std::string worldFolder,
-		EntityFactory* entityFactory,
 		float cellSize = 250.f,
 		unsigned int windowSize = 2
 	);

@@ -18,8 +18,6 @@ class Engine
 
 	WorldWindow worldGrid;
 
-	EntityFactory entityFactory;
-
 	// Systems
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;

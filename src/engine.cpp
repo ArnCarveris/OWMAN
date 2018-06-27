@@ -68,10 +68,10 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 	int windowSize = atoi( node->value() );
 
     service::input::set(this);
+    service::entity::set(this);
     service::resource::set();
-    service::world_streamer::set<WorldStreamer>(worldFolder, &entityFactory, cellSize, windowSize);
+    service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
 
-	entityFactory = EntityFactory(this);
 
     // init systems
 	graphicsSystem = new GraphicsSystem( title, xResolution, yResolution, fullscreen );
@@ -98,7 +98,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
     node = mcDoc.first_node("main_character");
 
-    mainCharacter = entityFactory.createMainCharacter(node);
+    mainCharacter = service::entity::ref().createMainCharacter(node);
 
 
     delete mcFileText;
@@ -219,6 +219,7 @@ Engine::~Engine()
     if( graphicsSystem ) delete graphicsSystem;
     if( mainCharacter) delete mainCharacter;
 
+    service::entity::reset();
     service::resource::reset();
     service::world_streamer::reset();
 }

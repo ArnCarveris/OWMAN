@@ -197,7 +197,6 @@ void cellToXmlDocument(xml_document<>* doc, const WorldCell& wc, float cellSize)
 WorldStreamer::WorldStreamer
 (
 	string worldFolder,
-	EntityFactory* entityFactory,
 	float cellSize,
     unsigned int windowSize
 )
@@ -207,7 +206,6 @@ worldWindow(windowSize)
 {
 
 	this->worldFolder = worldFolder;
-	this->entityFactory = entityFactory;
 
     fstream fs;
     fs.open("world_folder/world_file.txt", ios::in);
@@ -406,7 +404,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                     ++it
                 )
                 {
-                    entityFactory->destroyEntity( *it );
+                    service::entity::ref().destroyEntity( *it );
                 }
 
                 service::resource::ref().release(loaded_it->second);
@@ -514,7 +512,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
             while( node != 0 )
             {
 
-                Entity* ent = entityFactory->createEntity(node, it->first-windowPos);
+                Entity* ent = service::entity::ref().createEntity(node, it->first-windowPos);
 
                 wc.push_back( ent );
                 node = node->next_sibling();
@@ -615,7 +613,7 @@ void WorldStreamer::end()
             ++it
         )
         {
-            entityFactory->destroyEntity( *it );
+            service::entity::ref().destroyEntity( *it );
         }
 
         service::resource::ref().release(loaded_it->second);

@@ -2,6 +2,8 @@
 #include "main_character.hpp"
 #include <rapidxml.hpp>
 
+#include <entt/locator/locator.hpp>
+
 #ifndef ENGINE
 class Engine;
 #endif
@@ -25,7 +27,6 @@ class EntityFactory
 
 public:
 
-	EntityFactory(){}
 	EntityFactory(Engine* engine);
 
 	/**
@@ -47,5 +48,10 @@ public:
 	void destroyEntity(Entity* entity);
 
 };
+
+namespace service
+{
+    using entity = entt::ServiceLocator<EntityFactory>;
+}
 
 #endif

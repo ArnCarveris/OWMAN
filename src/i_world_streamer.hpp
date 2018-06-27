@@ -21,20 +21,7 @@ class EntityFactory;
 
 class IWorldStreamer
 {
-
-protected:
-
-	EntityFactory* entityFactory;
-
 public:
-
-	IWorldStreamer(){}
-
-	IWorldStreamer(EntityFactory* entityFactory);
-
-	EntityFactory* getEntityFactory()const;
-	void setEntityFactory(EntityFactory* entityFactory);
-
 	/**
 	 * \brief Inits the world streamer.
 	 * \param cell the cell where the main character is located.
