@@ -19,7 +19,7 @@ public:
 
     b2World* getWorld();
 
-    PhysicsComponent* createComponent(const Vec2f& position, xml_node<>* node, const bool kinematic);
+    PhysicsComponent* createComponent(const Vec2f& position, rapidxml::xml_node<>* node, const bool kinematic);
 
     void destroyComponent(PhysicsComponent* component);
 

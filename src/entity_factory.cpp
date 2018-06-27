@@ -236,7 +236,7 @@ void EntityFactory::destroyEntity(Entity* entity)
 	PhysicsComponent* pc = entity->getPhysicsComponent();
 	if( pc )
 	{
-        myEngine->getPhysicsSystem()->destroyPhysicsComponent(pc);
+        myEngine->getPhysicsSystem()->destroyComponent(pc);
     }
 
 }
