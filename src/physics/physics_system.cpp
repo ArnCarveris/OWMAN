@@ -23,116 +23,6 @@ void PhysicsSystem::update(unsigned int delta)
 
 }
 
-PhysicsComponent* PhysicsSystem::createPhysicsBox
-    ( const Vec2f& position, const Vec2f& scale, float mass )
-{
-
-    PhysicsComponent* component = new PhysicsComponent;
-    component->myPhysicsSystem = this;
-
-
-    b2BodyDef bodyDef;
-    bodyDef.type = (mass == 0) ? b2_staticBody : b2_dynamicBody;
-    bodyDef.fixedRotation = true;
-    bodyDef.active = true;
-    bodyDef.position.Set(position.x, position.y);
-    bodyDef.linearDamping = 0.2;
-    component->body = world->CreateBody(&bodyDef);
-
-    b2PolygonShape shape;
-    shape.SetAsBox(scale.x / 2, scale.y / 2);
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = mass / (scale.x*scale.y);
-    fixtureDef.restitution = 0.5;
-    fixtureDef.shape = &shape;
-
-    component->body->CreateFixture(&fixtureDef);
-
-    return component;
-
-}
-
-PhysicsComponent* PhysicsSystem::createPhysicsBoxKinematic
-    ( const Vec2f& position, const Vec2f& scale, float mass )
-{
-
-    PhysicsComponent* component = new PhysicsComponent;
-    component->myPhysicsSystem = this;
-
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.fixedRotation = true;
-    bodyDef.active = true;
-    bodyDef.position.Set(position.x, position.y);
-    bodyDef.linearDamping = 0.01;
-    component->body = world->CreateBody(&bodyDef);
-
-    b2PolygonShape shape;
-    shape.SetAsBox(scale.x / 2, scale.y / 2);
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = mass / (scale.x*scale.y);
-    fixtureDef.shape = &shape;
-
-    component->body->CreateFixture(&fixtureDef);
-
-    return component;
-
-}
-
-PhysicsComponent* PhysicsSystem::createPhysicsCircle
-    ( const Vec2f& position, float radius, float mass )
-{
-    PhysicsComponent* component = new PhysicsComponent;
-    component->myPhysicsSystem = this;
-
-    b2BodyDef bodyDef;
-    bodyDef.type = (mass == 0) ? b2_staticBody : b2_dynamicBody;
-    bodyDef.fixedRotation = true;
-    bodyDef.active = true;
-    bodyDef.position.Set(position.x, position.y);
-    bodyDef.linearDamping = 0.2;
-    component->body = world->CreateBody(&bodyDef);
-
-    b2CircleShape shape;
-    shape.m_radius = radius;
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = mass / (M_PI * radius*radius);
-    fixtureDef.restitution = 0.5;
-    fixtureDef.shape = &shape;
-
-    component->body->CreateFixture(&fixtureDef);
-    return component;
-}
-
-PhysicsComponent* PhysicsSystem::createPhysicsCircleKinematic
-    ( const Vec2f& position, float radius, float mass )
-{
-    PhysicsComponent* component = new PhysicsComponent;
-    component->myPhysicsSystem = this;
-
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.fixedRotation = true;
-    bodyDef.active = true;
-    bodyDef.position.Set(position.x, position.y);
-    bodyDef.linearDamping = 0.01;
-    component->body = world->CreateBody(&bodyDef);
-
-    b2CircleShape shape;
-    shape.m_radius = radius;
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.density = mass / (M_PI * radius*radius);
-    fixtureDef.shape = &shape;
-
-    component->body->CreateFixture(&fixtureDef);
-
-    return component;
-}
-
 // destroyers
 
 void PhysicsSystem::destroyPhysicsComponent( PhysicsComponent* component)
@@ -143,6 +33,73 @@ void PhysicsSystem::destroyPhysicsComponent( PhysicsComponent* component)
 b2World* PhysicsSystem::getWorld()
 {
     return world;
+}
+
+PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node<>* node, const bool kinematic)
+{
+    PhysicsComponent* component = new PhysicsComponent;
+    component->myPhysicsSystem = this;
+
+    xml_node<> *shape_node = node->first_node(xmlstr::shape);
+    string sShape(shape_node->value());
+
+    xml_node<> *mass_node = node->first_node(xmlstr::mass);
+    float mass = atof(mass_node->value());
+
+    b2BodyDef bodyDef;
+    b2FixtureDef fixtureDef;
+
+    bodyDef.fixedRotation = true;
+    bodyDef.active = true;
+    bodyDef.position.Set(position.x, position.y);
+
+    if (kinematic)
+    {
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.linearDamping = 0.01;
+    }
+    else
+    {
+        bodyDef.type = (mass == 0) ? b2_staticBody : b2_dynamicBody;
+        bodyDef.linearDamping = 0.2;
+
+        fixtureDef.restitution = 0.5;
+    }
+
+    component->body = world->CreateBody(&bodyDef);
+
+    if (sShape == xmlstr::box)
+    {
+        xml_node<> *width_node = node->first_node(xmlstr::width);
+        xml_node<> *height_node = node->first_node(xmlstr::height);
+
+        Vec2f scale(atof(width_node->value()), atof(height_node->value()));
+
+        b2PolygonShape shape;
+
+        shape.SetAsBox(scale.x / 2, scale.y / 2);
+
+        fixtureDef.density = mass / (scale.x*scale.y);
+        fixtureDef.shape = &shape;
+
+        component->body->CreateFixture(&fixtureDef);
+    }
+    else if (sShape == xmlstr::circle)
+    {
+        xml_node<> *radius_node = node->first_node(xmlstr::radius);
+        float radius = atof(radius_node->value());
+
+        b2CircleShape shape;
+
+        shape.m_radius = radius;
+
+        fixtureDef.density = mass / (M_PI * radius*radius);
+        fixtureDef.shape = &shape;
+
+        component->body->CreateFixture(&fixtureDef);
+    }
+
+    return component;
 }
 
 rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component, rapidxml::xml_document<>* doc)

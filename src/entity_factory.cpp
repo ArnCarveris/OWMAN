@@ -84,46 +84,7 @@ Entity* EntityFactory::createEntity
 	xml_node<> *physics_node = node->first_node(xmlstr::physics);
 	if( physics_node )
 	{
-        PhysicsComponent* physicsComponent;
-
-        xml_node<> *shape_node = physics_node->first_node(xmlstr::shape);
-        string sShape( shape_node->value() );
-
-        xml_node<> *mass_node = physics_node->first_node(xmlstr::mass);
-        float mass = atof( mass_node->value() );
-
-        if(sShape == xmlstr::box)
-        {
-            xml_node<> *width_physics_node = physics_node->first_node(xmlstr::width);
-            float width_physics = atof( width_physics_node->value() );
-            xml_node<> *height_physics_node = physics_node->first_node(xmlstr::height);
-            float height_physics = atof( height_physics_node->value() );
-
-            physicsComponent =
-            myEngine->getPhysicsSystem()->createPhysicsBox
-            (
-                pos,
-                Vec2f(width_physics, height_physics),
-                mass
-            );
-        }
-        else if(sShape == xmlstr::circle)
-        {
-            xml_node<> *radius_node = physics_node->first_node(xmlstr::radius);
-            float radius = atof( radius_node->value() );
-            physicsComponent =
-            myEngine->getPhysicsSystem()->createPhysicsCircle
-            (
-                pos,
-                radius,
-                mass
-            );
-        }
-        else
-        {cerr << "error: type of shape not recognized" << endl;}
-
-        entity->setPhysicsComponent( physicsComponent );
-
+        entity->setPhysicsComponent(myEngine->getPhysicsSystem()->createComponent(pos, physics_node, false));
     }
 
 
@@ -197,26 +158,7 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 
     if( physics_node )
     {
-
-        xml_node<> *shape_node = physics_node->first_node(xmlstr::shape);
-        string sShape( shape_node->value() );
-        xml_node<> *width_physics_node = physics_node->first_node(xmlstr::width);
-        float width_physics = atof( width_physics_node->value() );
-        xml_node<> *height_physics_node = physics_node->first_node(xmlstr::height);
-        float height_physics = atof( height_physics_node->value() );
-        xml_node<> *mass_node = physics_node->first_node(xmlstr::mass);
-        float mass = atof( mass_node->value() );
-
-        PhysicsComponent* physicsComponent =
-        myEngine->getPhysicsSystem()->createPhysicsBoxKinematic
-        (
-            pos,
-            Vec2f(width_physics, height_physics),
-            mass
-        );
-
-        entity->setPhysicsComponent( physicsComponent );
-
+        entity->setPhysicsComponent(myEngine->getPhysicsSystem()->createComponent(pos, physics_node, true));
     }
 
 
