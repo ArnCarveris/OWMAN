@@ -7,6 +7,7 @@
 #include "renderer/sprite_status.hpp"
 #include <string>
 #include <iostream>
+#include <sstream>
 #include "util/xmlstr.hpp"
 
 using namespace rapidxml;
@@ -224,6 +225,61 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 	entity->setCell( Vec2i(cell_x, cell_y) );
 
 	return entity;
+
+}
+
+rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xml_document<>* doc, float cellSize)
+{
+
+    xml_node<>* node_ent;
+    node_ent = doc->allocate_node(node_element, xmlstr::entity);
+
+
+    float x = entity->getPosition().x;
+    float y = entity->getPosition().y;
+    // we have to do this because positions are wrt the cell
+    // where the main character is and not wrt the cell where
+    // this entity is
+    while (x < 0) x += cellSize;
+    while (x >= cellSize) x -= cellSize;
+    while (y < 0) y += cellSize;
+    while (y >= cellSize) y -= cellSize;
+
+    xml_node<>* pos_node = doc->allocate_node(node_element, xmlstr::position);
+    node_ent->append_node(pos_node);
+
+    /// x
+    stringstream ss;
+    ss << x;
+    string sx = ss.str();
+    char* s = doc->allocate_string(sx.c_str());
+    xml_node<>* x_node = doc->allocate_node(node_element, xmlstr::x, s);
+    pos_node->append_node(x_node);
+
+    /// y
+    ss.str(string());
+    ss.clear();
+    ss << y;
+    string sy = ss.str();
+    s = doc->allocate_string(sy.c_str());
+    xml_node<>* y_node = doc->allocate_node(node_element, xmlstr::y, s);
+    pos_node->append_node(y_node);
+
+    /// graphics component
+    if (auto* component = entity->getGraphicsComponent())
+    {
+        xml_node<>* graphics_node = component->createXmlNode(doc);
+        node_ent->append_node(graphics_node);
+    }
+
+    /// physics component
+    if (auto* component = entity->getPhysicsComponent())
+    {
+        xml_node<>* physics_node = component->createXmlNode(doc);
+        node_ent->append_node(physics_node);
+    }
+
+    return node_ent;
 
 }
 

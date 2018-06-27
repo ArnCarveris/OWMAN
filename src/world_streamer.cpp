@@ -185,8 +185,7 @@ void cellToXmlDocument(xml_document<>* doc, const WorldCell& wc, float cellSize)
     xml_node<>* node_ent;
     for( unsigned int i=0; i<wc.size(); i++ )
     {
-
-        node_ent = wc[i]->createXmlNode(doc, cellSize);
+        node_ent = service::entity::ref().createXmlNode(wc[i], doc, cellSize);
         root->append_node( node_ent );
 
     }

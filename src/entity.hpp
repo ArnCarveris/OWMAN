@@ -50,7 +50,6 @@ public:
 	GraphicsComponent* getGraphicsComponent();
 	PhysicsComponent* getPhysicsComponent();
 
-	rapidxml::xml_node<>* createXmlNode(rapidxml::xml_document<>* doc, float cellSize);
 
 	~Entity();
 

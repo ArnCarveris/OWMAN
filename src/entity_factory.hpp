@@ -45,6 +45,8 @@ public:
 	 **/
 	MainCharacter* createMainCharacter(rapidxml::xml_node<> *node);
 
+    rapidxml::xml_node<>* createXmlNode(Entity* entity, rapidxml::xml_document<>* doc, float cellSize);
+
 	void destroyEntity(Entity* entity);
 
 };
