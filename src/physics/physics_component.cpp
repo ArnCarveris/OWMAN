@@ -1,5 +1,6 @@
 #include "physics_component.hpp"
 #include <Box2D/Box2D.h>
+#include "physics_system.hpp"
 
 Vec2f PhysicsComponent::getPosition()const
 {
@@ -19,4 +20,12 @@ Vec2f PhysicsComponent::getSpeed()const
 void PhysicsComponent::setSpeed(const Vec2f& v)
 {
     body->SetLinearVelocity( b2Vec2( v.x, v.y ) );
+}
+
+void PhysicsComponent::destroyDispatcher()
+{
+    b2World* world = myPhysicsSystem->getWorld();
+
+    world->DestroyBody(body);
+    delete this;
 }

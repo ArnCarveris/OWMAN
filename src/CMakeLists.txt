@@ -8,10 +8,6 @@ add_executable(
 	math/vec2f.cpp
 	math/vec2i.cpp
 	math/functions.cpp
-	physics/physics_box.cpp
-	physics/physics_box_factory.cpp
-	physics/physics_circle.cpp
-	physics/physics_circle_factory.cpp
 	physics/physics_component.cpp
 	physics/physics_system.cpp
 	renderer/animation.cpp

@@ -2,7 +2,6 @@
 #include "cell_size.hpp"
 #include "renderer/graphics_component.hpp"
 #include "physics/physics_component.hpp"
-#include "physics/physics_box.hpp"
 #include "engine.hpp"
 #include "renderer/sprite_status.hpp"
 #include <string>
@@ -275,7 +274,7 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xm
     /// physics component
     if (auto* component = entity->getPhysicsComponent())
     {
-        xml_node<>* physics_node = component->createXmlNode(doc);
+        xml_node<>* physics_node = myEngine->getPhysicsSystem()->createXmlNode(component, doc);
         node_ent->append_node(physics_node);
     }
 
