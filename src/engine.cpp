@@ -109,10 +109,13 @@ void Engine::init()
 {
 
     SDL_Init(SDL_INIT_TIMER);
-    service::resource::ref().deliver<ResourceCell>();
-    service::resource::ref().deliver<ResourceText>();
-    service::resource::ref().deliver<ResourceTexture>();
-    service::resource::ref().launch();
+
+    service::resource::ref()
+        .deliver<ResourceCell>()
+        .deliver<ResourceText>()
+        .deliver<ResourceTexture>()
+        .launch()
+    ;
 
     service::world_streamer::ref().init
     (
