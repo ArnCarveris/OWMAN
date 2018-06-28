@@ -107,20 +107,23 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 bool core::resource::LoaderProxy<ResourceCell>::load_synchronously(ResourceCell*) { return false; }
 bool core::resource::LoaderProxy<ResourceCell>::unload_synchronously(ResourceCell*) { return false; }
-void core::resource::LoaderProxy<ResourceCell>::load_asynchronously(ResourceCell* ptr) { ptr->load(); }
-void core::resource::LoaderProxy<ResourceCell>::unload_asynchronously(ResourceCell* ptr) { ptr->free(); }
+bool core::resource::LoaderProxy<ResourceCell>::load_asynchronously(ResourceCell* ptr) { ptr->load(); return false; }
+bool core::resource::LoaderProxy<ResourceCell>::unload_asynchronously(ResourceCell* ptr) { ptr->free(); return true; }
+bool core::resource::LoaderProxy<ResourceCell>::synchronize_loaded(ResourceCell*) { return true; }
 
 
 bool core::resource::LoaderProxy<ResourceText>::load_synchronously(ResourceText*) { return false; }
 bool core::resource::LoaderProxy<ResourceText>::unload_synchronously(ResourceText*) { return false; }
-void core::resource::LoaderProxy<ResourceText>::load_asynchronously(ResourceText* ptr) { ptr->load(); }
-void core::resource::LoaderProxy<ResourceText>::unload_asynchronously(ResourceText* ptr) { ptr->free(); }
+bool core::resource::LoaderProxy<ResourceText>::load_asynchronously(ResourceText* ptr) { ptr->load(); return false; }
+bool core::resource::LoaderProxy<ResourceText>::unload_asynchronously(ResourceText* ptr) { ptr->free(); return true; }
+bool core::resource::LoaderProxy<ResourceText>::synchronize_loaded(ResourceText*) { return true; }
 
 
 bool core::resource::LoaderProxy<ResourceTexture>::load_synchronously(ResourceTexture*) { return false; }
 bool core::resource::LoaderProxy<ResourceTexture>::unload_synchronously(ResourceTexture*) { return false; }
-void core::resource::LoaderProxy<ResourceTexture>::load_asynchronously(ResourceTexture* ptr) { ptr->load(); }
-void core::resource::LoaderProxy<ResourceTexture>::unload_asynchronously(ResourceTexture* ptr) { ptr->free(); }
+bool core::resource::LoaderProxy<ResourceTexture>::load_asynchronously(ResourceTexture* ptr) { ptr->load(); return false; }
+bool core::resource::LoaderProxy<ResourceTexture>::unload_asynchronously(ResourceTexture* ptr) { ptr->free(); return true; }
+bool core::resource::LoaderProxy<ResourceTexture>::synchronize_loaded(ResourceTexture*) { return true; }
 
 
 void Engine::init()
@@ -154,6 +157,8 @@ void Engine::mainLoop()
         unsigned ticks = SDL_GetTicks();
 
         service::input::ref().poll();
+
+        service::resource::ref().synchronize();
 
         // update physics
         physicsSystem->update( ticks - prevTicks );
