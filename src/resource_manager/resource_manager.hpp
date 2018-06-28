@@ -16,6 +16,7 @@ namespace core::resource
     template<typename> class Loader;struct ILoader
     {
         virtual void fulfill(const Request&) = 0;
+        virtual bool synchronize() = 0;
     };
 
     using Registry = entt::ResourceRegistry<Loader, ILoader>;
@@ -65,14 +66,17 @@ namespace core::resource
         static bool load_synchronously(Type*);
         static bool unload_synchronously(Type*);
 
-        static void load_asynchronously(Type*);
-        static void unload_asynchronously(Type*);
+        static bool load_asynchronously(Type*);
+        static bool unload_asynchronously(Type*);
+
+        static bool synchronize_loaded(Type*);
     };
 
     template<typename Type> 
     class Loader : public Registry::LoaderBasis<Type>
     {
     private:
+        using Queue = std::deque<Type*>;
         using Proxy = LoaderProxy<Type>;
     public:
         Loader(SharedState* shared_state) :
@@ -120,23 +124,51 @@ namespace core::resource
             {
 
             case ERequest::Load: {
-                Proxy::load_asynchronously(ptr);
+                if (Proxy::load_asynchronously(ptr))
+                {
+                    m_shared_state->m_mutex.lock();
+                    m_loaded_queue.emplace_back(ptr);
+                    m_shared_state->m_mutex.unlock();
+                }
             } break;
 
             case ERequest::Unload: {
-                Proxy::unload_asynchronously(ptr);
-
-                m_shared_state->m_mutex.lock();
-                cache->discard(request.m_id);
-                m_shared_state->m_mutex.unlock();
+                if (Proxy::unload_asynchronously(ptr))
+                {
+                    m_shared_state->m_mutex.lock();
+                    cache->discard(request.m_id);
+                    m_shared_state->m_mutex.unlock();
+                }
             } break;
 
             default:
                 break;
             }
         }
+        bool synchronize()
+        {
+            if (m_loaded_queue.empty())
+            {
+                return false;
+            }
+
+            Queue pending;
+
+            for (auto& ptr : m_loaded_queue)
+            {
+                if (!Proxy::synchronize_loaded(ptr))
+                {
+                    pending.emplace_back(ptr);
+                }
+            }
+
+            m_loaded_queue = pending;
+
+            return true;
+        }
     private:
-        SharedState* m_shared_state;
+        SharedState*    m_shared_state;
+        Queue           m_loaded_queue;
     };
 }
 
@@ -170,6 +202,7 @@ public:
     template<typename Type>
     void release(core::resource::Handle<Type>& handle);
 
+    bool synchronize();
     /**
     * \brief launches the resource manger in its own thread
     */

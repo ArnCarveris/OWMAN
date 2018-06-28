@@ -3,6 +3,22 @@
 
 using namespace std;
 
+bool ResourceManager::synchronize()
+{
+    bool res = false;
+
+    m_shared_state.m_mutex.lock();
+
+    for (auto& loader : m_registry.loaders())
+    {
+        res |= loader->synchronize();
+    }
+
+    m_shared_state.m_mutex.unlock();
+
+    return res;
+}
+
 void ResourceManager::launch()
 {
     _stop = false;
