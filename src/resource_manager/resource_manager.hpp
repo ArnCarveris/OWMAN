@@ -138,8 +138,8 @@ public:
 
 	ResourceManager(){}
 
-    template<typename Type>
-    void deliver();
+    template<typename Type, typename... Args>
+    ResourceManager& deliver(Args&&... args);
 
     template<typename Type>
     core::resource::Handle<Type> obtain(const core::resource::ID& id);

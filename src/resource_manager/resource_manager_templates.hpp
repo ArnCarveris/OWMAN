@@ -1,10 +1,12 @@
 #ifndef RESOURCE_MANAGER_TEMPLATES
 #define RESOURCE_MANAGER_TEMPLATES
 
-template<typename Type>
-void ResourceManager::deliver()
+template<typename Type, typename... Args>
+ResourceManager& ResourceManager::deliver(Args&&... args)
 {
-    m_registry.deliver<Type>(&m_shared_state);
+    m_registry.deliver<Type>(&m_shared_state, std::forward<Args>(args)...);
+
+    return *this;
 }
 
 template<typename Type>
