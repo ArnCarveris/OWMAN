@@ -38,8 +38,8 @@ namespace core::resource
 
     enum ERequest
     {
-        Obtain,
-        Release,
+        Load,
+        Unload,
         Stop
     };
 
@@ -58,9 +58,22 @@ namespace core::resource
         void stop() { m_request_queue.push({ ERequest::Stop, 0, {""} }); }
     };
 
+
+    template<typename Type>
+    struct LoaderProxy
+    {
+        static bool load_synchronously(Type*);
+        static bool unload_synchronously(Type*);
+
+        static void load_asynchronously(Type*);
+        static void unload_asynchronously(Type*);
+    };
+
     template<typename Type> 
     class Loader : public Registry::LoaderBasis<Type>
     {
+    private:
+        using Proxy = LoaderProxy<Type>;
     public:
         Loader(SharedState* shared_state) :
             m_shared_state(shared_state)
@@ -70,15 +83,25 @@ namespace core::resource
     public:
         std::shared_ptr<Type> load(const ID& id)
         {
-            m_shared_state->m_request_queue.push({ ERequest::Obtain,GetTypeID<Type>(), id });
+            auto* ptr = new Type((const char*)id);
 
-            return std::shared_ptr<Type>(new Type((const char*)id));
+            if (!Proxy::load_synchronously(ptr))
+            {
+                m_shared_state->m_request_queue.push({ ERequest::Load,GetTypeID<Type>(), id });
+            }
+
+            return std::shared_ptr<Type>(ptr);
         }
         bool unload(const Type& ref)
         {
-            m_shared_state->m_request_queue.push({ ERequest::Release,GetTypeID<Type>(), identify(ref)});
+            auto res = Proxy::unload_synchronously(const_cast<Type*>(&ref));
 
-            return false;
+            if (!res)
+            {
+                m_shared_state->m_request_queue.push({ ERequest::Unload,GetTypeID<Type>(), identify(ref) });
+            }
+
+            return res;
         }
 
         ID identify(const Type& ref)
@@ -90,18 +113,18 @@ namespace core::resource
         {
             m_shared_state->m_mutex.lock();
             auto handle = cache->handle(request.m_id);
-            auto& ref = const_cast<Type&>(handle.get());
+            auto* ptr = const_cast<Type*>(&handle.get());
             m_shared_state->m_mutex.unlock();
 
             switch (request.m_type)
             {
 
-            case ERequest::Obtain: {
-                ref.load();
+            case ERequest::Load: {
+                Proxy::load_asynchronously(ptr);
             } break;
 
-            case ERequest::Release: {
-                ref.free();
+            case ERequest::Unload: {
+                Proxy::unload_asynchronously(ptr);
 
                 m_shared_state->m_mutex.lock();
                 cache->discard(request.m_id);
