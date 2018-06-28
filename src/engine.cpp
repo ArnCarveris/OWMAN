@@ -105,6 +105,24 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 }
 
+bool core::resource::LoaderProxy<ResourceCell>::load_synchronously(ResourceCell*) { return false; }
+bool core::resource::LoaderProxy<ResourceCell>::unload_synchronously(ResourceCell*) { return false; }
+void core::resource::LoaderProxy<ResourceCell>::load_asynchronously(ResourceCell* ptr) { ptr->load(); }
+void core::resource::LoaderProxy<ResourceCell>::unload_asynchronously(ResourceCell* ptr) { ptr->free(); }
+
+
+bool core::resource::LoaderProxy<ResourceText>::load_synchronously(ResourceText*) { return false; }
+bool core::resource::LoaderProxy<ResourceText>::unload_synchronously(ResourceText*) { return false; }
+void core::resource::LoaderProxy<ResourceText>::load_asynchronously(ResourceText* ptr) { ptr->load(); }
+void core::resource::LoaderProxy<ResourceText>::unload_asynchronously(ResourceText* ptr) { ptr->free(); }
+
+
+bool core::resource::LoaderProxy<ResourceTexture>::load_synchronously(ResourceTexture*) { return false; }
+bool core::resource::LoaderProxy<ResourceTexture>::unload_synchronously(ResourceTexture*) { return false; }
+void core::resource::LoaderProxy<ResourceTexture>::load_asynchronously(ResourceTexture* ptr) { ptr->load(); }
+void core::resource::LoaderProxy<ResourceTexture>::unload_asynchronously(ResourceTexture* ptr) { ptr->free(); }
+
+
 void Engine::init()
 {
 
