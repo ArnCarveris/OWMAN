@@ -4,14 +4,19 @@
 #include "low_level_renderer_2d.hpp"
 #include "../math/aarect.hpp"
 #include "../resource_manager/resource_manager.hpp"
+#include "../resource_manager/resource_texture.hpp"
 
+
+class Texture;
 class TextureManager;
-class ResourceTexture;
+
+using texture = core::resource::Data<ResourceTexture, Texture>;
 
 class Texture
 {
     friend class TextureManager;
 
+    friend struct core::resource::LoaderProxy<texture>;
 public:
 
     const static std::string texturesPath;
