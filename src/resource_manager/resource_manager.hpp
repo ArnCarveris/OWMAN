@@ -61,6 +61,33 @@ namespace core::resource
         void stop() { m_request_queue.push({ ERequest::Stop, 0, {""} }); }
     };
 
+    template<typename Intermediate, typename Final>
+    class Data
+    {
+        friend class  Loader<Data>;
+        friend struct LoaderProxy<Data>;
+
+        Data(const char* id) :
+            m_id(id)
+        { }
+    public:
+        Data() = delete;
+        Data(const Data&) = delete;
+        Data(Data&&) = default;
+
+        operator const char *() const { return m_id.c_str(); }
+
+        inline const Final & get() const { return m_final; }
+        inline operator const Final &() const { return get(); }
+        inline const Final & operator *() const { return get(); }
+        inline const Final * operator ->() const { }
+
+        inline Final & get_mutable() const { return const_cast<Final&>(m_final); }
+    private:
+        std::string m_id;
+        Intermediate m_intermediate;
+        Final m_final;
+    };
 
     template<typename Type>
     struct LoaderProxy
