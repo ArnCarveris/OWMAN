@@ -1,4 +1,5 @@
 #include "resource_cell.hpp"
+#include "resource_manager.hpp"
 #include <rapidxml_print.hpp>
 #include <iostream>
 #include <fstream>
@@ -69,4 +70,12 @@ rapidxml::xml_document<>* ResourceCell::getDocument()
 {
     return &doc;
 }
+
+
+
+bool core::resource::LoaderProxy<ResourceCell>::load_synchronously(ResourceCell*) { return false; }
+bool core::resource::LoaderProxy<ResourceCell>::unload_synchronously(ResourceCell*) { return false; }
+bool core::resource::LoaderProxy<ResourceCell>::load_asynchronously(ResourceCell* ptr) { ptr->load(); return false; }
+bool core::resource::LoaderProxy<ResourceCell>::unload_asynchronously(ResourceCell* ptr) { ptr->free(); return true; }
+bool core::resource::LoaderProxy<ResourceCell>::synchronize_loaded(ResourceCell*) { return true; }
 

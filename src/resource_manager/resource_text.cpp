@@ -1,4 +1,5 @@
 #include "resource_text.hpp"
+#include "resource_manager.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -44,3 +45,10 @@ void ResourceText::free()
 	status = Resource::Status::STORED;
 
 }
+
+bool core::resource::LoaderProxy<ResourceText>::load_synchronously(ResourceText*) { return false; }
+bool core::resource::LoaderProxy<ResourceText>::unload_synchronously(ResourceText*) { return false; }
+bool core::resource::LoaderProxy<ResourceText>::load_asynchronously(ResourceText* ptr) { ptr->load(); return false; }
+bool core::resource::LoaderProxy<ResourceText>::unload_asynchronously(ResourceText* ptr) { ptr->free(); return true; }
+bool core::resource::LoaderProxy<ResourceText>::synchronize_loaded(ResourceText*) { return true; }
+
