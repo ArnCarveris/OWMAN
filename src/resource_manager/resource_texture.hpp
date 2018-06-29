@@ -24,7 +24,7 @@ class ResourceTexture : public Resource
 
 public:
 
-	ResourceTexture(const std::string& name);
+	ResourceTexture(const std::string& name = "");
 
     void load();
     void free();

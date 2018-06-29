@@ -16,7 +16,7 @@ class ResourceCell : public Resource
 	rapidxml::xml_node<> *node;
 
 public:
-	ResourceCell(const std::string& name);
+	ResourceCell(const std::string& name = "");
 
     void load();
     void free();

@@ -11,7 +11,7 @@ class ResourceText : public Resource
 
 public:
 
-    ResourceText(const std::string& name);
+    ResourceText(const std::string& name = "");
 
     void load();
     void free();

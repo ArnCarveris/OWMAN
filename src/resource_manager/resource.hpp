@@ -30,15 +30,13 @@ protected:
 
 	std::string name;
 	Status status;
-
-
-	void setName(std::string name);
-
 public:
 
-	Resource(const std::string& name);
+	Resource(const std::string& name = "");
 
 	const std::string& getName()const;
+    void setName(const std::string& name);
+
 	Resource::Status getStatus()const;
 
 	virtual ~Resource(){};
