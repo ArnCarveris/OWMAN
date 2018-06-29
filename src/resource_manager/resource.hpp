@@ -43,6 +43,8 @@ public:
 
 	virtual ~Resource(){};
 
+    operator const char *() const { return name.c_str(); }
+
 };
 
 #endif
