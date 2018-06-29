@@ -18,6 +18,8 @@ namespace core::resource
         virtual void fulfill(const Request&) = 0;
         virtual bool synchronize() = 0;
     };
+    template<typename Type>
+    struct LoaderProxy;
 
     using Registry = entt::ResourceRegistry<Loader, ILoader>;
 
