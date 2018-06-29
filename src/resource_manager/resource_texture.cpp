@@ -1,5 +1,4 @@
 #include "resource_texture.hpp"
-#include "../renderer/texture.hpp"
 #include <iostream>
 #include <stb_image.h>
 
@@ -62,9 +61,3 @@ void ResourceTexture::free()
 	stbi_image_free(imageData);
 
 }
-
-bool core::resource::LoaderProxy<ResourceTexture>::load_synchronously(ResourceTexture*) { return false; }
-bool core::resource::LoaderProxy<ResourceTexture>::unload_synchronously(ResourceTexture*) { return false; }
-bool core::resource::LoaderProxy<ResourceTexture>::load_asynchronously(ResourceTexture* ptr) { ptr->load(); return false; }
-bool core::resource::LoaderProxy<ResourceTexture>::unload_asynchronously(ResourceTexture* ptr) { ptr->free(); return true; }
-bool core::resource::LoaderProxy<ResourceTexture>::synchronize_loaded(ResourceTexture*) { return true; }

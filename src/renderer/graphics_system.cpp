@@ -16,7 +16,6 @@ GraphicsSystem::GraphicsSystem
 	bool fullScreen
 )
 :
-textureManager(this),
 spriteManager(this)
 {
     service::renderer::set
@@ -37,7 +36,6 @@ void GraphicsSystem::update(unsigned int delta)
 
     float deltaSeconds = ticksToSeconds(delta);
 
-	textureManager.update();
 	spriteManager.update(deltaSeconds);
 
 	set<GraphicsComponent*>::iterator it;
@@ -117,10 +115,6 @@ Camera* GraphicsSystem::getCamera()
 	return &camera;
 }
 
-TextureManager* GraphicsSystem::getTextureManager()
-{
-    return &textureManager;
-}
 SpriteManager* GraphicsSystem::getSpriteManager()
 {
     return &spriteManager ;

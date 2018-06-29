@@ -4,7 +4,6 @@
 #include "resource.hpp"
 #include "../renderer/low_level_renderer_2d.hpp"
 
-class ResourceTextureFactory;
 class ResourceManager;
 
 

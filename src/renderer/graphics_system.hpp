@@ -6,7 +6,6 @@
 #include <set>
 #include <vector>
 #include "camera.hpp"
-#include "texture_manager.hpp"
 #include "sprite_manager.hpp"
 
 class Engine;
@@ -19,7 +18,6 @@ class GraphicsSystem
 
 	Engine* myEngine;
 
-	TextureManager textureManager;
 	SpriteManager spriteManager;
 
 	Camera camera;
@@ -57,7 +55,6 @@ public:
 	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
 
 	Camera* getCamera();
-	TextureManager* getTextureManager();
 	SpriteManager* getSpriteManager();
 
 	void end();

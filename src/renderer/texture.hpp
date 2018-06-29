@@ -8,14 +8,11 @@
 
 
 class Texture;
-class TextureManager;
 
 using texture = core::resource::Data<ResourceTexture, Texture>;
 
 class Texture
 {
-    friend class TextureManager;
-
     friend struct core::resource::LoaderProxy<texture>;
 public:
 
@@ -33,7 +30,6 @@ public:
 
     Texture(){}
 
-    Texture(TextureManager* TextureManager, const std::string& name);
 
     /**
     * \brief get the name of the texture file
@@ -54,33 +50,6 @@ public:
     * \brief is laoded in graphics card
     */
     bool isReady()const;
-
-    /**
-    * \brief load this texture to RAM
-    * The brings the texture resource from disk to MM.\
-    * You will know that the secondary thread of the resource manager
-    * has finished loading this resource when isLoaded() returns true.
-    */
-    void loadResource();
-
-    /**
-    * \brief load this texture to the GPU
-    * The texture data will remain in MM unless you
-    * release it with releaseResource()
-    */
-    void loadToGPU();
-
-    /**
-    * \brief release the data in MM
-    * You should call this function after using loadToGPU().
-    */
-    void releaseResource();
-
-    /**
-    * \brief release from GPU
-    * Call this *only* after loadToGPU
-    */
-    void release();
 
     /**
     * \brief draw a texture in the screen
@@ -114,16 +83,11 @@ public:
     unsigned getHeight()const;
 
 private:
-
-    TextureManager* textureManager;
-
     std::string name;
     Status status;
     FilterMode filterMode;
 
     LowLevelRenderer2D::Texture llTexture;
-
-    core::resource::Handle<ResourceTexture> resourceHandle;
 
 };
 

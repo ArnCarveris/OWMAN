@@ -48,7 +48,6 @@ void Sprite::update()
         if(resourceHandle && Resource::Status::LOADED == resourceHandle->getStatus())
         {
             GraphicsSystem* gs = mySpriteManager->getGraphicsSystem();
-            TextureManager* texMan = gs->getTextureManager();
             // parse XML
             xmlText = resourceHandle->getText();
             doc.parse<0>((char*)xmlText.c_str());
@@ -87,7 +86,7 @@ void Sprite::update()
                 ++it
             )
             {
-                string name = TextureManager::texturesPath + it->second;
+                string name = Texture::texturesPath + it->second;
                 
                 textures.emplace_back(service::resource::ref().obtain<texture>(core::resource::ID{name.c_str()}));
                 idToIndex[it->first] = i;

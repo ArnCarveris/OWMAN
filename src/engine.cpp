@@ -1,8 +1,8 @@
 #include "engine.hpp"
 #include "resource_manager/resource_cell.hpp"
 #include "resource_manager/resource_text.hpp"
-#include "resource_manager/resource_texture.hpp"
 #include "resource_manager/resource_manager.hpp"
+#include "renderer/texture.hpp"
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "physics/physics_component.hpp"
@@ -117,7 +117,6 @@ void Engine::init()
         .deliver<texture>()
         .deliver<ResourceCell>()
         .deliver<ResourceText>()
-        .deliver<ResourceTexture>()
         .launch()
     ;
 

@@ -1,25 +1,8 @@
 #include "texture.hpp"
-#include "texture_manager.hpp"
 #include <cassert>
-#include "../resource_manager/resource_manager.hpp"
-#include "../resource_manager/resource_texture.hpp"
 #include "graphics_system.hpp"
 
-const std::string Texture::texturesPath = "textures";
-
-Texture::Texture(TextureManager* textureManager, const std::string& name)
-{
-    this->textureManager = textureManager;
-    this->name = name;
-    status = Status::START;
-    llTexture = LowLevelRenderer2D::Texture();
-    filterMode = FilterMode::NEAREST;
-}
-
-const std::string& Texture::getName()const
-{
-    return name;
-}
+const std::string Texture::texturesPath = "img/";
 
 void Texture::setFilterMode(FilterMode filterMode)
 {
@@ -36,52 +19,6 @@ bool Texture::isReady()const
     return Status::READY == status;
 }
 
-void Texture::loadResource()
-{
-    assert(!resourceHandle);
-    auto id = texturesPath + "/" + name;
-    resourceHandle = service::resource::ref().obtain<ResourceTexture>(core::resource::ID{id.c_str()});
-    status = Status::LOADING;
-}
-
-void Texture::loadToGPU()
-{
-    assert(resourceHandle);
-    auto& res = const_cast<ResourceTexture&>(resourceHandle.get());
-    assert(isLoaded() && res.getStatus() == ResourceTexture::Status::LOADED);
-
-    GraphicsSystem* gs = textureManager->getGraphicsSystem();
-    llTexture =
-    service::renderer::ref().createTexture
-    (
-        res.getTextureData(),
-        res.getWidth(),
-        res.getHeight()
-    );
-    llTexture.setFilterMode(filterMode);
-    status = Status::READY;
-}
-
-void Texture::releaseResource()
-{
-    service::resource::ref().release(resourceHandle);
-}
-
-void Texture::release()
-{
-    if( isReady() )
-    {
-        // the texture is un VRAM
-        GraphicsSystem* gs = textureManager->getGraphicsSystem();
-        service::renderer::ref().destroyTexture(&llTexture);
-    }
-    else
-    {
-        // Even if the resource is still loading the ResourceManager will
-        // take care of this
-        releaseResource();
-    }
-}
 
 void Texture::draw
 (
@@ -116,7 +53,6 @@ bool core::resource::LoaderProxy<texture>::load_synchronously(texture* ptr)
 {
     ptr->m_intermediate.setName(ptr->m_id);
 
-    ptr->m_final.name = ptr->m_id;
     ptr->m_final.status = Texture::Status::START;
     ptr->m_final.llTexture = LowLevelRenderer2D::Texture();
     ptr->m_final.filterMode = Texture::FilterMode::NEAREST;
