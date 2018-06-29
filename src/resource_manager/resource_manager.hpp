@@ -61,14 +61,15 @@ namespace core::resource
         void stop() { m_request_queue.push({ ERequest::Stop, 0, {""} }); }
     };
 
-    template<typename Intermediate, typename Final>
+    template<typename Intermediate, typename Final, typename Status = int>
     class Data
     {
         friend class  Loader<Data>;
         friend struct LoaderProxy<Data>;
 
         Data(const char* id) :
-            m_id(id)
+            m_id(id),
+            m_status(Status{})
         { }
     public:
         Data() = delete;
@@ -84,8 +85,10 @@ namespace core::resource
 
         inline ID               get_id() const { return ID{m_id.c_str()}; }
         inline Final &          get_mutable() const { return const_cast<Final&>(m_final); }
+        inline const Status&    get_status() const { return m_status; }
     private:
         std::string     m_id;
+        Status          m_status;
         Intermediate    m_intermediate;
         Final           m_final;
     };
