@@ -110,7 +110,7 @@ namespace core::resource
 
         ID identify(const Type& ref)
         {
-            return ID{ ref.getName().c_str()};
+            return ID{ (const char*)ref };
         }
 
         void fulfill(const Request& request)
