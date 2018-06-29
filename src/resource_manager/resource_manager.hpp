@@ -82,6 +82,7 @@ namespace core::resource
         inline const Final & operator *() const { return get(); }
         inline const Final * operator ->() const { }
 
+        inline ID get_id() const { return ID{m_id.c_str()}; }
         inline Final & get_mutable() const { return const_cast<Final&>(m_final); }
     private:
         std::string m_id;
