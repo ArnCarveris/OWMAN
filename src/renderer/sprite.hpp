@@ -7,12 +7,10 @@
 #include <map>
 #include <vector>
 #include "animation.hpp"
-#include "../resource_manager/resource_manager.hpp"
+#include "texture.hpp"
 
 class SpriteManager;
-class ResourceTexture;
 class GraphicsSystem;
-class Texture;
 class ResourceText;
 class SpriteStatus;
 
@@ -41,7 +39,7 @@ class Sprite
 	std::string fileName;
 
     std::map<std::string, unsigned> textureNameToIndex;
-	std::vector<Texture*> textures;
+	std::vector<core::resource::Handle<texture>> textures;
 
     std::map<std::string, unsigned> animNameToIndex;
     std::map<std::string, unsigned> idToIndex;

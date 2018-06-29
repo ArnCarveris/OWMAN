@@ -88,8 +88,8 @@ void Sprite::update()
             )
             {
                 string name = TextureManager::texturesPath + it->second;
-                Texture* res = texMan->getTexture(name);
-                textures.push_back(res);
+                
+                textures.emplace_back(service::resource::ref().obtain<texture>(core::resource::ID{name.c_str()}));
                 idToIndex[it->first] = i;
                 textureNameToIndex[name] = i;
                 i++;
@@ -105,7 +105,7 @@ void Sprite::update()
         bool allLoaded = true;
         for(unsigned i=0; i<textures.size(); i++)
         {
-            if(textures[i]->isReady() == false)
+            if(textures[i]->get().isReady() == false)
             {
                 allLoaded = false;
                 break;
@@ -147,26 +147,26 @@ void Sprite::update()
                     if(0 == nodeTex) throw Exception("no tex provided for frame");
                     string texId = nodeTex->value();
                     unsigned texIndex = idToIndex[texId];
-                    Texture* tex = textures[texIndex];
+                    auto& tex = textures[texIndex]->get();
 
                     xml_node<>* nodeRect = nodeFrame->first_node("rect");
                     if(0 == nodeRect) throw Exception("no rect provided for frame");
                     AARect rect;
                         xml_node<>* nodeX = nodeRect->first_node("x");
                         if(0 == nodeX) throw Exception("no x provided for rect");
-                        rect.x = atof(nodeX->value()) / tex->getWidth();
+                        rect.x = atof(nodeX->value()) / tex.getWidth();
 
                         xml_node<>* nodeY = nodeRect->first_node("y");
                         if(0 == nodeY) throw Exception("no y provided for rect");
-                        rect.y = atof(nodeY->value()) / tex->getHeight();
+                        rect.y = atof(nodeY->value()) / tex.getHeight();
 
                         xml_node<>* nodeW = nodeRect->first_node("w");
                         if(0 == nodeW) throw Exception("no w provided for rect");
-                        rect.w = atof(nodeW->value()) / tex->getWidth();
+                        rect.w = atof(nodeW->value()) / tex.getWidth();
 
                         xml_node<>* nodeH = nodeRect->first_node("h");
                         if(0 == nodeH) throw Exception("no h provided for rect");
-                        rect.h = atof(nodeH->value()) / tex->getHeight();
+                        rect.h = atof(nodeH->value()) / tex.getHeight();
 
 
                     xml_node<>* nodeTime = nodeFrame->first_node("time");
@@ -231,9 +231,8 @@ Sprite::~Sprite()
 
 void Sprite::release()
 {
-    TextureManager* texMan = getGraphicsSystem()->getTextureManager();
-    for(Texture* tex : textures)
+    for(auto& it: textures)
     {
-        texMan->releaseTexture(tex);
+        service::resource::ref().release(it);
     }
 }

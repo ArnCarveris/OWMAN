@@ -82,13 +82,13 @@ void SpriteStatus::draw()const
     {
         const Animation& anim = mySprite->animations[currentAnimation];
         const AnimationFrame& frame = anim.frames[currentFrame];
-        const Texture* texture = mySprite->textures[frame.textureIndex];
+        auto& texture = mySprite->textures[frame.textureIndex]->get();
 
         const Vec2f& pos = position;
         const Vec2f& scale = this->scale;
         const LowLevelRenderer2D::SpriteVbo& vbo = frame.vbo;
 
-        texture->draw(pos, scale, vbo);
+        texture.draw(pos, scale, vbo);
     }
 }
 
