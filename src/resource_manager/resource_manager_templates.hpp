@@ -12,9 +12,9 @@ ResourceManager& ResourceManager::deliver(Args&&... args)
 template<typename Type>
 core::resource::Handle<Type> ResourceManager::obtain(const core::resource::ID& id)
 {
-    m_shared_state.lock();
-    auto handle = m_registry.obtain<Type>(id);
-    m_shared_state.unlock();
+    core::resource::Handle<Type> handle;
+
+    m_shared_state.try_lock([&]() { handle = m_registry.obtain<Type>(id); });
 
     return handle;
 }
