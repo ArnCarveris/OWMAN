@@ -17,42 +17,25 @@ WorldWindow::WorldWindow(unsigned int windowSize)
 
 vector<Entity*> WorldWindow::getEntities()const
 {
-
     int len = 0;
 
-    for
-    (
-        map<Vec2i, WorldCell>::const_iterator it = cells.begin();
-        it != cells.end();
-        ++it
-    )
+    for (auto & wc : cells)
     {
-
-        len += it->second.size();
-
+        len += wc.second.entities.size();
     }
 
-    vector<Entity*> res;
-    res.reserve(len);
+    vector<Entity*> ents;
+    ents.reserve(len);
 
-    for
-    (
-        map<Vec2i, WorldCell>::const_iterator it = cells.begin();
-        it != cells.end();
-        ++it
-    )
+    for (auto & wc : cells)
     {
-
-        const WorldCell& wc = it->second;
-
-        for(unsigned int i=0; i<wc.size(); i++)
+        for (auto& e : wc.second.entities)
         {
-            res.push_back( wc[i] );
+            ents.push_back(e);
         }
-
     }
 
-    return res;
+    return ents;
 
 }
 

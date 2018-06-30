@@ -7,6 +7,11 @@ class Entity;
 #ifndef WORLD_CELL
 #define WORLD_CELL
 
-typedef std::vector<Entity*> WorldCell;
+class WorldCell
+{
+public:
+    std::vector<Entity*> entities;
+};
+
 
 #endif

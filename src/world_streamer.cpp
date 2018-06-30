@@ -171,7 +171,7 @@ void cellToXmlDocument(xml_document<>* doc, const WorldCell& wc, float cellSize)
     doc->clear();
 
     const char* str_cell = doc->allocate_string("cell");
-    if( wc.size() == 0 )
+    if( wc.entities.size() == 0 )
     {
         const char* str_space = doc->allocate_string(" ");
         xml_node<>* root = doc->allocate_node(node_element, str_cell, str_space);
@@ -183,9 +183,9 @@ void cellToXmlDocument(xml_document<>* doc, const WorldCell& wc, float cellSize)
     doc->append_node( root );
 
     xml_node<>* node_ent;
-    for( unsigned int i=0; i<wc.size(); i++ )
+    for( unsigned int i=0; i<wc.entities.size(); i++ )
     {
-        node_ent = service::entity::ref().createXmlNode(wc[i], doc, cellSize);
+        node_ent = service::entity::ref().createXmlNode(wc.entities[i], doc, cellSize);
         root->append_node( node_ent );
 
     }
@@ -273,10 +273,10 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
         WorldCell& wc = it->second;
         Vec2i currentCell = it->first;
 
-        for(unsigned int i=0; i<wc.size(); i++)
+        for(unsigned int i=0; i<wc.entities.size(); i++)
         {
 
-            Vec2f pos = wc[i]->getPosition();
+            Vec2f pos = wc.entities[i]->getPosition();
             Vec2i goodCell = Vec2i( floor(pos.x/cellSize), floor(pos.y/cellSize) );
             goodCell += windowPos;
 
@@ -290,12 +290,12 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                 // the cell is loaded -> just append
                 if( it2 != worldWindow.cells.end() )
                 {
-                    Entity* ent = wc[i];
+                    Entity* ent = wc.entities[i];
 
-                    wc[i] = wc.back();
-                    wc.pop_back();
+                    wc.entities[i] = wc.entities.back();
+                    wc.entities.pop_back();
 
-                    it2->second.push_back(ent);
+                    it2->second.entities.push_back(ent);
 
                     i--;
 
@@ -396,14 +396,9 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                 cellToXmlDocument( doc, wc, cellSize );
 
                 // release all the entities of the cell
-                for
-                (
-                    WorldCell::const_iterator it = wc.begin();
-                    it != wc.end();
-                    ++it
-                )
+                for(auto& it : wc.entities)
                 {
-                    service::entity::ref().destroyEntity( *it );
+                    service::entity::ref().destroyEntity( it);
                 }
 
                 service::resource::ref().release(loaded_it->second);
@@ -513,7 +508,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
                 Entity* ent = service::entity::ref().createEntity(node, it->first-windowPos);
 
-                wc.push_back( ent );
+                wc.entities.push_back( ent );
                 node = node->next_sibling();
 
             }
@@ -549,40 +544,7 @@ float WorldStreamer::getCellSize()const
 
 vector<Entity*> WorldStreamer::getEntities()const
 {
-
-    int len = 0;
-
-    for
-    (
-        map<Vec2i, WorldCell>::const_iterator it = worldWindow.cells.begin();
-        it != worldWindow.cells.end();
-        ++it
-    )
-    {
-        len += it->second.size();
-    }
-
-    vector<Entity*> ents;
-    ents.reserve(len);
-
-    for
-    (
-        map<Vec2i, WorldCell>::const_iterator it = worldWindow.cells.begin();
-        it != worldWindow.cells.end();
-        ++it
-    )
-    {
-        const WorldCell& wc = it->second;
-
-        for(unsigned int i=0; i<wc.size(); i++)
-        {
-            ents.push_back(wc[i]);
-        }
-
-    }
-
-    return ents;
-
+    return worldWindow.getEntities();
 }
 
 void WorldStreamer::end()
@@ -607,8 +569,8 @@ void WorldStreamer::end()
         // release all the entities of the cell
         for
         (
-            WorldCell::const_iterator it = wc.begin();
-            it != wc.end();
+            auto it = wc.entities.begin();
+            it != wc.entities.end();
             ++it
         )
         {
