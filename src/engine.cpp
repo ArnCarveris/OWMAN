@@ -114,7 +114,7 @@ void Engine::init()
     SDL_Init(SDL_INIT_TIMER);
 
     service::resource::ref()
-        .deliver<texture>()
+        .deliver<Texture::Resource>()
         .deliver<ResourceCell>()
         .deliver<ResourceText>()
         .launch()

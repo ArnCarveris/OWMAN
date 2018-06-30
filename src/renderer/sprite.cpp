@@ -1,7 +1,6 @@
 #include "sprite.hpp"
 #include "graphics_system.hpp"
 #include "../resource_manager/resource_manager.hpp"
-#include "../resource_manager/resource_texture.hpp"
 #include "../resource_manager/resource_text.hpp"
 #include <iostream>
 #include <string>
@@ -88,7 +87,7 @@ void Sprite::update()
             {
                 string name = Texture::texturesPath + it->second;
                 
-                textures.emplace_back(service::resource::ref().obtain<texture>(core::resource::ID{name.c_str()}));
+                textures.emplace_back(service::resource::ref().obtain<Texture::Resource>(core::resource::ID{name.c_str()}));
                 idToIndex[it->first] = i;
                 textureNameToIndex[name] = i;
                 i++;
@@ -104,7 +103,7 @@ void Sprite::update()
         bool allLoaded = true;
         for(unsigned i=0; i<textures.size(); i++)
         {
-            if(textures[i]->get().isReady() == false)
+            if(textures[i]->get_status() != Texture::Status::READY)
             {
                 allLoaded = false;
                 break;

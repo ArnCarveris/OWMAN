@@ -4,22 +4,15 @@
 #include "low_level_renderer_2d.hpp"
 #include "../math/aarect.hpp"
 #include "../resource_manager/resource_manager.hpp"
-#include "../resource_manager/resource_texture.hpp"
+#include "../resource_manager/resource_image.hpp"
 
 
 class Texture;
 
-using texture = core::resource::Data<ResourceTexture, Texture>;
 
 class Texture
 {
-    friend struct core::resource::LoaderProxy<texture>;
 public:
-
-    const static std::string texturesPath;
-
-    typedef LowLevelRenderer2D::Texture::FilterMode FilterMode;
-
     enum class Status
     {
         START,
@@ -28,28 +21,19 @@ public:
         READY,
     };
 
+    using Resource = core::resource::Data<ResourceImage, Texture, Status>;
+
+    const static std::string texturesPath;
+
+    typedef LowLevelRenderer2D::Texture::FilterMode FilterMode;
+
+
     Texture(){}
-
-
-    /**
-    * \brief get the name of the texture file
-    */
-    const std::string& getName()const;
 
     /**
     * \brief set the filter mode
     */
     void setFilterMode(FilterMode filterMode);
-
-    /**
-    * \brief is loaded in main memory
-    */
-    bool isLoaded()const;
-
-    /**
-    * \brief is laoded in graphics card
-    */
-    bool isReady()const;
 
     /**
     * \brief draw a texture in the screen
@@ -83,12 +67,11 @@ public:
     unsigned getHeight()const;
 
 private:
-    std::string name;
-    Status status;
     FilterMode filterMode;
 
     LowLevelRenderer2D::Texture llTexture;
-
+private:
+    friend struct core::resource::LoaderProxy<Resource>;
 };
 
 #endif // TEXTURE

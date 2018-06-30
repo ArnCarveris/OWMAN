@@ -24,7 +24,7 @@ add_executable(
 	resource_manager/resource_cell.cpp
 	resource_manager/resource_manager.cpp
 	resource_manager/resource_text.cpp
-	resource_manager/resource_texture.cpp
+	resource_manager/resource_image.cpp
 	resource_manager/work_queue.cpp
 	util/file_to_string.cpp
 	util/xmlstr.cpp

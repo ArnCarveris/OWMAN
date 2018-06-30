@@ -9,17 +9,6 @@ void Texture::setFilterMode(FilterMode filterMode)
     this->filterMode = filterMode;
 }
 
-bool Texture::isLoaded()const
-{
-    return Status::LOADED == status;
-}
-
-bool Texture::isReady()const
-{
-    return Status::READY == status;
-}
-
-
 void Texture::draw
 (
     const Vec2f& pos,
@@ -49,50 +38,48 @@ unsigned Texture::getHeight()const
     return llTexture.getHeight();
 }
 
-bool core::resource::LoaderProxy<texture>::load_synchronously(texture* ptr)
+bool core::resource::LoaderProxy<Texture::Resource>::load_synchronously(Texture::Resource* ptr)
 {
-    ptr->m_intermediate.setName(ptr->m_id);
-
-    ptr->m_final.status = Texture::Status::START;
+    ptr->m_status = Texture::Status::START;
     ptr->m_final.llTexture = LowLevelRenderer2D::Texture();
     ptr->m_final.filterMode = Texture::FilterMode::NEAREST;
 
     return false;
 }
-bool core::resource::LoaderProxy<texture>::unload_synchronously(texture* ptr)
+bool core::resource::LoaderProxy<Texture::Resource>::unload_synchronously(Texture::Resource* ptr)
 {
     service::renderer::ref().destroyTexture(&ptr->m_final.llTexture);
 
-    return ptr->m_final.isReady();
+    return ptr->m_status == Texture::Status::READY;
 }
-bool core::resource::LoaderProxy<texture>::load_asynchronously(texture* ptr)
+bool core::resource::LoaderProxy<Texture::Resource>::load_asynchronously(Texture::Resource* ptr)
 {
-    ptr->m_final.status = Texture::Status::LOADING;
+    ptr->m_status = Texture::Status::LOADING;
 
-    ptr->m_intermediate.load();
+    ptr->m_intermediate.load(ptr->m_id.c_str());
 
-    ptr->m_final.status = Texture::Status::LOADED;
+    ptr->m_status = Texture::Status::LOADED;
 
     return true;
 }
-bool core::resource::LoaderProxy<texture>::unload_asynchronously(texture* ptr)
+bool core::resource::LoaderProxy<Texture::Resource>::unload_asynchronously(Texture::Resource* ptr)
 {
     ptr->m_intermediate.free();
 
     return true;
 }
-bool core::resource::LoaderProxy<texture>::synchronize_loaded(texture* ptr)
+bool core::resource::LoaderProxy<Texture::Resource>::synchronize_loaded(Texture::Resource* ptr)
 {
     ptr->m_final.llTexture = service::renderer::ref().createTexture
     (
-        ptr->m_intermediate.getTextureData(),
+        ptr->m_intermediate.getData(),
         ptr->m_intermediate.getWidth(),
         ptr->m_intermediate.getHeight()
     );
     ptr->m_intermediate.free();
 
     ptr->m_final.llTexture.setFilterMode(ptr->m_final.filterMode);
-    ptr->m_final.status = Texture::Status::READY;
+    ptr->m_status = Texture::Status::READY;
 
     return true;
 }

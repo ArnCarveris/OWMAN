@@ -39,7 +39,7 @@ class Sprite
 	std::string fileName;
 
     std::map<std::string, unsigned> textureNameToIndex;
-	std::vector<core::resource::Handle<texture>> textures;
+	std::vector<core::resource::Handle<Texture::Resource>> textures;
 
     std::map<std::string, unsigned> animNameToIndex;
     std::map<std::string, unsigned> idToIndex;
