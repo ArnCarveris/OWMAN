@@ -157,41 +157,6 @@ Vec2i getCell(string fileName)
 
 
 
-// helper
-/** \brief modifies an xml_document to represent the given cell
- *
- * \param the document to be modified
- * \param the cell
- */
-void cellToXmlDocument(xml_document<>* doc, const WorldCell& wc, float cellSize)
-{
-
-    doc->remove_all_attributes();
-    doc->remove_all_nodes();
-    doc->clear();
-
-    const char* str_cell = doc->allocate_string("cell");
-    if( wc.entities.size() == 0 )
-    {
-        const char* str_space = doc->allocate_string(" ");
-        xml_node<>* root = doc->allocate_node(node_element, str_cell, str_space);
-        doc->append_node( root );
-        return;
-    }
-
-    xml_node<>* root = doc->allocate_node(node_element, str_cell);
-    doc->append_node( root );
-
-    xml_node<>* node_ent;
-    for( unsigned int i=0; i<wc.entities.size(); i++ )
-    {
-        node_ent = service::entity::ref().createXmlNode(wc.entities[i], doc, cellSize);
-        root->append_node( node_ent );
-
-    }
-
-}
-
 
 WorldStreamer::WorldStreamer
 (
@@ -238,21 +203,7 @@ void WorldStreamer::init(const Vec2i& cell, const Vec2f& offset)
     )
     if( availableCells.find( Vec2i(x, y) ) != availableCells.end() )
     {
-
-        stringstream ss;
-        ss << worldFolder
-        << "/"
-        << "cell_"
-        << x
-        << "_"
-        << y
-        << ".xml";
-
-        string fileName = ss.str();
-        // cout << fileName << endl;
-
-        loadingCellResources[ Vec2i(x, y) ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });
-
+        loadCellAtPosition(Vec2i(x, y));
     }
 
 }
@@ -264,13 +215,13 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
     for
     (
-        map<Vec2i, WorldCell>::iterator it = worldWindow.cells.begin();
+        auto it = worldWindow.cells.begin();
         it != worldWindow.cells.end();
         ++it
     )
     {
 
-        WorldCell& wc = it->second;
+        WorldCell& wc = it->second->get_mutable();
         Vec2i currentCell = it->first;
 
         for(unsigned int i=0; i<wc.entities.size(); i++)
@@ -285,8 +236,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
             if( currentCell != goodCell )
             {
 
-                map<Vec2i, WorldCell>::iterator it2;
-                it2 = worldWindow.cells.find( goodCell );
+                auto it2 = worldWindow.cells.find( goodCell );
                 // the cell is loaded -> just append
                 if( it2 != worldWindow.cells.end() )
                 {
@@ -295,7 +245,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                     wc.entities[i] = wc.entities.back();
                     wc.entities.pop_back();
 
-                    it2->second.entities.push_back(ent);
+                    it2->second->get_mutable().entities.push_back(ent);
 
                     i--;
 
@@ -305,20 +255,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                 // --> load it
                 else if( availableCells.find(goodCell) != availableCells.end() )
                 {
-
-                    stringstream ss;
-                    ss << worldFolder
-                    << "/"
-                    << "cell_"
-                    << goodCell.x
-                    << "_"
-                    << goodCell.y
-                    << ".xml";
-
-                    string fileName = ss.str();
-                    
-                    loadingCellResources[ goodCell ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });;
-
+                    loadCellAtPosition(goodCell);
                 }
 
             }
@@ -374,7 +311,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
         // delete old cells
         for
         (
-            map<Vec2i, WorldCell>::const_iterator it = worldWindow.cells.begin();
+            auto it = worldWindow.cells.begin();
             it != worldWindow.cells.end();
             // ++it
         )
@@ -390,20 +327,11 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
             {
 
                 // update XML document
-                const WorldCell& wc = it->second;
                 auto loaded_it = loadedCellResources.find(it->first);
-                xml_document<>* doc = const_cast<ResourceCell&>(loaded_it->second.get()).getDocument();
-                cellToXmlDocument( doc, wc, cellSize );
 
-                // release all the entities of the cell
-                for(auto& it : wc.entities)
-                {
-                    service::entity::ref().destroyEntity( it);
-                }
-
-                service::resource::ref().release(loaded_it->second);
                 loadedCellResources.erase(loaded_it);
 
+                service::resource::ref().release(it->second);
                 auto nextIt = it;
                 nextIt++;
                 worldWindow.cells.erase(it);
@@ -440,21 +368,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
             loadingCellResources.find( Vec2i(x, y) ) == loadingCellResources.end()  // no
         )
         {
-
-            stringstream ss;
-            ss << worldFolder
-            << "/"
-            << "cell_"
-            << x
-            << "_"
-            << y
-            << ".xml";
-
-            string fileName = ss.str();
-
-            loadingCellResources[ Vec2i(x, y) ] = service::resource::ref().obtain<ResourceCell>(core::resource::ID{ fileName.c_str() });;
-            
-
+            loadCellAtPosition(Vec2i(x, y));
         }
 
 
@@ -468,11 +382,11 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
     )
     {
 
-        ResourceCell& res = const_cast<ResourceCell&>(it->second.get());
+        auto& res = const_cast<WorldCell::Resource&>(it->second.get());
         // the resource file is finally loaded
         if
         (
-            res.getStatus() == Resource::Status::LOADED // finally loaded
+            res.get_status() == WorldCell::Status::LOADED // finally loaded
         )
         {
 
@@ -497,25 +411,8 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
             }
             */
 
-            WorldCell wc;
-
-            xml_node<> *node = res.getNode();
-
-            node = node->first_node("entity");
-
-            while( node != 0 )
-            {
-
-                Entity* ent = service::entity::ref().createEntity(node, it->first-windowPos);
-
-                wc.entities.push_back( ent );
-                node = node->next_sibling();
-
-            }
-
-
             Vec2i cell = it->first;
-            worldWindow.cells[ cell ] = wc;
+            worldWindow.cells[ cell ] = it->second;
 
             auto nextIt = it;
             nextIt++;
@@ -552,33 +449,16 @@ void WorldStreamer::end()
 
     for
     (
-        map<Vec2i, WorldCell>::const_iterator it = worldWindow.cells.begin();
+        auto it = worldWindow.cells.begin();
         it != worldWindow.cells.end();
         // ++it
     )
     {
-
-
-
-        // update XML document
-        const WorldCell& wc = it->second;
         auto loaded_it = loadedCellResources.find(it->first);
-        xml_document<>* doc = const_cast<ResourceCell&>(loaded_it->second.get()).getDocument();
-        cellToXmlDocument( doc, wc, cellSize );
 
-        // release all the entities of the cell
-        for
-        (
-            auto it = wc.entities.begin();
-            it != wc.entities.end();
-            ++it
-        )
-        {
-            service::entity::ref().destroyEntity( *it );
-        }
-
-        service::resource::ref().release(loaded_it->second);
         loadedCellResources.erase(loaded_it);
+
+        service::resource::ref().release(it->second);
 
         auto nextIt = it;
         nextIt++;
@@ -586,6 +466,29 @@ void WorldStreamer::end()
         it = nextIt;
 
     }
+
+
+}
+
+void WorldStreamer::loadCellAtPosition(const Vec2i& position)
+{
+
+    stringstream ss;
+    ss << worldFolder
+        << "/"
+        << "cell_"
+        << position.x
+        << "_"
+        << position.y
+        << ".xml";
+
+    string fileName = ss.str();
+
+    auto res = service::resource::ref().obtain<WorldCell::Resource>(core::resource::ID{ fileName.c_str() });
+
+    res->get_mutable().position = position;
+
+    loadingCellResources[position] = res;
 
 
 }

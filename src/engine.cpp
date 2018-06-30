@@ -1,5 +1,4 @@
 #include "engine.hpp"
-#include "resource_manager/resource_cell.hpp"
 #include "resource_manager/resource_text.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
@@ -115,7 +114,7 @@ void Engine::init()
 
     service::resource::ref()
         .deliver<Texture::Resource>()
-        .deliver<ResourceCell>()
+        .deliver<WorldCell::Resource>()
         .deliver<ResourceText>()
         .launch()
     ;

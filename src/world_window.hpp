@@ -18,7 +18,7 @@ class WorldWindow
 
 	friend class WorldStreamer;
 
-	std::map<Vec2i, WorldCell> cells;
+	std::map<Vec2i, core::resource::Handle<WorldCell::Resource>> cells;
 
 	unsigned int windowSize;
 

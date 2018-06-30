@@ -21,7 +21,7 @@ vector<Entity*> WorldWindow::getEntities()const
 
     for (auto & wc : cells)
     {
-        len += wc.second.entities.size();
+        len += wc.second->get().entities.size();
     }
 
     vector<Entity*> ents;
@@ -29,7 +29,7 @@ vector<Entity*> WorldWindow::getEntities()const
 
     for (auto & wc : cells)
     {
-        for (auto& e : wc.second.entities)
+        for (auto& e : wc.second->get().entities)
         {
             ents.push_back(e);
         }
