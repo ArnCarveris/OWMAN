@@ -7,14 +7,13 @@ bool ResourceManager::synchronize()
 {
     bool res = false;
 
-    m_shared_state.lock();
-
-    for (auto& loader : m_registry.loaders())
+    m_shared_state.try_lock([&]() 
     {
-        res |= loader->synchronize();
-    }
-
-    m_shared_state.unlock();
+        for (auto& loader : m_registry.loaders())
+        {
+            res |= loader->synchronize();
+        }
+    });
 
     return res;
 }
