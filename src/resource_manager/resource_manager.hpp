@@ -53,12 +53,50 @@ namespace core::resource
         ID m_id;
     };
 
-    struct SharedState
+    class SharedState
     {
-        std::mutex         m_mutex;
-        WorkQueue<Request> m_request_queue;
+    public:
+        inline void lock() 
+        {
+            m_mutex.lock();
+        }
 
-        void stop() { m_request_queue.push({ ERequest::Stop, 0, {""} }); }
+        inline void unlock()
+        {
+            m_mutex.unlock();
+        }
+
+        template<typename Fn>
+        inline void try_lock(Fn&& fn)
+        {
+            if (m_mutex.try_lock())
+            {
+                fn();
+
+                m_mutex.unlock();
+            }
+            else
+            {
+                fn();
+            }
+        }
+
+        inline void push_request(const Request& request) 
+        { 
+            m_request_queue.push(request); 
+        }
+        inline Request pop_request()
+        {
+            return m_request_queue.pop();
+        }
+
+        inline void stop()
+        { 
+            m_request_queue.push({ ERequest::Stop, 0, {""} }); 
+        }
+    private:
+        std::mutex          m_mutex;
+        WorkQueue<Request>  m_request_queue;
     };
 
     template<typename Intermediate, typename Final, typename Status = int>
@@ -126,7 +164,7 @@ namespace core::resource
 
             if (!Proxy::load_synchronously(ptr))
             {
-                m_shared_state->m_request_queue.push({ ERequest::Load,GetTypeID<Type>(), id });
+                m_shared_state->push_request({ ERequest::Load,GetTypeID<Type>(), id });
             }
 
             return std::shared_ptr<Type>(ptr);
@@ -137,7 +175,7 @@ namespace core::resource
 
             if (!res)
             {
-                m_shared_state->m_request_queue.push({ ERequest::Unload,GetTypeID<Type>(), identify(ref) });
+                m_shared_state->push_request({ ERequest::Unload,GetTypeID<Type>(), identify(ref) });
             }
 
             return res;
@@ -150,10 +188,10 @@ namespace core::resource
 
         void fulfill(const Request& request)
         {
-            m_shared_state->m_mutex.lock();
+            m_shared_state->lock();
             auto handle = cache->handle(request.m_id);
-            auto* ptr = const_cast<Type*>(&handle.get());
-            m_shared_state->m_mutex.unlock();
+            auto ptr = const_cast<Type*>(&handle.get());
+            m_shared_state->unlock();
 
             switch (request.m_type)
             {
@@ -161,18 +199,18 @@ namespace core::resource
             case ERequest::Load: {
                 if (Proxy::load_asynchronously(ptr))
                 {
-                    m_shared_state->m_mutex.lock();
+                    m_shared_state->lock();
                     m_loaded_queue.emplace_back(ptr);
-                    m_shared_state->m_mutex.unlock();
+                    m_shared_state->unlock();
                 }
             } break;
 
             case ERequest::Unload: {
                 if (Proxy::unload_asynchronously(ptr))
                 {
-                    m_shared_state->m_mutex.lock();
+                    m_shared_state->lock();
                     cache->discard(request.m_id);
-                    m_shared_state->m_mutex.unlock();
+                    m_shared_state->unlock();
                 }
             } break;
 

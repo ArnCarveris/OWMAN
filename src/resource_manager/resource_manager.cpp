@@ -7,14 +7,14 @@ bool ResourceManager::synchronize()
 {
     bool res = false;
 
-    m_shared_state.m_mutex.lock();
+    m_shared_state.lock();
 
     for (auto& loader : m_registry.loaders())
     {
         res |= loader->synchronize();
     }
 
-    m_shared_state.m_mutex.unlock();
+    m_shared_state.unlock();
 
     return res;
 }
@@ -47,7 +47,7 @@ void ResourceManager::loop()
 	// if the are not elements in the queue
 	while( !_stop )
 	{
-        auto request = m_shared_state.m_request_queue.pop();
+        auto request = m_shared_state.pop_request();
 
         if (request.m_type == core::resource::ERequest::Stop)
         {

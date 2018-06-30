@@ -12,9 +12,9 @@ ResourceManager& ResourceManager::deliver(Args&&... args)
 template<typename Type>
 core::resource::Handle<Type> ResourceManager::obtain(const core::resource::ID& id)
 {
-    m_shared_state.m_mutex.lock();
+    m_shared_state.lock();
     auto handle = m_registry.obtain<Type>(id);
-    m_shared_state.m_mutex.unlock();
+    m_shared_state.unlock();
 
     return handle;
 }
@@ -22,9 +22,7 @@ core::resource::Handle<Type> ResourceManager::obtain(const core::resource::ID& i
 template<typename Type>
 void ResourceManager::release(core::resource::Handle<Type>& handle)
 {
-    m_shared_state.m_mutex.lock();
-    m_registry.release<Type>(handle);
-    m_shared_state.m_mutex.unlock();
+    m_shared_state.try_lock([&]() { m_registry.release<Type>(handle); });
 }
 
 
