@@ -62,11 +62,20 @@ LowLevelRenderer2D::Texture::Texture(const unsigned char* image, int width, int 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glGenTextures(1, &textureID);
 	GLenum error = glGetError();
+#ifdef ENABLE_LOG
+    cout << "create.texture(" << width << ", " << height << "): " << textureID << endl;
+
     if (error != GL_NO_ERROR)
     {
-        cout << "texture: " << textureID << endl;
-        cout << "error: " << error << endl;
+        cout << " - error: " << error << endl;
     }
+#else
+    if (error != GL_NO_ERROR)
+    {
+        cout << "create.texture: " << textureID << ", error: " << error << endl;
+    }
+#endif
+
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -459,6 +468,9 @@ LowLevelRenderer2D::Texture LowLevelRenderer2D::createTexture(const unsigned cha
 
 void LowLevelRenderer2D::destroyTexture(Texture* texture)
 {
+#ifdef ENABLE_LOG
+    cout << "destroy.texture(" << texture->width << ", " << texture->height << "): " << texture->textureID << endl;
+#endif
 	glDeleteTextures(1, &(texture->textureID));
 	texture->width = 0;
 	texture->height = 0;
