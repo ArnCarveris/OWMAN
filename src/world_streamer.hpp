@@ -80,7 +80,7 @@ public:
 	 **/
 	std::vector<Entity*> getEntities()const;
 
-	Vec2i getWindowPosition()const;
+	const Vec2i& getWindowPosition()const;
 
 	float getCellSize()const;
 

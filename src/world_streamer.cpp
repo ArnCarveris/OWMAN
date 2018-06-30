@@ -532,7 +532,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
 }
 
-Vec2i WorldStreamer::getWindowPosition()const
+const Vec2i& WorldStreamer::getWindowPosition()const
 {
 	return windowPos;
 }

@@ -45,6 +45,8 @@ public:
 
 	virtual float getCellSize()const;
 
+    virtual const Vec2i& getWindowPosition() const = 0;
+
 	virtual void end() = 0;
 
 	virtual ~IWorldStreamer(){}
