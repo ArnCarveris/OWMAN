@@ -72,6 +72,8 @@ namespace core::resource
             m_status(Status{})
         { }
     public:
+        using status_t = Status;
+
         Data() = delete;
         Data(const Data&) = delete;
         Data(Data&&) = default;
