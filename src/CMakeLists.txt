@@ -19,9 +19,8 @@ add_executable(
 	renderer/sprite.cpp
 	renderer/sprite_status.cpp
 	renderer/texture.cpp
-	resource_manager/resource.cpp
-	resource_manager/resource_xml.cpp
 	resource_manager/resource_manager.cpp
+	resource_manager/resource_xml.cpp
 	resource_manager/resource_image.cpp
 	resource_manager/work_queue.cpp
 	util/file_to_string.cpp
