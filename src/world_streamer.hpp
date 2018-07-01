@@ -80,6 +80,8 @@ public:
 
 	const Vec2i& getWindowPosition()const;
 
+    const char* getWorldFolder() const;
+
 	float getCellSize()const;
 
 	void end();
