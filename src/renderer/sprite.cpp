@@ -85,11 +85,10 @@ void Sprite::update()
                 ++it
             )
             {
-                string name = Texture::texturesPath + it->second;
                 
-                textures.emplace_back(service::resource::ref().obtain<Texture::Resource>(core::resource::ID{name.c_str()}));
+                textures.emplace_back(service::resource::ref().obtain<Texture::Resource>(core::resource::ID{ it->second.c_str()}));
                 idToIndex[it->first] = i;
-                textureNameToIndex[name] = i;
+                textureNameToIndex[it->second] = i;
                 i++;
             }
 

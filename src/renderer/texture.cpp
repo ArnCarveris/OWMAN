@@ -56,7 +56,9 @@ bool core::resource::LoaderProxy<Texture::Resource>::load_asynchronously(Texture
 {
     ptr->m_status = Texture::Status::LOADING;
 
-    ptr->m_intermediate.load(ptr->m_id.c_str());
+    auto path = Texture::texturesPath + ptr->m_id;
+
+    ptr->m_intermediate.load(path.c_str());
 
     ptr->m_status = Texture::Status::LOADED;
 
