@@ -39,6 +39,8 @@ bool ResourceXml::save(const char* path)
 bool ResourceXml::free()
 {
     text.clear();
+    doc.clear();
+    node = nullptr;
 
     return true;
 }
