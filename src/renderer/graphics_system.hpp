@@ -6,7 +6,6 @@
 #include <set>
 #include <vector>
 #include "camera.hpp"
-#include "sprite_manager.hpp"
 
 class Engine;
 class GraphicsComponent;
@@ -17,8 +16,6 @@ class GraphicsSystem
 {
 
 	Engine* myEngine;
-
-	SpriteManager spriteManager;
 
 	Camera camera;
 
@@ -50,12 +47,10 @@ public:
 	void swap();
 
 	SpriteStatus* instanceSprite(std::string fileName, const Vec2f& scale = Vec2f(1, 1));
-	void destroySpriteInstance(SpriteStatus* sprite);
 
 	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
 
 	Camera* getCamera();
-	SpriteManager* getSpriteManager();
 
 	void end();
 

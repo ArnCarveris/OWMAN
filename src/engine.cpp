@@ -1,7 +1,8 @@
 #include "engine.hpp"
-#include "resource_manager/resource_text.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
+#include "renderer/sprite.hpp"
+
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "physics/physics_component.hpp"
@@ -82,28 +83,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 	delete initFileText;
 
-    // main character
-
-    stringstream ss;
-    ss << worldFolder << "/" << "main_character.xml";
-    string mcFileName = ss.str();
-
-    char* mcFileText = fileToString(mcFileName.c_str());
-
-    assert(mcFileText && "main_character.xml not found");
-
-    xml_document<> mcDoc;
-    mcDoc.parse<0>( mcFileText );
-
-    node = mcDoc.first_node("main_character");
-
-    mainCharacter = service::entity::ref().createMainCharacter(node);
-
-
-    delete mcFileText;
 
 }
-
 
 
 
@@ -115,9 +96,29 @@ void Engine::init()
     service::resource::ref()
         .deliver<Texture::Resource>()
         .deliver<WorldCell::Resource>()
-        .deliver<ResourceText>()
+        .deliver<Sprite::Resource>()
         .launch()
     ;
+
+    // main character
+
+    stringstream ss;
+    ss << service::world_streamer::ref().getWorldFolder() << "/" << "main_character.xml";
+    string mcFileName = ss.str();
+
+    char* mcFileText = fileToString(mcFileName.c_str());
+
+    assert(mcFileText && "main_character.xml not found");
+
+    xml_document<> mcDoc;
+    mcDoc.parse<0>(mcFileText);
+
+    auto node = mcDoc.first_node("main_character");
+
+    mainCharacter = service::entity::ref().createMainCharacter(node);
+
+
+    delete mcFileText;
 
     service::world_streamer::ref().init
     (

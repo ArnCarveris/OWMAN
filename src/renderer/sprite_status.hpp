@@ -1,10 +1,10 @@
 #ifndef SPRITE_STATUS
 #define SPRITE_STATUS
 
+#include "sprite.hpp"
 #include "graphics_component.hpp"
 #include <string>
 
-class Sprite;
 class SpriteManager;
 
 class SpriteStatus : public GraphicsComponent
@@ -12,20 +12,17 @@ class SpriteStatus : public GraphicsComponent
     unsigned currentAnimation;
     unsigned currentFrame;
     float elapsedTime;  //< elapsed time in the current frame
-    Sprite* mySprite;
 
+    core::resource::Handle<Sprite::Resource> sprite;
 public:
 
-    SpriteStatus(Sprite* sprite);
+    SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite);
 
     int getCurrentFrame()const;
     float getElapsedTime()const;
 
     void setCurrentFrame(int frame);
     void setElapsedTime(float time);
-
-    Sprite* getSprite();
-    SpriteManager* getSpriteManager();
 
     bool isReady()const;
     void update(float delta);

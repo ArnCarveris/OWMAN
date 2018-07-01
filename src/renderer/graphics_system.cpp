@@ -14,10 +14,7 @@ GraphicsSystem::GraphicsSystem
 	string windowTitle,
 	unsigned int width, unsigned int height,
 	bool fullScreen
-)
-:
-spriteManager(this)
-{
+) {
     service::renderer::set
     (
         windowTitle,
@@ -35,8 +32,6 @@ void GraphicsSystem::update(unsigned int delta)
 {
 
     float deltaSeconds = ticksToSeconds(delta);
-
-	spriteManager.update(deltaSeconds);
 
 	set<GraphicsComponent*>::iterator it;
 	for( it=components.begin(); it != components.end(); ++it )
@@ -88,26 +83,18 @@ void GraphicsSystem::swap()
 
 SpriteStatus* GraphicsSystem::instanceSprite(std::string name, const Vec2f& scale)
 {
-	SpriteStatus* sprite = spriteManager.instanceSprite(name);
-	sprite->setScale(scale);    // < TODO
-	components.insert(sprite);
-	return sprite;
+    SpriteStatus* spriteStatus = new SpriteStatus(this, service::resource::ref().obtain<Sprite::Resource>(core::resource::ID{ name.c_str() }));
+    spriteStatus->setScale(scale);    // < TODO
+	components.insert(spriteStatus);
+	return spriteStatus;
 }
 
-void GraphicsSystem::destroySpriteInstance(SpriteStatus* sprite)
-{
-
-    components.erase(sprite);
-    spriteManager.releaseSpriteInstance(sprite);
-
-}
 
 void GraphicsSystem::destroyGraphicsComponent(GraphicsComponent* graphicsComponent)
 {
-
-    components.erase(graphicsComponent);
     graphicsComponent->destroyDispatcher();
 
+    components.erase(graphicsComponent);
 }
 
 Camera* GraphicsSystem::getCamera()
@@ -115,10 +102,6 @@ Camera* GraphicsSystem::getCamera()
 	return &camera;
 }
 
-SpriteManager* GraphicsSystem::getSpriteManager()
-{
-    return &spriteManager ;
-}
 
 void GraphicsSystem::end()
 {

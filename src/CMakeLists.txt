@@ -17,7 +17,6 @@ add_executable(
 	renderer/graphics_system.cpp
 	renderer/low_level_renderer_2d.cpp
 	renderer/sprite.cpp
-	renderer/sprite_manager.cpp
 	renderer/sprite_status.cpp
 	renderer/texture.cpp
 	resource_manager/resource.cpp

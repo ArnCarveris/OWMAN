@@ -3,7 +3,6 @@
 #include "animation.hpp"
 #include "animation_frame.hpp"
 #include "../math/functions.hpp"
-#include "sprite_manager.hpp"
 #include "graphics_system.hpp"
 #include "texture.hpp"
 #include "../util/xmlstr.hpp"
@@ -12,11 +11,11 @@
 using namespace std;
 using namespace rapidxml;
 
-SpriteStatus::SpriteStatus(Sprite* sprite)
+SpriteStatus::SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite)
 :
-    GraphicsComponent(sprite->getSpriteManager()->getGraphicsSystem())
+    GraphicsComponent(system),
+    sprite(sprite)
 {
-    mySprite = sprite;
     currentAnimation = 0;
     currentFrame = 0;
     elapsedTime = 0.0f;
@@ -43,19 +42,10 @@ void SpriteStatus::setElapsedTime(float time)
     elapsedTime = time;
 }
 
-Sprite* SpriteStatus::getSprite()
-{
-    return mySprite;
-}
-
-SpriteManager* SpriteStatus::getSpriteManager()
-{
-    return getSprite()->getSpriteManager();
-}
 
 bool SpriteStatus::isReady()const
 {
-    return mySprite->isReady();
+    return sprite && sprite->get_status() == Sprite::Status::EVERYTHING_LOADED;
 }
 
 void SpriteStatus::update(float delta)
@@ -63,7 +53,7 @@ void SpriteStatus::update(float delta)
     if(isReady())
     {
         elapsedTime += delta;
-        const Animation& anim = mySprite->animations[currentAnimation];
+        const Animation& anim = sprite->get().animations[currentAnimation];
         const AnimationFrame& frame = anim.frames[currentFrame];
         float frameDuration = frame.frameDuration;
         if(elapsedTime >= frameDuration)
@@ -80,9 +70,9 @@ void SpriteStatus::draw()const
 {
     if(isReady())
     {
-        const Animation& anim = mySprite->animations[currentAnimation];
+        const Animation& anim = sprite->get().animations[currentAnimation];
         const AnimationFrame& frame = anim.frames[currentFrame];
-        auto& texture = mySprite->textures[frame.textureIndex]->get();
+        auto& texture = sprite->get().textures[frame.textureIndex]->get();
 
         const Vec2f& pos = position;
         const Vec2f& scale = this->scale;
@@ -99,7 +89,7 @@ unsigned SpriteStatus::getAnimationIndex()const
 
 void SpriteStatus::setAnimation(const string& animName)
 {
-    unsigned index = mySprite->getAnimIndex(animName);
+    unsigned index = sprite->get().getAnimIndex(animName);
     if(index != currentAnimation)
     {
         currentAnimation = index;
@@ -118,10 +108,10 @@ void SpriteStatus::setAnimation(unsigned animIndex)
 
 rapidxml::xml_node<>* SpriteStatus::createXmlNode(rapidxml::xml_document<>* doc)
 {
-    const string& spriteName = mySprite->getName();
+    const char* spriteName = *sprite;
 
     xml_node<>* root = GraphicsComponent::createXmlNode(doc);
-    const char* str_spriteName = doc->allocate_string(spriteName.c_str());
+    const char* str_spriteName = doc->allocate_string(spriteName);
     xml_node<>* node_sprite = doc->allocate_node(node_element, xmlstr::sprite, str_spriteName);
     root->prepend_node(node_sprite);
 
@@ -130,5 +120,7 @@ rapidxml::xml_node<>* SpriteStatus::createXmlNode(rapidxml::xml_document<>* doc)
 
 void SpriteStatus::destroyDispatcher()
 {
-    getSpriteManager()->releaseSpriteInstance(this);
+    service::resource::ref().release(sprite);
+
+    delete this;
 }
