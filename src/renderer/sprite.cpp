@@ -1,7 +1,6 @@
 #include "sprite.hpp"
 #include "graphics_system.hpp"
 #include "../resource_manager/resource_manager.hpp"
-#include "../resource_manager/resource_text.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
