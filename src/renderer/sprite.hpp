@@ -1,7 +1,6 @@
 #ifndef SPRITE
 #define SPRITE
 
-#include "graphics_component.hpp"
 #include "low_level_renderer_2d.hpp"
 #include "../math/vec2f.hpp"
 #include "../resource_manager/resource_manager.hpp"
@@ -12,9 +11,7 @@
 #include "animation.hpp"
 #include "texture.hpp"
 
-class SpriteManager;
 class GraphicsSystem;
-class ResourceText;
 class SpriteStatus;
 
 /** \brief Represents a static sprite

@@ -9,7 +9,6 @@
 #include <rapidxml.hpp>
 
 class Engine;
-class GraphicsComponent;
 class Sprite;
 class SpriteStatus;
 
@@ -20,7 +19,7 @@ class GraphicsSystem
 
 	Camera camera;
 
-	std::set<GraphicsComponent*> components;
+	std::set<SpriteStatus*> components;
 
 public:
 
@@ -49,7 +48,7 @@ public:
 
     SpriteStatus* createComponent(rapidxml::xml_node<>* node);
 
-	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
+	void destroyGraphicsComponent(SpriteStatus* graphicsComponent);
 
     rapidxml::xml_node<>* createXmlNode(SpriteStatus* component, rapidxml::xml_document<>* doc);
 

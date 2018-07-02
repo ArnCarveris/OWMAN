@@ -13,13 +13,67 @@ using namespace rapidxml;
 
 SpriteStatus::SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite)
 :
-    GraphicsComponent(system),
+    myGraphicsSystem(system),
+    visible(true),
+    priority(0),
+    position(0, 0),
+    scale(1, 1),
     sprite(sprite)
 {
     currentAnimation = 0;
     currentFrame = 0;
     elapsedTime = 0.0f;
     //cout << "-" << endl;
+}
+
+GraphicsSystem* SpriteStatus::getGraphicsSystem()
+{
+    return myGraphicsSystem;
+}
+
+bool SpriteStatus::isVisible()const
+{
+    return visible;
+}
+
+void SpriteStatus::setVisible(bool visible)
+{
+    this->visible = visible;
+}
+
+const Vec2f& SpriteStatus::getPosition()const
+{
+    return position;
+}
+
+Vec2f& SpriteStatus::getPosition()
+{
+    return position;
+}
+
+Vec2f SpriteStatus::getScale()const
+{
+    return scale;
+}
+
+void SpriteStatus::setPosition(const Vec2f& position)
+{
+    this->position = position;
+}
+
+void SpriteStatus::setScale(const Vec2f& scale)
+{
+    this->scale = scale;
+}
+
+int SpriteStatus::getPriority()const
+{
+    return priority;
+}
+
+void SpriteStatus::setPriority(int priority)
+{
+    this->priority = priority;
 }
 
 int SpriteStatus::getCurrentFrame()const

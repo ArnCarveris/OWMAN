@@ -2,12 +2,20 @@
 #define SPRITE_STATUS
 
 #include "sprite.hpp"
-#include "graphics_component.hpp"
 #include <string>
 
-class SpriteStatus : public GraphicsComponent
+class GraphicsSystem;
+
+class SpriteStatus
 {
     friend class GraphicsSystem;
+
+    GraphicsSystem* myGraphicsSystem;
+    bool visible;
+    int priority;	// the higher the more priority
+
+    Vec2f position;
+    Vec2f scale;
 
     unsigned currentAnimation;
     unsigned currentFrame;
@@ -17,6 +25,20 @@ class SpriteStatus : public GraphicsComponent
 public:
 
     SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite);
+
+    GraphicsSystem* getGraphicsSystem();
+    
+    bool isVisible()const;
+    void setVisible(bool visible);
+
+
+    const Vec2f& getPosition()const;
+    Vec2f& getPosition();
+    Vec2f getScale()const;
+    void setPosition(const Vec2f& position);
+    void setScale(const Vec2f& scale);
+    int getPriority()const;
+    void setPriority(int priority);
 
     int getCurrentFrame()const;
     float getElapsedTime()const;

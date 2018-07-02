@@ -1,6 +1,5 @@
 #include "entity_factory.hpp"
 #include "cell_size.hpp"
-#include "renderer/graphics_component.hpp"
 #include "physics/physics_component.hpp"
 #include "engine.hpp"
 #include "renderer/sprite_status.hpp"
@@ -181,13 +180,13 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xm
 void EntityFactory::destroyEntity(Entity* entity)
 {
 
-    GraphicsComponent* gc = entity->getGraphicsComponent();
+    auto* gc = entity->getGraphicsComponent();
     if( gc )
     {
         myEngine->getGraphicsSystem()->destroyGraphicsComponent( gc );
     }
 
-	PhysicsComponent* pc = entity->getPhysicsComponent();
+    auto* pc = entity->getPhysicsComponent();
 	if( pc )
 	{
         myEngine->getPhysicsSystem()->destroyComponent(pc);

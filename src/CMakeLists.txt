@@ -13,7 +13,6 @@ add_executable(
 	renderer/animation.cpp
 	renderer/animation_frame.cpp
 	renderer/camera.cpp
-	renderer/graphics_component.cpp
 	renderer/graphics_system.cpp
 	renderer/low_level_renderer_2d.cpp
 	renderer/sprite.cpp

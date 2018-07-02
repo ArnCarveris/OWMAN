@@ -2,7 +2,6 @@
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "math/vec2i.hpp"
-#include "renderer/graphics_component.hpp"
 #include "entity_factory.hpp"
 #include <fstream>
 #include <sstream>

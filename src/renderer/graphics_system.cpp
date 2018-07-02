@@ -1,5 +1,4 @@
 #include "graphics_system.hpp"
-#include "graphics_component.hpp"
 #include "sprite_status.hpp"
 #include "color.hpp"
 #include "../resource_manager/resource_manager.hpp"
@@ -35,7 +34,7 @@ void GraphicsSystem::update(unsigned int delta)
 
     float deltaSeconds = ticksToSeconds(delta);
 
-	set<GraphicsComponent*>::iterator it;
+	set<SpriteStatus*>::iterator it;
 	for( it=components.begin(); it != components.end(); ++it )
 	{
 
@@ -48,7 +47,7 @@ void GraphicsSystem::update(unsigned int delta)
 void GraphicsSystem::draw()
 {
 
-    vector<GraphicsComponent*> vec(components.begin(), components.end());
+    vector<SpriteStatus*> vec(components.begin(), components.end());
 
     // sort by priority
     // TODO: avoid sorting in each frame, but its difficult to implement
@@ -56,14 +55,14 @@ void GraphicsSystem::draw()
     (
         vec.begin(),
         vec.end(),
-        [](GraphicsComponent* gc1, GraphicsComponent* gc2) -> bool
+        [](SpriteStatus* gc1, SpriteStatus* gc2) -> bool
         {
             return gc1->getPriority() < gc2->getPriority();
         }
     );
 
     service::renderer::ref().clear();
-	vector<GraphicsComponent*>::iterator it;
+	vector<SpriteStatus*>::iterator it;
 	for( it=vec.begin(); it != vec.end(); ++it )
 	{
 
@@ -109,7 +108,7 @@ SpriteStatus* GraphicsSystem::createComponent(rapidxml::xml_node<>* node)
 }
 
 
-void GraphicsSystem::destroyGraphicsComponent(GraphicsComponent* graphicsComponent)
+void GraphicsSystem::destroyGraphicsComponent(SpriteStatus* graphicsComponent)
 {
     graphicsComponent->destroyDispatcher();
 
