@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 #include "camera.hpp"
+#include <rapidxml.hpp>
 
 class Engine;
 class GraphicsComponent;
@@ -46,7 +47,7 @@ public:
 	 */
 	void swap();
 
-	SpriteStatus* instanceSprite(std::string fileName, const Vec2f& scale = Vec2f(1, 1));
+    SpriteStatus* createComponent(rapidxml::xml_node<>* node);
 
 	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
 

@@ -54,30 +54,7 @@ Entity* EntityFactory::createEntity
 	xml_node<> *graphics_node = node->first_node(xmlstr::graphics);
 	if( graphics_node )
 	{
-
-		xml_node<> *sprite_node = graphics_node->first_node(xmlstr::sprite);
-		string spriteName = sprite_node->value();
-		xml_node<> *width_graphics_node = graphics_node->first_node(xmlstr::width);
-		float width_graphics = atof( width_graphics_node->value() );
-		xml_node<> *height_graphics_node = graphics_node->first_node(xmlstr::height);
-		float height_graphics = atof( height_graphics_node->value() );
-		xml_node<> *priority_node = graphics_node->first_node(xmlstr::priority);
-
-		GraphicsComponent* graphicsComponent =
-        myEngine->getGraphicsSystem()->instanceSprite
-        (
-            spriteName,
-            Vec2f( width_graphics, height_graphics )
-        );
-
-        if( priority_node )
-		{
-            int priority = atoi( priority_node->value() );
-            graphicsComponent->setPriority( priority );
-		}
-
-        entity->setGraphicsComponent( graphicsComponent );
-
+        entity->setGraphicsComponent(myEngine->getGraphicsSystem()->createComponent(graphics_node));
     }
 
 	// physics
@@ -127,30 +104,7 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 	xml_node<> *graphics_node = node->first_node(xmlstr::graphics);
 	if( graphics_node )
 	{
-
-		xml_node<> *sprite_node = graphics_node->first_node(xmlstr::sprite);
-		string spriteName = sprite_node->value();
-		xml_node<> *width_graphics_node = graphics_node->first_node(xmlstr::width);
-		float width_graphics = atof( width_graphics_node->value() );
-		xml_node<> *height_graphics_node = graphics_node->first_node(xmlstr::height);
-		float height_graphics = atof( height_graphics_node->value() );
-		xml_node<> *priority_node = graphics_node->first_node(xmlstr::priority);
-
-		GraphicsComponent* graphicsComponent =
-        myEngine->getGraphicsSystem()->instanceSprite
-        (
-            spriteName,
-            Vec2f( width_graphics, height_graphics )
-        );
-
-        if( priority_node )
-		{
-            int priority = atoi( priority_node->value() );
-            graphicsComponent->setPriority( priority );
-		}
-
-        entity->setGraphicsComponent( graphicsComponent );
-
+        entity->setGraphicsComponent(myEngine->getGraphicsSystem()->createComponent(graphics_node));
     }
 
 	// physics

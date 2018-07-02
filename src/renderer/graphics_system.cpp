@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include "../util/time_conversions.hpp"
+#include "../util/xmlstr.hpp"
 
 using namespace std;
 
@@ -81,11 +82,28 @@ void GraphicsSystem::swap()
 
 }
 
-SpriteStatus* GraphicsSystem::instanceSprite(std::string name, const Vec2f& scale)
+SpriteStatus* GraphicsSystem::createComponent(rapidxml::xml_node<>* node)
 {
-    SpriteStatus* spriteStatus = new SpriteStatus(this, service::resource::ref().obtain<Sprite::Resource>(core::resource::ID{ name.c_str() }));
-    spriteStatus->setScale(scale);    // < TODO
-	components.insert(spriteStatus);
+    rapidxml::xml_node<> *sprite_node = node->first_node(xmlstr::sprite);
+    string spriteName = sprite_node->value();
+    rapidxml::xml_node<> *width_graphics_node = node->first_node(xmlstr::width);
+    float width_graphics = atof(width_graphics_node->value());
+    rapidxml::xml_node<> *height_graphics_node = node->first_node(xmlstr::height);
+    float height_graphics = atof(height_graphics_node->value());
+    rapidxml::xml_node<> *priority_node = node->first_node(xmlstr::priority);
+    
+    SpriteStatus* spriteStatus = new SpriteStatus(this, service::resource::ref().obtain<Sprite::Resource>(core::resource::ID{ spriteName.c_str() }));
+    spriteStatus->setScale(Vec2f(width_graphics, height_graphics));    // < TODO
+
+
+    if (priority_node)
+    {
+        int priority = atoi(priority_node->value());
+        spriteStatus->setPriority(priority);
+    }
+
+    components.insert(spriteStatus);
+
 	return spriteStatus;
 }
 
