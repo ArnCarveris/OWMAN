@@ -4,6 +4,7 @@
 #include "color.hpp"
 #include "../resource_manager/resource_manager.hpp"
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include "../util/time_conversions.hpp"
 #include "../util/xmlstr.hpp"
@@ -113,6 +114,44 @@ void GraphicsSystem::destroyGraphicsComponent(GraphicsComponent* graphicsCompone
     graphicsComponent->destroyDispatcher();
 
     components.erase(graphicsComponent);
+}
+
+rapidxml::xml_node<>* GraphicsSystem::createXmlNode(SpriteStatus* component, rapidxml::xml_document<>* doc)
+{
+    rapidxml::xml_node<>* root = doc->allocate_node(rapidxml::node_element, xmlstr::graphics);
+    stringstream ss;
+    // scaleX
+    ss << component->scale.x;
+    const char* scaleX = doc->allocate_string(ss.str().c_str());
+    // clear
+    ss.clear();
+    ss.str(string());
+    //scaleY
+    ss << component->scale.y;
+    const char* scaleY = doc->allocate_string(ss.str().c_str());
+    // clear
+    ss.clear();
+    ss.str(string());
+    // priority
+    ss << component->priority;
+    const char* prio = doc->allocate_string(ss.str().c_str());
+    // allocate strings
+
+    // allocate nodes
+    rapidxml::xml_node<>* node_width = doc->allocate_node(rapidxml::node_element, xmlstr::width, scaleX);
+    rapidxml::xml_node<>* node_height = doc->allocate_node(rapidxml::node_element, xmlstr::height, scaleY);
+    rapidxml::xml_node<>* node_priority = doc->allocate_node(rapidxml::node_element, xmlstr::priority, prio);
+    // attach nodes
+    root->append_node(node_width);
+    root->append_node(node_height);
+    root->append_node(node_priority);
+
+    const char* spriteName = *component->sprite;
+    const char* str_spriteName = doc->allocate_string(spriteName);
+    rapidxml::xml_node<>* node_sprite = doc->allocate_node(rapidxml::node_element, xmlstr::sprite, str_spriteName);
+    root->prepend_node(node_sprite);
+
+    return root;
 }
 
 Camera* GraphicsSystem::getCamera()

@@ -6,7 +6,7 @@
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "physics/physics_component.hpp"
-#include "renderer/graphics_component.hpp"
+#include "renderer/sprite_status.hpp"
 #include <string>
 #include <sstream>
 #include <cstdio>
@@ -163,14 +163,14 @@ void Engine::mainLoop()
                 entity->getPhysicsComponent() != 0
             )
             {
-                GraphicsComponent* gc = entity->getGraphicsComponent();
-                PhysicsComponent* pc = entity->getPhysicsComponent();
+                auto* gc = entity->getGraphicsComponent();
+                auto* pc = entity->getPhysicsComponent();
                 gc->setPosition( pc->getPosition() );
             }
         }
 
-        GraphicsComponent* gc = mainCharacter->getGraphicsComponent();
-        PhysicsComponent* pc = mainCharacter->getPhysicsComponent();
+        auto* gc = mainCharacter->getGraphicsComponent();
+        auto* pc = mainCharacter->getPhysicsComponent();
         gc->setPosition( pc->getPosition() );
 
 

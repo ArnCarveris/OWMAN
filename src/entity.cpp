@@ -1,5 +1,5 @@
 #include "entity.hpp"
-#include "renderer/graphics_component.hpp"
+#include "renderer/sprite_status.hpp"
 #include "physics/physics_component.hpp"
 
 Entity::Entity()
@@ -50,12 +50,12 @@ void Entity::setPosition(const Vec2f& pos)
 
 }
 
-GraphicsComponent* Entity::getGraphicsComponent()
+SpriteStatus* Entity::getGraphicsComponent()
 {
 	return graphicsComponent;
 }
 
-void Entity::setGraphicsComponent(GraphicsComponent* component)
+void Entity::setGraphicsComponent(SpriteStatus* component)
 {
 	graphicsComponent = component;
 }

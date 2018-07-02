@@ -163,7 +163,7 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xm
     /// graphics component
     if (auto* component = entity->getGraphicsComponent())
     {
-        xml_node<>* graphics_node = component->createXmlNode(doc);
+        xml_node<>* graphics_node = myEngine->getGraphicsSystem()->createXmlNode(component, doc);
         node_ent->append_node(graphics_node);
     }
 

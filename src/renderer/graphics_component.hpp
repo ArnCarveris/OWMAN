@@ -56,7 +56,6 @@ public:
      * \param The XML document
      * \return The XML node
      */
-	virtual rapidxml::xml_node<>* createXmlNode(rapidxml::xml_document<>* doc);
 
 	virtual ~GraphicsComponent() {};
 

@@ -2,8 +2,8 @@
 #include "position.hpp"
 #include <rapidxml.hpp>
 
-#ifndef GRAPHICS_COMPONENT
-class GraphicsComponent;
+#ifndef SPRITE_STATUS
+class SpriteStatus;
 #endif
 
 #ifndef PHYSICS_COMPONENT
@@ -31,12 +31,12 @@ protected:
 	TypeId typeId;
 	Id id;
 
-	GraphicsComponent* graphicsComponent;
+    SpriteStatus* graphicsComponent;
 	PhysicsComponent* physicsComponent;
 
 	Entity();
 
-	void setGraphicsComponent(GraphicsComponent* component);
+	void setGraphicsComponent(SpriteStatus* component);
 	void setPhysicsComponent(PhysicsComponent* component);
 
 public:
@@ -47,7 +47,7 @@ public:
 	Vec2f getPosition()const;
 	void setPosition(const Vec2f& pos);
 
-	GraphicsComponent* getGraphicsComponent();
+    SpriteStatus* getGraphicsComponent();
 	PhysicsComponent* getPhysicsComponent();
 
 

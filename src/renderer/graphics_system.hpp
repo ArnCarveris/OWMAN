@@ -51,6 +51,8 @@ public:
 
 	void destroyGraphicsComponent(GraphicsComponent* graphicsComponent);
 
+    rapidxml::xml_node<>* createXmlNode(SpriteStatus* component, rapidxml::xml_document<>* doc);
+
 	Camera* getCamera();
 
 	void end();

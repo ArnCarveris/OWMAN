@@ -106,17 +106,6 @@ void SpriteStatus::setAnimation(unsigned animIndex)
     }
 }
 
-rapidxml::xml_node<>* SpriteStatus::createXmlNode(rapidxml::xml_document<>* doc)
-{
-    const char* spriteName = *sprite;
-
-    xml_node<>* root = GraphicsComponent::createXmlNode(doc);
-    const char* str_spriteName = doc->allocate_string(spriteName);
-    xml_node<>* node_sprite = doc->allocate_node(node_element, xmlstr::sprite, str_spriteName);
-    root->prepend_node(node_sprite);
-
-    return root;
-}
 
 void SpriteStatus::destroyDispatcher()
 {

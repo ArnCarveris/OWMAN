@@ -5,10 +5,10 @@
 #include "graphics_component.hpp"
 #include <string>
 
-class SpriteManager;
-
 class SpriteStatus : public GraphicsComponent
 {
+    friend class GraphicsSystem;
+
     unsigned currentAnimation;
     unsigned currentFrame;
     float elapsedTime;  //< elapsed time in the current frame
@@ -31,8 +31,6 @@ public:
     unsigned getAnimationIndex()const;
     void setAnimation(const std::string& animName);
     void setAnimation(unsigned animIndex);
-
-    rapidxml::xml_node<>* createXmlNode(rapidxml::xml_document<>* doc);
 
     void destroyDispatcher();
 
