@@ -9,7 +9,13 @@ class Vec2i;
  */
 class Vec2f
 {
-
+public:
+    template<typename...Tags>
+    struct RepositionEvent
+    {
+        Vec2f from;
+        Vec2f to;
+    };
 public:
 
 	float x, y;
@@ -29,5 +35,6 @@ public:
 	Vec2f operator-()const;
 
 };
+
 
 #endif
