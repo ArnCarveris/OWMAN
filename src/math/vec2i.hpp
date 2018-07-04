@@ -10,6 +10,13 @@ class Vec2f;
  */
 class Vec2i
 {
+public:
+    template<typename...Tags>
+    struct RepositionEvent
+    {
+        Vec2i from;
+        Vec2i to;
+    };
 
 public:
 
