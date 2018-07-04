@@ -10,9 +10,6 @@
 class EntityFactory;
 #endif
 
-#ifndef MAIN_CHARACTER
-class MainCharacter;
-#endif
 
 #ifndef GRAPHICS_SYSTEM
 class GraphicsSystem;
@@ -70,13 +67,13 @@ public:
 	 * \param offset of the character wrt the cell bot left corner.
 	 * Both params could be ingnored by the implementation.
 	 **/
-	void update(const Vec2f& position, MainCharacter* mainCharacter);
+	void update(const Vec2f& position);
 
 	/**
 	 * \brief Returns a vector of pointers to all the active entities
 	 *
 	 **/
-	std::vector<Entity*> getEntities()const;
+	std::vector<Entity> getEntities()const;
 
 	const Vec2i& getWindowPosition()const;
 

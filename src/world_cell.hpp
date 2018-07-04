@@ -2,10 +2,7 @@
 #include "math/vec2i.hpp"
 #include "resource_manager/resource_xml.hpp"
 #include "resource_manager/resource_manager.hpp"
-
-#ifndef ENTITY
-class Entity;
-#endif
+#include "entity.hpp"
 
 #ifndef WORLD_CELL
 #define WORLD_CELL
@@ -25,7 +22,7 @@ public:
     using Resource = core::resource::Data<ResourceXml, WorldCell, Status>;
 
 public:
-    std::vector<Entity*> entities;
+    std::vector<Entity> entities;
 
     Vec2i position;
 };

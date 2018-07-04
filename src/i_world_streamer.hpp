@@ -1,23 +1,13 @@
 #include <vector>
 #include "math/vec2i.hpp"
 #include "math/vec2f.hpp"
-
-#ifndef ENTITY
-class Entity;
-#endif
-
-#ifndef MAIN_CHARACTER
-class MainCharacter;
-#endif
-
-#ifndef ENTITY_FACTORY
-class EntityFactory;
-#endif
+#include "entity.hpp"
 
 #ifndef I_WORLD_STREAMER
 #define I_WORLD_STREAMER
 
 #include <entt/locator/locator.hpp>
+
 
 class IWorldStreamer
 {
@@ -35,13 +25,13 @@ public:
 	 * \param offset of the character wrt the cell bot left corner.
 	 * The param could be ignored by the implementation.
 	 **/
-	virtual void update(const Vec2f& position, MainCharacter* mainCharacter) = 0;
+	virtual void update(const Vec2f& position) = 0;
 
 	/**
 	 * \brief Returns a vector of pointers to all the active entities
 	 *
 	 **/
-	virtual std::vector<Entity*> getEntities()const = 0;
+	virtual std::vector<Entity> getEntities()const = 0;
 
 	virtual float getCellSize()const;
 

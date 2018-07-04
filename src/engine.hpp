@@ -22,8 +22,6 @@ class Engine
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
-	MainCharacter* mainCharacter;
-
 	bool end;
 	int fps;
 
@@ -34,6 +32,9 @@ public:
 	void init();
 
 	void mainLoop();
+
+    void prepare(const Vec2f::RepositionEvent<Entity>& event);
+    void finalize(const Vec2f::RepositionEvent<Entity>& event);
 
     GraphicsSystem* getGraphicsSystem();
     PhysicsSystem* getPhysicsSystem();

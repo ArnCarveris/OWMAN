@@ -17,7 +17,8 @@ EventHandler::EventHandler( Engine* engine )
 void EventHandler::handle()
 {
 
-    Entity* mc = engine->getMainCharacter();
+    Entity mc = service::entity::ref().registry.attachee<MainCharacter>();
+
     static const float v = 2000;
     float vx = 0;
     float vy = 0;
@@ -96,29 +97,30 @@ void EventHandler::handle()
 
 	}
 
-    if(!mc->getGraphicsComponent()->isReady()) return;
 
-    SpriteStatus* spr = ((SpriteStatus*)mc->getGraphicsComponent());
+    auto& spr = service::entity::ref().registry.get<SpriteStatus>(mc);
+
+    if (!spr.isReady()) return;
 
     if(upArrowStatus)
     {
         vy += v;
-        spr->setAnimation("walking_up");
+        spr.setAnimation("walking_up");
     }
     if(downArrowStatus)
     {
         vy -= v;
-        spr->setAnimation("walking_down");
+        spr.setAnimation("walking_down");
     }
     if(leftArrowStatus)
     {
         vx -= v;
-        spr->setAnimation("walking_left");
+        spr.setAnimation("walking_left");
     }
     if(rightArrowStatus)
     {
         vx += v;
-        spr->setAnimation("walking_right");
+        spr.setAnimation("walking_right");
     }
     float len = sqrt(vx*vx + vy*vy);
     if(len > 0)
@@ -130,13 +132,12 @@ void EventHandler::handle()
     }
     else
     {
-        unsigned animIndex = spr->getAnimationIndex();
+        unsigned animIndex = spr.getAnimationIndex();
         animIndex %= 4;
-        spr->setAnimation(animIndex);
+        spr.setAnimation(animIndex);
     }
 
-    mc->getPhysicsComponent()->setSpeed( Vec2f(vx, vy) );
-
+    service::entity::ref().registry.get<PhysicsComponent>(mc).setSpeed( Vec2f(vx, vy) );
 }
 
 void EventHandler::poll()

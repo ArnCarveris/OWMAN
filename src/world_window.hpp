@@ -2,10 +2,7 @@
 #include <map>
 #include "position.hpp"
 #include "world_cell.hpp"
-
-#ifndef ENTITY
-class Entity;
-#endif
+#include "entity.hpp"
 
 #ifndef WORLD_WINDOW
 #define WORLD_WINDOW
@@ -28,7 +25,7 @@ public:
 
 	WorldWindow(unsigned int windowSize);
 
-    std::vector<Entity*> getEntities()const;
+    std::vector<Entity> getEntities()const;
 
 	~WorldWindow();
 

@@ -13,24 +13,24 @@ using namespace std;
 
 EntityFactory::EntityFactory(Engine* engine)
 {
-	countId = DEFAULT_INIT_ID;
 	myEngine = engine;
 }
 
 
-Entity* EntityFactory::createEntity
+Entity EntityFactory::createEntity
 (
 	xml_node<> *node,
 	const Vec2i& toCenter
 )
 {
+	Entity entity = registry.create();
 
-	Entity* entity = new Entity;
+	Vec2f& pos = registry.assign<Vec2f>(entity);
 
-	Vec2f pos;
 	pos.x = toCenter.x * myEngine->getCellSize();
 	pos.y = toCenter.y * myEngine->getCellSize();
 
+#ifdef LEGACY
 	xml_node<> *id_node = node->first_node("id");
 	if( id_node != 0 )
 	{
@@ -41,6 +41,7 @@ Entity* EntityFactory::createEntity
 		entity->id = countId;
 		countId++;
 	}
+#endif
 
 	// position
 	xml_node<> *position_node = node->first_node(xmlstr::position);
@@ -53,30 +54,31 @@ Entity* EntityFactory::createEntity
 	xml_node<> *graphics_node = node->first_node(xmlstr::graphics);
 	if( graphics_node )
 	{
-        entity->setGraphicsComponent(myEngine->getGraphicsSystem()->createComponent(graphics_node));
+        myEngine->getGraphicsSystem()->assignComponent(registry, entity, graphics_node);
     }
 
 	// physics
 	xml_node<> *physics_node = node->first_node(xmlstr::physics);
 	if( physics_node )
 	{
-        entity->setPhysicsComponent(myEngine->getPhysicsSystem()->createComponent(pos, physics_node, false));
+        myEngine->getPhysicsSystem()->assignComponent(registry, entity, physics_node, false);
     }
 
 
-	entity->setPosition( pos );
 
 	return entity;
 
 }
 
-MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
+Entity EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 {
 
-    MainCharacter* entity = new MainCharacter;
+    Entity entity = registry.create();
 
-	Vec2f pos;
+    Vec2f& pos = registry.assign<Vec2f>(entity);
 
+
+#ifdef LEGACY
 	xml_node<> *id_node = node->first_node("id");
 	if( id_node != 0 )
 	{
@@ -87,7 +89,7 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 		entity->id = countId;
 		countId++;
 	}
-
+#endif
 	// position
 	xml_node<> *position_node = node->first_node(xmlstr::position);
         xml_node<> *cell_x_node = position_node->first_node(xmlstr::cell_x);
@@ -103,7 +105,7 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 	xml_node<> *graphics_node = node->first_node(xmlstr::graphics);
 	if( graphics_node )
 	{
-        entity->setGraphicsComponent(myEngine->getGraphicsSystem()->createComponent(graphics_node));
+        myEngine->getGraphicsSystem()->assignComponent(registry, entity, graphics_node);
     }
 
 	// physics
@@ -111,26 +113,25 @@ MainCharacter* EntityFactory::createMainCharacter(rapidxml::xml_node<> *node)
 
     if( physics_node )
     {
-        entity->setPhysicsComponent(myEngine->getPhysicsSystem()->createComponent(pos, physics_node, true));
+        myEngine->getPhysicsSystem()->assignComponent(registry, entity, physics_node, true);
     }
 
-
-	entity->setPosition( pos );
-	entity->setCell( Vec2i(cell_x, cell_y) );
+    registry.assign<MainCharacter>(entt::tag_t{}, entity).setCell( Vec2i(cell_x, cell_y) );
 
 	return entity;
 
 }
 
-rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xml_document<>* doc, float cellSize)
+rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity entity, rapidxml::xml_document<>* doc, float cellSize)
 {
 
     xml_node<>* node_ent;
     node_ent = doc->allocate_node(node_element, xmlstr::entity);
 
+    Vec2f& pos = registry.get<Vec2f>(entity);
 
-    float x = entity->getPosition().x;
-    float y = entity->getPosition().y;
+    float x = pos.x;
+    float y = pos.y;
     // we have to do this because positions are wrt the cell
     // where the main character is and not wrt the cell where
     // this entity is
@@ -160,16 +161,14 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xm
     pos_node->append_node(y_node);
 
     /// graphics component
-    if (auto* component = entity->getGraphicsComponent())
+    if (xml_node<>* graphics_node = myEngine->getGraphicsSystem()->createXmlNode(registry, entity, doc))
     {
-        xml_node<>* graphics_node = myEngine->getGraphicsSystem()->createXmlNode(component, doc);
         node_ent->append_node(graphics_node);
     }
 
     /// physics component
-    if (auto* component = entity->getPhysicsComponent())
+    if (xml_node<>* physics_node = myEngine->getPhysicsSystem()->createXmlNode(registry, entity, doc))
     {
-        xml_node<>* physics_node = myEngine->getPhysicsSystem()->createXmlNode(component, doc);
         node_ent->append_node(physics_node);
     }
 
@@ -177,19 +176,7 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity * entity, rapidxml::xm
 
 }
 
-void EntityFactory::destroyEntity(Entity* entity)
+void EntityFactory::destroyEntity(Entity entity)
 {
-
-    auto* gc = entity->getGraphicsComponent();
-    if( gc )
-    {
-        myEngine->getGraphicsSystem()->destroyGraphicsComponent( gc );
-    }
-
-    auto* pc = entity->getPhysicsComponent();
-	if( pc )
-	{
-        myEngine->getPhysicsSystem()->destroyComponent(pc);
-    }
-
+    registry.destroy(entity);
 }

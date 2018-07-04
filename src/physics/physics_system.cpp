@@ -1,5 +1,6 @@
 #include "physics_system.hpp"
-
+#include "../dispatcher.hpp"
+#include "../entity_factory.hpp"
 #include "../math/functions.hpp"
 #include "../util/xmlstr.hpp"
 #include <sstream>
@@ -13,6 +14,15 @@ PhysicsSystem::PhysicsSystem()
     b2Vec2 gravity(0, 0);
     world = new b2World(gravity);
 
+    service::entity::ref().registry.destruction<PhysicsComponent>().connect<PhysicsSystem, &PhysicsSystem::destroyComponent>(this);
+    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect(this);
+}
+
+void PhysicsSystem::receive(const Vec2f::RepositionEvent<Entity>& event)
+{
+    service::entity::ref().registry.view<PhysicsComponent, Vec2f>().each([](const Entity entity, PhysicsComponent& component, Vec2f& position) {
+        component.setPosition(position);
+    });
 }
 
 void PhysicsSystem::update(unsigned int delta)
@@ -20,7 +30,10 @@ void PhysicsSystem::update(unsigned int delta)
 
     float seconds = delta / 1000.0f;
     world->Step(seconds, 12, 5);
-
+    
+    service::entity::ref().registry.view<PhysicsComponent, Vec2f>().each([](const Entity entity, PhysicsComponent& component, Vec2f& position) {
+        position = component.getPosition();
+    });
 }
 
 b2World* PhysicsSystem::getWorld()
@@ -28,9 +41,10 @@ b2World* PhysicsSystem::getWorld()
     return world;
 }
 
-PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node<>* node, const bool kinematic)
+void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml_node<>* node, const bool kinematic)
 {
-    PhysicsComponent* component = new PhysicsComponent;
+    auto& position = registry.get<Vec2f>(entity);
+    auto& component = registry.assign<PhysicsComponent>(entity);
 
     xml_node<> *shape_node = node->first_node(xmlstr::shape);
     string sShape(shape_node->value());
@@ -58,7 +72,7 @@ PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node
         fixtureDef.restitution = 0.5;
     }
 
-    component->body = world->CreateBody(&bodyDef);
+    component.body = world->CreateBody(&bodyDef);
 
     if (sShape == xmlstr::box)
     {
@@ -74,7 +88,7 @@ PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node
         fixtureDef.density = mass / (scale.x*scale.y);
         fixtureDef.shape = &shape;
 
-        component->body->CreateFixture(&fixtureDef);
+        component.body->CreateFixture(&fixtureDef);
     }
     else if (sShape == xmlstr::circle)
     {
@@ -88,27 +102,29 @@ PhysicsComponent* PhysicsSystem::createComponent(const Vec2f& position, xml_node
         fixtureDef.density = mass / (M_PI * radius*radius);
         fixtureDef.shape = &shape;
 
-        component->body->CreateFixture(&fixtureDef);
+        component.body->CreateFixture(&fixtureDef);
+    }
+}
+
+void PhysicsSystem::destroyComponent(EntityRegistry& registry, Entity entity)
+{
+    world->DestroyBody(registry.get<PhysicsComponent>(entity).body);
+}
+
+rapidxml::xml_node<>* PhysicsSystem::createXmlNode(EntityRegistry& registry, Entity entity, rapidxml::xml_document<>* doc)
+{
+    if (!registry.has<PhysicsComponent>(entity))
+    {
+        return nullptr;
     }
 
-    return component;
-}
+    auto& component = registry.get<PhysicsComponent>(entity);
 
-void PhysicsSystem::destroyComponent(PhysicsComponent* component)
-{
-    world->DestroyBody(component->body);
-
-    delete component;
-}
-
-
-rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component, rapidxml::xml_document<>* doc)
-{
     stringstream ss;
     char* s;
     xml_node<>* root = doc->allocate_node(node_element, xmlstr::physics);
 
-    switch (component->body->GetFixtureList()->GetShape()->GetType())
+    switch (component.body->GetFixtureList()->GetShape()->GetType())
     {
     case b2Shape::Type::e_circle: {
 
@@ -117,7 +133,7 @@ rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component,
         root->append_node(shape_node);
 
         // radius
-        ss << component->body->GetFixtureList()->GetShape()->m_radius;
+        ss << component.body->GetFixtureList()->GetShape()->m_radius;
         string radStr = ss.str();
         s = doc->allocate_string(radStr.c_str());
         xml_node<>* width_node = doc->allocate_node(node_element, xmlstr::radius, s);
@@ -131,7 +147,7 @@ rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component,
         xml_node<>* shape_node = doc->allocate_node(node_element, xmlstr::shape, xmlstr::box);
         root->append_node(shape_node);
 
-        auto& aabb = component->body->GetFixtureList()->GetAABB(0);
+        auto& aabb = component.body->GetFixtureList()->GetAABB(0);
 
         // width
         ss << int(aabb.upperBound.x - aabb.lowerBound.x);
@@ -156,7 +172,7 @@ rapidxml::xml_node<>* PhysicsSystem::createXmlNode(PhysicsComponent * component,
     ss.str(string());
     ss.clear();
     // mass
-    ss << component->body->GetMass();
+    ss << component.body->GetMass();
     string mass = ss.str();
     s = doc->allocate_string(mass.c_str());
     xml_node<>* mass_node = doc->allocate_node(node_element, xmlstr::mass, s);

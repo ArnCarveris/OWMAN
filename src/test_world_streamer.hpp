@@ -13,7 +13,7 @@ class TestWorldStreamer : public IWorldStreamer
 
 protected:
 
-	std::vector<Entity*> entities;
+	std::vector<Entity> entities;
 
 public:
 
@@ -25,7 +25,7 @@ public:
 
 	void update(Vec2f& position);
 
-	std::vector<Entity*> getEntities()const;
+	std::vector<Entity> getEntities()const;
 
 	void end(){}
 

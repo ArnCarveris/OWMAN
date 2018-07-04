@@ -15,7 +15,7 @@ WorldWindow::WorldWindow(unsigned int windowSize)
 
 }
 
-vector<Entity*> WorldWindow::getEntities()const
+vector<Entity> WorldWindow::getEntities()const
 {
     int len = 0;
 
@@ -24,7 +24,7 @@ vector<Entity*> WorldWindow::getEntities()const
         len += wc.second->get().entities.size();
     }
 
-    vector<Entity*> ents;
+    vector<Entity> ents;
     ents.reserve(len);
 
     for (auto & wc : cells)

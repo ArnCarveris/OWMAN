@@ -14,7 +14,6 @@ class SpriteStatus
     bool visible;
     int priority;	// the higher the more priority
 
-    Vec2f position;
     Vec2f scale;
 
     unsigned currentAnimation;
@@ -32,10 +31,7 @@ public:
     void setVisible(bool visible);
 
 
-    const Vec2f& getPosition()const;
-    Vec2f& getPosition();
-    Vec2f getScale()const;
-    void setPosition(const Vec2f& position);
+    const Vec2f& getScale()const;
     void setScale(const Vec2f& scale);
     int getPriority()const;
     void setPriority(int priority);
@@ -48,13 +44,11 @@ public:
 
     bool isReady()const;
     void update(float delta);
-    void draw()const;
+    void draw(const Vec2f& pos)const;
 
     unsigned getAnimationIndex()const;
     void setAnimation(const std::string& animName);
     void setAnimation(unsigned animIndex);
-
-    void destroyDispatcher();
 
 };
 

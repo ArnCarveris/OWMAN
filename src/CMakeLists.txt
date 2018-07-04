@@ -25,7 +25,6 @@ add_executable(
 	util/file_to_string.cpp
 	util/xmlstr.cpp
 	engine.cpp
-	entity.cpp
 	entity_factory.cpp
 	i_world_streamer.cpp
 	main.cpp

@@ -7,6 +7,7 @@
 #include <vector>
 #include "camera.hpp"
 #include <rapidxml.hpp>
+#include "../entity.hpp"
 
 class Engine;
 class Sprite;
@@ -18,8 +19,6 @@ class GraphicsSystem
 	Engine* myEngine;
 
 	Camera camera;
-
-	std::set<SpriteStatus*> components;
 
 public:
 
@@ -46,11 +45,11 @@ public:
 	 */
 	void swap();
 
-    SpriteStatus* createComponent(rapidxml::xml_node<>* node);
+    void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node);
 
-	void destroyGraphicsComponent(SpriteStatus* graphicsComponent);
+    void destroyComponent(EntityRegistry& registry, Entity entity);
 
-    rapidxml::xml_node<>* createXmlNode(SpriteStatus* component, rapidxml::xml_document<>* doc);
+    rapidxml::xml_node<>* createXmlNode(EntityRegistry& registry, Entity entity, rapidxml::xml_document<>* doc);
 
 	Camera* getCamera();
 

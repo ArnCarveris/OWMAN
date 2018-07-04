@@ -45,7 +45,7 @@ void TestWorldStreamer::init(Vec2i& cell, Vec2f& offset)
 	doc.parse<0>(entityText);
 
 	xml_node<>* root = doc.first_node("entity");
-	Entity* entity = entityFactory->createEntity( root, Vec2i(0, 0) );
+	Entity entity = entityFactory->createEntity( root, Vec2i(0, 0) );
 
 	entities.push_back(entity);
 
@@ -56,7 +56,7 @@ void TestWorldStreamer::update(Vec2f& position)
 
 }
 
-vector<Entity*> TestWorldStreamer::getEntities()const
+vector<Entity> TestWorldStreamer::getEntities()const
 {
 	return entities;
 }

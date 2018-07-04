@@ -1,12 +1,5 @@
 #include "main_character.hpp"
 
-MainCharacter::MainCharacter()
-{
-	id = 0;		// 0 is invalid
-	typeId = "";
-	graphicsComponent = 0;
-}
-
 const Vec2i& MainCharacter::getCell()const
 {
 

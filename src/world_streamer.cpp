@@ -3,6 +3,7 @@
 #include "util/file_to_string.hpp"
 #include "math/vec2i.hpp"
 #include "entity_factory.hpp"
+#include "dispatcher.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -207,7 +208,7 @@ void WorldStreamer::init(const Vec2i& cell, const Vec2f& offset)
 
 }
 
-void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
+void WorldStreamer::update(const Vec2f& position)
 {
 
     // check if the entities have changed of cell
@@ -225,8 +226,9 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
 
         for(unsigned int i=0; i<wc.entities.size(); i++)
         {
+            Entity& ent = wc.entities[i];
 
-            Vec2f pos = wc.entities[i]->getPosition();
+            Vec2f& pos = service::entity::ref().registry.get<Vec2f>(ent);
             Vec2i goodCell = Vec2i( floor(pos.x/cellSize), floor(pos.y/cellSize) );
             goodCell += windowPos;
 
@@ -239,8 +241,6 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
                 // the cell is loaded -> just append
                 if( it2 != worldWindow.cells.end() )
                 {
-                    Entity* ent = wc.entities[i];
-
                     wc.entities[i] = wc.entities.back();
                     wc.entities.pop_back();
 
@@ -298,14 +298,7 @@ void WorldStreamer::update(const Vec2f& position, MainCharacter* mainCharacter)
         // update window pos
         windowPos = nextCell;
 
-        // update entities pos
-        vector<Entity*> ents = getEntities();
-        for(unsigned int i=0; i<ents.size(); i++)
-        {
-            Vec2f pPos = ents[i]->getPosition();
-            ents[i]->setPosition( pPos + (pos-position) );
-        }
-        mainCharacter->setPosition( pos );
+        service::dispatcher::ref().trigger<Vec2f::RepositionEvent<Entity>>(position, pos);
 
         // delete old cells
         for
@@ -443,7 +436,7 @@ float WorldStreamer::getCellSize()const
     return cellSize;
 }
 
-vector<Entity*> WorldStreamer::getEntities()const
+vector<Entity> WorldStreamer::getEntities()const
 {
     return worldWindow.getEntities();
 }

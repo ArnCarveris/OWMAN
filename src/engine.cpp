@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "dispatcher.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
 #include "renderer/sprite.hpp"
@@ -67,11 +68,16 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 	node = doc.first_node("window_size");
 	int windowSize = atoi( node->value() );
 
+    delete initFileText;
+
     service::input::set(this);
     service::entity::set(this);
     service::resource::set();
+    service::dispatcher::set();
     service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
 
+
+    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect<Engine, &Engine::finalize>(this);
 
     // init systems
 	graphicsSystem = new GraphicsSystem( title, xResolution, yResolution, fullscreen );
@@ -81,9 +87,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 	physicsSystem = new PhysicsSystem();
 
-	delete initFileText;
-
-
+    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect<Engine, &Engine::prepare>(this);
 }
 
 
@@ -115,15 +119,15 @@ void Engine::init()
 
     auto node = mcDoc.first_node("main_character");
 
-    mainCharacter = service::entity::ref().createMainCharacter(node);
-
-
+    auto mainCharacter = service::entity::ref().createMainCharacter(node);
+   
     delete mcFileText;
+
 
     service::world_streamer::ref().init
     (
-        mainCharacter->getCell(),
-        mainCharacter->getPosition()
+        getMainCharacter()->getCell(),
+        service::entity::ref().registry.get<Vec2f>(mainCharacter)
     );
 
 }
@@ -147,35 +151,14 @@ void Engine::mainLoop()
 
         // update world streamer
 
-        service::world_streamer::ref().update( mainCharacter->getPosition(), mainCharacter );
+        auto mainCharacter = service::entity::ref().registry.attachee<MainCharacter>();
 
-        // get list of entities
-        vector<Entity*> entities = service::world_streamer::ref().getEntities();
+        service::world_streamer::ref().update( service::entity::ref().registry.get<Vec2f>(mainCharacter));
 
-        // move graphics components to match physics components
-        // (update position of graphics components)
-        for(unsigned int i=0; i<entities.size(); i++)
-        {
-            Entity* entity = entities[i];
-            if
-            (
-                entity->getGraphicsComponent() != 0 &&
-                entity->getPhysicsComponent() != 0
-            )
-            {
-                auto* gc = entity->getGraphicsComponent();
-                auto* pc = entity->getPhysicsComponent();
-                gc->setPosition( pc->getPosition() );
-            }
-        }
-
-        auto* gc = mainCharacter->getGraphicsComponent();
-        auto* pc = mainCharacter->getPhysicsComponent();
-        gc->setPosition( pc->getPosition() );
 
 
         // follow main character with the camera
-        graphicsSystem->getCamera()->setPosition( -mainCharacter->getPosition() );
+        graphicsSystem->getCamera()->setPosition( -service::entity::ref().registry.get<Vec2f>(mainCharacter));
 
         // update graphics
         graphicsSystem->update(ticks-prevTicks);
@@ -195,6 +178,26 @@ void Engine::mainLoop()
 
 }
 
+void Engine::prepare(const Vec2f::RepositionEvent<Entity>& event)
+{
+    service::entity::ref().registry.view<Vec2f>().each
+    (
+        [delta = event.to - event.from](const Entity entity, Vec2f& position) 
+        {
+            position += delta;
+        }
+    );
+
+    auto mainCharacter = service::entity::ref().registry.attachee<MainCharacter>();
+
+    service::entity::ref().registry.get<Vec2f>(mainCharacter) = event.to;
+}
+
+void Engine::finalize(const Vec2f::RepositionEvent<Entity>& event)
+{
+
+}
+
 GraphicsSystem* Engine::getGraphicsSystem()
 {
 	return graphicsSystem;
@@ -207,7 +210,7 @@ PhysicsSystem* Engine::getPhysicsSystem()
 
 MainCharacter* Engine::getMainCharacter()
 {
-    return mainCharacter;
+    return &service::entity::ref().registry.get<MainCharacter>();
 }
 
 float Engine::getCellSize()const
@@ -225,9 +228,9 @@ void Engine::endGame()
 Engine::~Engine()
 {
     if( graphicsSystem ) delete graphicsSystem;
-    if( mainCharacter) delete mainCharacter;
 
     service::entity::reset();
     service::resource::reset();
+    service::dispatcher::reset();
     service::world_streamer::reset();
 }
