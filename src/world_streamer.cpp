@@ -241,6 +241,8 @@ void WorldStreamer::update(const Vec2f& position)
                 // the cell is loaded -> just append
                 if( it2 != worldWindow.cells.end() )
                 {
+                    service::dispatcher::ref().trigger<EntityMigrationEvent>(currentCell, goodCell, ent);
+
                     wc.entities[i] = wc.entities.back();
                     wc.entities.pop_back();
 
