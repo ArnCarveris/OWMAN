@@ -1,5 +1,5 @@
 #include "engine.hpp"
-#include "dispatcher.hpp"
+#include "events.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
 #include "renderer/sprite.hpp"
@@ -77,7 +77,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
 
 
-    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect<Engine, &Engine::finalize>(this);
+    service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
 
     // init systems
 	graphicsSystem = new GraphicsSystem( title, xResolution, yResolution, fullscreen );
@@ -87,7 +87,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 	physicsSystem = new PhysicsSystem();
 
-    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect<Engine, &Engine::prepare>(this);
+    service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
 }
 
 
@@ -178,7 +178,7 @@ void Engine::mainLoop()
 
 }
 
-void Engine::prepare(const Vec2f::RepositionEvent<Entity>& event)
+void Engine::prepare(const WorldRepositionEvent& event)
 {
     service::entity::ref().registry.view<Vec2f>().each
     (
@@ -193,7 +193,7 @@ void Engine::prepare(const Vec2f::RepositionEvent<Entity>& event)
     service::entity::ref().registry.get<Vec2f>(mainCharacter) = event.to;
 }
 
-void Engine::finalize(const Vec2f::RepositionEvent<Entity>& event)
+void Engine::finalize(const WorldRepositionEvent& event)
 {
 
 }

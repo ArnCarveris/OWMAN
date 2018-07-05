@@ -33,8 +33,8 @@ public:
 
 	void mainLoop();
 
-    void prepare(const Vec2f::RepositionEvent<Entity>& event);
-    void finalize(const Vec2f::RepositionEvent<Entity>& event);
+    void prepare(const WorldRepositionEvent& event);
+    void finalize(const WorldRepositionEvent& event);
 
     GraphicsSystem* getGraphicsSystem();
     PhysicsSystem* getPhysicsSystem();

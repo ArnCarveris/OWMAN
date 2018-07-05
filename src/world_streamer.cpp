@@ -3,7 +3,7 @@
 #include "util/file_to_string.hpp"
 #include "math/vec2i.hpp"
 #include "entity_factory.hpp"
-#include "dispatcher.hpp"
+#include "events.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -298,7 +298,8 @@ void WorldStreamer::update(const Vec2f& position)
         // update window pos
         windowPos = nextCell;
 
-        service::dispatcher::ref().trigger<Vec2f::RepositionEvent<Entity>>(position, pos);
+        service::dispatcher::ref().trigger<WorldRepositionEvent>(position, pos);
+
 
         // delete old cells
         for

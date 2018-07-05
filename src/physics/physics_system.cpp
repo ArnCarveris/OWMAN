@@ -18,7 +18,7 @@ PhysicsSystem::PhysicsSystem()
     service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect(this);
 }
 
-void PhysicsSystem::receive(const Vec2f::RepositionEvent<Entity>& event)
+void PhysicsSystem::receive(const WorldRepositionEvent& event)
 {
     service::entity::ref().registry.view<PhysicsComponent, Vec2f>().each([](const Entity entity, PhysicsComponent& component, Vec2f& position) {
         component.setPosition(position);

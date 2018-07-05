@@ -4,6 +4,7 @@
 #include <Box2D/Box2D.h>
 #include "../math/vec2f.hpp"
 #include "../entity.hpp"
+#include "../events.hpp"
 
 #include "physics_component.hpp"
 
@@ -15,7 +16,7 @@ public:
 
     PhysicsSystem();
 
-    void receive(const Vec2f::RepositionEvent<Entity>& event);
+    void receive(const WorldRepositionEvent& event);
 
     void update(unsigned int delta);
 
