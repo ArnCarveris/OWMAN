@@ -184,21 +184,20 @@ worldWindow(windowSize)
 
 }
 
-void WorldStreamer::init(const Vec2i& cell, const Vec2f& offset)
+void WorldStreamer::init(const Position& position)
 {
-
-    windowPos = cell;
+    windowPos = position.getCell();
 
     for
     (
-        int y = cell.y - worldWindow.windowSize;
-        y <= (int)(cell.y + worldWindow.windowSize);
+        int y = windowPos.y - worldWindow.windowSize;
+        y <= (int)(windowPos.y + worldWindow.windowSize);
         y++
     )
     for
     (
-        int x = cell.x - worldWindow.windowSize;
-        x <= (int)(cell.x + worldWindow.windowSize);
+        int x = windowPos.x - worldWindow.windowSize;
+        x <= (int)(windowPos.x + worldWindow.windowSize);
         x++
     )
     if( availableCells.find( Vec2i(x, y) ) != availableCells.end() )

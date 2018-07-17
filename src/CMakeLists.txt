@@ -28,8 +28,8 @@ add_executable(
 	entity_factory.cpp
 	i_world_streamer.cpp
 	main.cpp
-	main_character.cpp
 	position.cpp
+	position_system.cpp
 	world_cell.cpp
 	world_streamer.cpp
 	world_window.cpp

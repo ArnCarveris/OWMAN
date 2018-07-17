@@ -3,6 +3,7 @@
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
 #include "renderer/sprite.hpp"
+#include "main_character.hpp"
 
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
@@ -80,6 +81,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
 
     // init systems
+    positionSystem = new PositionSystem();
+
 	graphicsSystem = new GraphicsSystem( title, xResolution, yResolution, fullscreen );
 	Camera* camera = graphicsSystem->getCamera();
 	camera->setWidth(xResolution/2);
@@ -119,17 +122,14 @@ void Engine::init()
 
     auto node = mcDoc.first_node("main_character");
 
-    auto mainCharacter = service::entity::ref().createMainCharacter(node);
+    auto mainCharacter = service::entity::ref().createEntity(node, Vec2i(0,0), true);
    
+    service::entity::ref().registry.assign<MainCharacter>(entt::tag_t{}, mainCharacter);
+
     delete mcFileText;
 
 
-    service::world_streamer::ref().init
-    (
-        getMainCharacter()->getCell(),
-        service::entity::ref().registry.get<Vec2f>(mainCharacter)
-    );
-
+    service::world_streamer::ref().init(service::entity::ref().registry.get<Position>(mainCharacter));
 }
 
 void Engine::mainLoop()
@@ -198,6 +198,10 @@ void Engine::finalize(const WorldRepositionEvent& event)
 
 }
 
+PositionSystem* Engine::getPositionSystem()
+{
+    return positionSystem;
+}
 GraphicsSystem* Engine::getGraphicsSystem()
 {
 	return graphicsSystem;
@@ -206,16 +210,6 @@ GraphicsSystem* Engine::getGraphicsSystem()
 PhysicsSystem* Engine::getPhysicsSystem()
 {
     return physicsSystem;
-}
-
-MainCharacter* Engine::getMainCharacter()
-{
-    return &service::entity::ref().registry.get<MainCharacter>();
-}
-
-float Engine::getCellSize()const
-{
-    return service::world_streamer::ref().getCellSize();
 }
 
 void Engine::endGame()
@@ -227,6 +221,7 @@ void Engine::endGame()
 
 Engine::~Engine()
 {
+    if (positionSystem) delete positionSystem;
     if( graphicsSystem ) delete graphicsSystem;
 
     service::entity::reset();

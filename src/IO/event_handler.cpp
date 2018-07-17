@@ -2,6 +2,7 @@
 #include "../engine.hpp"
 #include "../physics/physics_component.hpp"
 #include "../renderer/sprite_status.hpp"
+#include "../main_character.hpp"
 #include <cmath>
 #include <iostream>
 

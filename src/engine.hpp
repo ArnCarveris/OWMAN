@@ -1,5 +1,6 @@
 #include "renderer/graphics_system.hpp"
 #include "physics/physics_system.hpp"
+#include "position_system.hpp"
 #include "entity_factory.hpp"
 #include "world_window.hpp"
 #include "world_streamer.hpp"
@@ -19,6 +20,7 @@ class Engine
 	WorldWindow worldGrid;
 
 	// Systems
+    PositionSystem* positionSystem;
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
@@ -36,12 +38,9 @@ public:
     void prepare(const WorldRepositionEvent& event);
     void finalize(const WorldRepositionEvent& event);
 
+    PositionSystem* getPositionSystem();
     GraphicsSystem* getGraphicsSystem();
     PhysicsSystem* getPhysicsSystem();
-
-	MainCharacter* getMainCharacter();
-
-	float getCellSize()const;
 
 	void endGame();
 

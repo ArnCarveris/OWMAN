@@ -59,7 +59,7 @@ public:
 	 * \param offset of the character wrt the cell bot left corner.
 	 * Both params could be ingnored by the implementation.
 	 **/
-	void init(const Vec2i& cell, const Vec2f& offset);
+	void init(const Position& position);
 
 	/**
 	 * \brief Updates the world streamer.

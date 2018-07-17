@@ -9,6 +9,8 @@
 #include <entt/locator/locator.hpp>
 
 
+class Position;
+
 class IWorldStreamer
 {
 public:
@@ -18,7 +20,7 @@ public:
 	 * \param offset of the character wrt the cell bot left corner.
 	 * Both params could be ignored by the implementation.
 	 **/
-	virtual void init(const Vec2i& cell, const Vec2f& offset) = 0;
+	virtual void init(const Position& position) = 0;
 
 	/**
 	 * \brief Updates the world streamer.

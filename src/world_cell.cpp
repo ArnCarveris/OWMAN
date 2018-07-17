@@ -28,14 +28,12 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::unload_synchronously(Worl
     }
     else
     {
-        auto cellSize = service::world_streamer::ref().getCellSize();
-
         auto* root = doc->allocate_node(rapidxml::node_element, str_cell);
         doc->append_node(root);
 
         for (auto& it : ptr->m_final.entities)
         {
-            root->append_node(service::entity::ref().createXmlNode(it, doc, cellSize));
+            root->append_node(service::entity::ref().createXmlNode(it, doc));
 
             service::entity::ref().destroyEntity(it);
         }
@@ -73,7 +71,7 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::synchronize_loaded(WorldC
 
     while (node != 0)
     {
-        auto ent = service::entity::ref().createEntity(node, ptr->m_final.position - windowPos);
+        auto ent = service::entity::ref().createEntity(node, ptr->m_final.position - windowPos, false);
 
         ptr->m_final.entities.push_back(ent);
 
