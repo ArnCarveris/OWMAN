@@ -48,4 +48,9 @@ public:
 
 };
 
+namespace service
+{
+    using engine = entt::ServiceLocator<Engine>;
+}
+
 #endif

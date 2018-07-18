@@ -2,12 +2,11 @@
 
 int main(int argc, char* argv[])
 {
+    service::engine::set("init_file.xml", "world_folder");
 
-    Engine engine("init_file.xml", "world_folder");
+    service::engine::ref().init();
 
-    engine.init();
-
-    engine.mainLoop();
+    service::engine::ref().mainLoop();
 
     return 0;
 }
