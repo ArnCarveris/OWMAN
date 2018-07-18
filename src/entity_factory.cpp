@@ -14,7 +14,7 @@ EntityFactory::EntityFactory(Engine* engine)
 }
 
 
-Entity EntityFactory::createEntity(rapidxml::xml_node<> *node, const bool kinematic)
+Entity EntityFactory::createEntity(rapidxml::xml_node<> *node)
 {
 	Entity entity = registry.create();
 
@@ -36,7 +36,7 @@ Entity EntityFactory::createEntity(rapidxml::xml_node<> *node, const bool kinema
 	xml_node<> *physics_node = node->first_node(xmlstr::physics);
 	if( physics_node )
 	{
-        myEngine->getPhysicsSystem()->assignComponent(registry, entity, physics_node, kinematic);
+        myEngine->getPhysicsSystem()->assignComponent(registry, entity, physics_node);
     }
 
 

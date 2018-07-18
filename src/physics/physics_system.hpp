@@ -23,7 +23,7 @@ public:
 
     b2World* getWorld();
 
-    void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node, const bool kinematic);
+    void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node);
 
     void destroyComponent(EntityRegistry& registry, Entity entity);
 

@@ -41,10 +41,21 @@ b2World* PhysicsSystem::getWorld()
     return world;
 }
 
-void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml_node<>* node, const bool kinematic)
-{
+void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml_node<>* node)
+{ 
+
     auto& position = registry.get<Vec2f>(entity);
     auto& component = registry.assign<PhysicsComponent>(entity);
+
+    bool kinematic = false;
+
+    if (auto *kinematic_node = node->first_node(xmlstr::kinematic))
+    {
+        if (auto* value = kinematic_node->value())
+        {
+            kinematic = !strcmp(value, "1") || !strcmpi(value, "true");
+        }
+    }
 
     xml_node<> *shape_node = node->first_node(xmlstr::shape);
     string sShape(shape_node->value());

@@ -73,7 +73,7 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::synchronize_loaded(WorldC
 
     while (node != 0)
     {
-        auto ent = service::entity::ref().createEntity(node, false);
+        auto ent = service::entity::ref().createEntity(node);
 
         ptr->m_final.entities.push_back(ent);
 
