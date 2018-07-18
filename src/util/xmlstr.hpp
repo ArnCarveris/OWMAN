@@ -26,6 +26,7 @@ namespace xmlstr
     extern const char* priority;
     extern const char* sprite;
     extern const char* mass;
+    extern const char* kinematic;
 
 }
 

@@ -21,5 +21,6 @@ namespace xmlstr
     const char* priority = "priority";
     const char* sprite = "sprite";
     const char* mass = "mass";
+    const char* kinematic = "kinematic";
 
 }
