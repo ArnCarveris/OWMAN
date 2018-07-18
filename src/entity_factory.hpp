@@ -28,7 +28,7 @@ public:
 	 * \param toCenter Number of cells to the center of the world window
 	 * \return A pointer to the entity. Use destroyEntity() to release.
 	 **/
-	Entity createEntity(rapidxml::xml_node<> *node, const Vec2i& toCenter, const bool kinematic);
+	Entity createEntity(rapidxml::xml_node<> *node, const bool kinematic);
 
     rapidxml::xml_node<>* createXmlNode(Entity entity, rapidxml::xml_document<>* doc);
 

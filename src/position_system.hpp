@@ -11,12 +11,13 @@ public:
     PositionSystem();
     ~PositionSystem();
 public:
+    void setRelativeCell(const Vec2i& cell);
 
     void recalc(const Vec2f& input, Position& output);
 
-    void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node, const Vec2i& toCenter);
-
-    void destroyComponent(EntityRegistry& registry, Entity entity);
+    void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node);
 
     rapidxml::xml_node<>* createXmlNode(EntityRegistry& registry, Entity entity, rapidxml::xml_document<>* doc);
+private:
+    Vec2i center;
 };

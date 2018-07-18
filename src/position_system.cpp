@@ -5,11 +5,21 @@
 #include <iostream>
 #include <sstream>
 
-PositionSystem::PositionSystem()
+PositionSystem::PositionSystem() :
+    center(0,0)
 {
 }
 PositionSystem::~PositionSystem()
 {
+}
+
+void PositionSystem::setRelativeCell(const Vec2i& cell)
+{
+    auto cellSize = service::world_streamer::ref().getCellSize();
+    auto relativeCell = cell - service::world_streamer::ref().getWindowPosition();
+
+    center.x = relativeCell.x * cellSize;
+    center.y = relativeCell.y * cellSize;
 }
 
 void PositionSystem::recalc(const Vec2f& input, Position& output)
@@ -29,13 +39,11 @@ void PositionSystem::recalc(const Vec2f& input, Position& output)
     output.setCell(Vec2i(x / cellSize, y / cellSize));
 }
 
-void PositionSystem::assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node, const Vec2i& toCenter)
+void PositionSystem::assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node)
 {
-    float cellSize = service::world_streamer::ref().getCellSize();
-
     auto& component = registry.assign<Position>(entity);
 
-    Vec2f& pos = registry.assign<Vec2f>(entity, toCenter.x * cellSize, toCenter.y * cellSize);
+    Vec2f& pos = registry.assign<Vec2f>(entity, center);
 
     rapidxml::xml_node<> *x_position_node = node->first_node(xmlstr::x);
     rapidxml::xml_node<> *y_position_node = node->first_node(xmlstr::y);

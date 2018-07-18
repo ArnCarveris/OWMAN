@@ -122,7 +122,7 @@ void Engine::init()
 
     auto node = mcDoc.first_node("main_character");
 
-    auto mainCharacter = service::entity::ref().createEntity(node, Vec2i(0,0), true);
+    auto mainCharacter = service::entity::ref().createEntity(node, true);
    
     service::entity::ref().registry.assign<MainCharacter>(entt::tag_t{}, mainCharacter);
 

@@ -14,7 +14,7 @@ EntityFactory::EntityFactory(Engine* engine)
 }
 
 
-Entity EntityFactory::createEntity(rapidxml::xml_node<> *node, const Vec2i& toCenter, const bool kinematic)
+Entity EntityFactory::createEntity(rapidxml::xml_node<> *node, const bool kinematic)
 {
 	Entity entity = registry.create();
 
@@ -22,7 +22,7 @@ Entity EntityFactory::createEntity(rapidxml::xml_node<> *node, const Vec2i& toCe
 	xml_node<> *position_node = node->first_node(xmlstr::position);
     if (position_node)
     {
-        myEngine->getPositionSystem()->assignComponent(registry, entity, position_node, toCenter);
+        myEngine->getPositionSystem()->assignComponent(registry, entity, position_node);
     }
 
 	// graphics

@@ -1,6 +1,7 @@
 #include "world_cell.hpp"
 #include "entity_factory.hpp"
 #include "i_world_streamer.hpp"
+#include "engine.hpp"
 
 
 bool core::resource::LoaderProxy<WorldCell::Resource>::load_synchronously(WorldCell::Resource* ptr)
@@ -64,14 +65,15 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::unload_asynchronously(Wor
 }
 bool core::resource::LoaderProxy<WorldCell::Resource>::synchronize_loaded(WorldCell::Resource* ptr)
 {
-    auto& windowPos = service::world_streamer::ref().getWindowPosition();
     auto *node = ptr->m_intermediate.getNode();
+
+    service::engine::ref().getPositionSystem()->setRelativeCell(ptr->m_final.position);
 
     node = node->first_node("entity");
 
     while (node != 0)
     {
-        auto ent = service::entity::ref().createEntity(node, ptr->m_final.position - windowPos, false);
+        auto ent = service::entity::ref().createEntity(node, false);
 
         ptr->m_final.entities.push_back(ent);
 
