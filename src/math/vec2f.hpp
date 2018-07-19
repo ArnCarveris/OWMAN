@@ -36,5 +36,10 @@ public:
 
 };
 
+template<typename Archive>
+void serialize(Archive &archive, Vec2f &ref) {
+    archive(cereal::make_nvp("x", ref.x));
+    archive(cereal::make_nvp("y", ref.y));
+}
 
 #endif
