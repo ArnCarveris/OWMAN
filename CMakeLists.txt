@@ -27,6 +27,7 @@ find_package(sdl2 REQUIRED)
 find_package(glm REQUIRED)
 find_package(unofficial-box2d REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(cereal REQUIRED)
 #
 # Compiler stuff
 #
