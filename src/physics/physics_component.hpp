@@ -24,6 +24,11 @@ public:
     Vec2f getSpeed()const;
     void setSpeed(const Vec2f& v);
 
+    template <class Archive>
+    void load(Archive & ar);
+
+    template <class Archive>
+    void save(Archive & ar) const;
 };
 
 #endif
