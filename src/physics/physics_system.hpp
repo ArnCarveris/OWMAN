@@ -25,6 +25,8 @@ public:
 
     void assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node);
 
+    void createdComponent(EntityRegistry& registry, Entity entity);
+
     void destroyComponent(EntityRegistry& registry, Entity entity);
 
     rapidxml::xml_node<>* createXmlNode(EntityRegistry& registry, Entity entity, rapidxml::xml_document<>* doc);

@@ -14,6 +14,7 @@ PhysicsSystem::PhysicsSystem()
     b2Vec2 gravity(0, 0);
     world = new b2World(gravity);
 
+    service::entity::ref().registry.construction<PhysicsComponent>().connect<PhysicsSystem, &PhysicsSystem::createdComponent>(this);
     service::entity::ref().registry.destruction<PhysicsComponent>().connect<PhysicsSystem, &PhysicsSystem::destroyComponent>(this);
     service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect(this);
 }
@@ -43,10 +44,8 @@ b2World* PhysicsSystem::getWorld()
 
 void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml_node<>* node)
 { 
-
-    auto& position = registry.get<Vec2f>(entity);
-    auto& component = registry.assign<PhysicsComponent>(entity);
-
+    PhysicsComponent component;
+    
     bool kinematic = false;
 
     if (auto *kinematic_node = node->first_node(xmlstr::kinematic))
@@ -68,7 +67,6 @@ void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml
 
     bodyDef.fixedRotation = true;
     bodyDef.active = true;
-    bodyDef.position.Set(position.x, position.y);
 
     if (kinematic)
     {
@@ -115,6 +113,16 @@ void PhysicsSystem::assignComponent(EntityRegistry& registry, Entity entity, xml
 
         component.body->CreateFixture(&fixtureDef);
     }
+    
+    registry.assign<PhysicsComponent>(entity, std::move(component));
+}
+
+void PhysicsSystem::createdComponent(EntityRegistry& registry, Entity entity)
+{
+    auto& position = registry.get<Vec2f>(entity);
+    auto& component = registry.get<PhysicsComponent>(entity);
+
+    component.setPosition(position);
 }
 
 void PhysicsSystem::destroyComponent(EntityRegistry& registry, Entity entity)
