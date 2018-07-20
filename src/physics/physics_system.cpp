@@ -3,6 +3,7 @@
 #include "../entity_factory.hpp"
 #include "../math/functions.hpp"
 #include "../util/xmlstr.hpp"
+#include "physics_component.hpp"
 #include <sstream>
 
 using namespace std;

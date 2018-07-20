@@ -2,7 +2,9 @@
 #include "../engine.hpp"
 #include "../physics/physics_component.hpp"
 #include "../renderer/sprite_status.hpp"
+#include "../renderer/graphics_system.hpp"
 #include "../main_character.hpp"
+#include "../entity_factory.hpp"
 #include <cmath>
 #include <iostream>
 

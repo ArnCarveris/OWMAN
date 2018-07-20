@@ -5,8 +5,7 @@
 #include "../math/vec2f.hpp"
 #include "../entity.hpp"
 #include "../events.hpp"
-
-#include "physics_component.hpp"
+#include <rapidxml.hpp>
 
 class PhysicsSystem
 {

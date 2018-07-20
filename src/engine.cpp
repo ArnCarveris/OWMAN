@@ -4,6 +4,12 @@
 #include "renderer/texture.hpp"
 #include "renderer/sprite.hpp"
 #include "main_character.hpp"
+#include "IO/event_handler.hpp"
+#include "entity_factory.hpp"
+#include "position_system.hpp"
+#include "renderer/graphics_system.hpp"
+#include "physics/physics_system.hpp"
+#include "world_streamer.hpp"
 
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"

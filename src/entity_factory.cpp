@@ -1,9 +1,11 @@
 #include "entity_factory.hpp"
 #include "cell_size.hpp"
-#include "physics/physics_component.hpp"
 #include "engine.hpp"
-#include "renderer/sprite_status.hpp"
 #include "util/xmlstr.hpp"
+
+#include "position_system.hpp"
+#include "physics/physics_system.hpp"
+#include "renderer/graphics_system.hpp"
 
 using namespace rapidxml;
 using namespace std;

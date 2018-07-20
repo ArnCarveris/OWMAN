@@ -1,19 +1,20 @@
-#include "renderer/graphics_system.hpp"
-#include "physics/physics_system.hpp"
-#include "position_system.hpp"
-#include "entity_factory.hpp"
-#include "world_window.hpp"
-#include "world_streamer.hpp"
-#include "test_world_streamer.hpp"
-#include "IO/event_handler.hpp"
+
 
 #ifndef ENGINE
 #define ENGINE
+
+#include "events.hpp"
+#include "world_window.hpp"
+#include <string>
 
 /** \brief encapsulates all systems
  * Has the main loop. Contains all systems like graphics system
  * and physics system
  */
+class PositionSystem;
+class GraphicsSystem;
+class PhysicsSystem;
+
 class Engine
 {
 

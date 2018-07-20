@@ -2,6 +2,7 @@
 #include "entity_factory.hpp"
 #include "i_world_streamer.hpp"
 #include "engine.hpp"
+#include "position_system.hpp"
 
 
 bool core::resource::LoaderProxy<WorldCell::Resource>::load_synchronously(WorldCell::Resource* ptr)
