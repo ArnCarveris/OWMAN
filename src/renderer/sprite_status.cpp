@@ -3,7 +3,6 @@
 #include "animation.hpp"
 #include "animation_frame.hpp"
 #include "../math/functions.hpp"
-#include "graphics_system.hpp"
 #include "texture.hpp"
 #include "../util/xmlstr.hpp"
 #include <iostream>
@@ -11,9 +10,8 @@
 using namespace std;
 using namespace rapidxml;
 
-SpriteStatus::SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite)
+SpriteStatus::SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite)
 :
-    myGraphicsSystem(system),
     visible(true),
     priority(0),
     scale(1, 1),
@@ -25,10 +23,6 @@ SpriteStatus::SpriteStatus(GraphicsSystem* system, const core::resource::Handle<
     //cout << "-" << endl;
 }
 
-GraphicsSystem* SpriteStatus::getGraphicsSystem()
-{
-    return myGraphicsSystem;
-}
 
 bool SpriteStatus::isVisible()const
 {

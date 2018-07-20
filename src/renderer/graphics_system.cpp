@@ -87,7 +87,7 @@ void GraphicsSystem::assignComponent(EntityRegistry& registry, Entity entity, ra
     float height_graphics = atof(height_graphics_node->value());
     rapidxml::xml_node<> *priority_node = node->first_node(xmlstr::priority);
     
-    SpriteStatus& spriteStatus = registry.assign<SpriteStatus>(entity, this, service::resource::ref().obtain<Sprite::Resource>(core::resource::ID{ spriteName.c_str() }));
+    SpriteStatus& spriteStatus = registry.assign<SpriteStatus>(entity, service::resource::ref().obtain<Sprite::Resource>(core::resource::ID{ spriteName.c_str() }));
     spriteStatus.setScale(Vec2f(width_graphics, height_graphics));    // < TODO
 
 

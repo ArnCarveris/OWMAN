@@ -3,14 +3,14 @@
 
 #include "sprite.hpp"
 #include <string>
+#include "../util/xmlstr.hpp"
+#include <cereal/cereal.hpp>
 
 class GraphicsSystem;
 
 class SpriteStatus
 {
     friend class GraphicsSystem;
-
-    GraphicsSystem* myGraphicsSystem;
     bool visible;
     int priority;	// the higher the more priority
 
@@ -23,9 +23,7 @@ class SpriteStatus
     core::resource::Handle<Sprite::Resource> sprite;
 public:
 
-    SpriteStatus(GraphicsSystem* system, const core::resource::Handle<Sprite::Resource>& sprite);
-
-    GraphicsSystem* getGraphicsSystem();
+    SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite);
     
     bool isVisible()const;
     void setVisible(bool visible);
