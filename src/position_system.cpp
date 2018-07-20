@@ -1,6 +1,7 @@
 #include "position_system.hpp"
 #include "util/xmlstr.hpp"
 #include "i_world_streamer.hpp"
+#include "entity_factory.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -8,6 +9,7 @@
 PositionSystem::PositionSystem() :
     center(0,0)
 {
+    service::entity::ref().registry.construction<Position>().connect<PositionSystem, &PositionSystem::createdComponent>(this);
 }
 PositionSystem::~PositionSystem()
 {
@@ -41,9 +43,7 @@ void PositionSystem::recalc(const Vec2f& input, Position& output)
 
 void PositionSystem::assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node)
 {
-    auto& component = registry.assign<Position>(entity);
-
-    Vec2f& pos = registry.assign<Vec2f>(entity, center);
+    Position component;
 
     rapidxml::xml_node<> *x_position_node = node->first_node(xmlstr::x);
     rapidxml::xml_node<> *y_position_node = node->first_node(xmlstr::y);
@@ -54,14 +54,21 @@ void PositionSystem::assignComponent(EntityRegistry& registry, Entity entity, ra
     if (x_position_node && y_position_node)
     {
         component.setOffset(Vec2i(atof(x_position_node->value()), atof(y_position_node->value())));
-
-        pos += component.getOffset();
     }
 
     if (cell_x_node && cell_y_node)
     {
         component.setCell(Vec2i(atoi(cell_x_node->value()), atoi(cell_y_node->value())));
     }
+
+    registry.assign<Position>(entity, std::move(component));
+}
+
+void PositionSystem::createdComponent(EntityRegistry& registry, Entity entity)
+{
+    auto& component = registry.get<Position>(entity);
+
+    registry.assign<Vec2f>(entity, center + component.getOffset());
 }
 
 
