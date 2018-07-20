@@ -48,6 +48,8 @@ public:
     void setAnimation(const std::string& animName);
     void setAnimation(unsigned animIndex);
 
+    template<typename Archive>
+    void serialize(Archive &archive);
 };
 
 #endif // SPRITE_STATUS
