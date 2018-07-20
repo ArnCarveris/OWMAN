@@ -12,6 +12,7 @@
 		<priority>10</priority>
 	</graphics>
 	<physics>
+		<kinematic>true</kinematic>
 		<shape>box</shape>
 		<width>16</width>
 		<height>16</height>
