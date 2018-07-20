@@ -11,6 +11,60 @@
 
 namespace core::resource
 {
+    template<typename Type>
+    class SerializableHandle final
+    {
+    public:
+        using type = entt::ResourceHandle<Type>;
+    public:
+        SerializableHandle() = default;
+        SerializableHandle(const SerializableHandle &) ENTT_NOEXCEPT = default;
+        SerializableHandle(SerializableHandle &&) ENTT_NOEXCEPT = default;
+        SerializableHandle & operator=(const SerializableHandle &) ENTT_NOEXCEPT = default;
+        SerializableHandle & operator=(SerializableHandle &&) ENTT_NOEXCEPT = default;
+
+        void reset() ENTT_NOEXCEPT { m_instance.reset() }
+        inline const Type & get() const ENTT_NOEXCEPT { return m_instance.get(); }
+
+        inline operator const Type &() const ENTT_NOEXCEPT { return get(); }
+        inline const Type & operator *() const ENTT_NOEXCEPT { return get(); }
+        inline const Type * operator ->() const ENTT_NOEXCEPT { return m_instance.operator->(); }
+
+        explicit operator bool() const { return m_instance.operator bool(); }
+    public:
+        SerializableHandle(const type& proxy) ENTT_NOEXCEPT
+            : m_instance{ proxy }
+        { }
+        SerializableHandle(type&& proxy) ENTT_NOEXCEPT
+            : m_instance{ std::move(proxy) }
+        { }
+        SerializableHandle & operator=(const type& proxy) ENTT_NOEXCEPT {
+            m_instance = proxy;
+            return *this;
+        }
+        SerializableHandle & operator=(type&& proxy) ENTT_NOEXCEPT {
+            m_instance = std::move(proxy);
+            return *this;
+        }
+    public:
+        inline operator type &() ENTT_NOEXCEPT { return m_instance; }
+        inline operator const type &() const ENTT_NOEXCEPT { return m_instance; }
+    public:
+        template <class Archive>
+        std::string save_minimal(Archive const &) const
+        {
+            return { (const char*)m_instance.get() };
+        }
+
+        template <class Archive>
+        void load_minimal(Archive const &, std::string const & id)
+        {
+            m_instance = service::resource::ref().obtain<Data>(core::resource::ID{ id.c_str() });
+        }
+    private:
+        type m_instance;
+    };
+
     struct Request;
 
     template<typename> class Loader;struct ILoader
