@@ -84,8 +84,7 @@ namespace core::resource
     using Cache = entt::ResourceCache<Type>;
 
     template<typename Type>
-    using Handle = entt::ResourceHandle<Type>;
-
+    using Handle = SerializableHandle<Type>;
 
     template<typename Type>
     inline TypeID GetTypeID()
