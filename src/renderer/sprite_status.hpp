@@ -22,7 +22,7 @@ class SpriteStatus
 
     core::resource::Handle<Sprite::Resource> sprite;
 public:
-
+    SpriteStatus() = default;
     SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite);
     
     bool isVisible()const;

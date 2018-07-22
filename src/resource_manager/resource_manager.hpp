@@ -59,7 +59,7 @@ namespace core::resource
         template <class Archive>
         void load_minimal(Archive const &, std::string const & id)
         {
-            m_instance = service::resource::ref().obtain<Data>(core::resource::ID{ id.c_str() });
+            m_instance = service::resource::ref().obtain<Type>(core::resource::ID{ id.c_str() });
         }
     private:
         type m_instance;
