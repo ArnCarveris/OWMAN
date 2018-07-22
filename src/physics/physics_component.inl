@@ -1,4 +1,5 @@
 #include "../math/vec2f.hpp"
+#include "../math/functions.hpp"
 #include <math.h>
 #include <string>
 #include <cereal/cereal.hpp>
@@ -13,6 +14,7 @@ void PhysicsComponent::load(Archive & ar)
     b2BodyDef bodyDef;
     b2FixtureDef fixtureDef;
 
+    bool kinematic = false;
     try
     {
         ar(cereal::make_nvp(xmlstr::kinematic, kinematic));
@@ -42,7 +44,7 @@ void PhysicsComponent::load(Archive & ar)
     body = service::engine::ref().getPhysicsSystem()->getWorld()->CreateBody(&bodyDef);
 
 
-    if (sShape == xmlstr::box)
+    if (shape == xmlstr::box)
     {
         Vec2f scale;
 
@@ -58,7 +60,7 @@ void PhysicsComponent::load(Archive & ar)
 
         body->CreateFixture(&fixtureDef);
     }
-    else if (sShape == xmlstr::circle)
+    else if (shape == xmlstr::circle)
     {
         float radius; ar(cereal::make_nvp(xmlstr::radius, radius));
 
