@@ -27,6 +27,20 @@ namespace core::serialization
         template<typename Archive>
         void save(Archive& archive) const;
     };
+
+    struct EntitiesMediator
+    {
+        EntitiesMediator() = delete;
+        EntitiesMediator(const EntitiesMediator&) = delete;
+
+        std::vector<Entity>& entities;
+
+        template<typename Archive>
+        void load(Archive& archive);
+
+        template<typename Archive>
+        void save(Archive& archive) const;
+    };
 }
 
 class EntityFactory
