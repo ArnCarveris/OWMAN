@@ -12,6 +12,23 @@ class Engine;
 #ifndef ENTITY_FACTORY
 #define ENTITY_FACTORY
 
+namespace core::serialization
+{
+    struct EntityMediator
+    {
+        EntityMediator() = delete;
+        EntityMediator(const EntityMediator&) = delete;
+
+        Entity& entity;
+
+        template<typename Archive>
+        void load(Archive& archive);
+
+        template<typename Archive>
+        void save(Archive& archive) const;
+    };
+}
+
 class EntityFactory
 {
 
