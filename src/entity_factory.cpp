@@ -74,8 +74,3 @@ rapidxml::xml_node<>* EntityFactory::createXmlNode(Entity entity, rapidxml::xml_
     return node_ent;
 
 }
-
-void EntityFactory::destroyEntity(Entity entity)
-{
-    registry.destroy(entity);
-}
