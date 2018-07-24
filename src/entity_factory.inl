@@ -1,4 +1,8 @@
 
+#include "position.hpp"
+#include "physics/physics_component.hpp"
+#include "renderer/sprite_status.hpp"
+
 #include "position.inl"
 #include "physics/physics_component.inl"
 #include "renderer/sprite_status.inl"
