@@ -32,8 +32,6 @@ public:
 
     rapidxml::xml_node<>* createXmlNode(Entity entity, rapidxml::xml_document<>* doc);
 
-	void destroyEntity(Entity entity);
-
 };
 
 namespace service

@@ -33,11 +33,11 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::unload_synchronously(Worl
         auto* root = doc->allocate_node(rapidxml::node_element, str_cell);
         doc->append_node(root);
 
-        for (auto& it : ptr->m_final.entities)
+        for (auto& entity : ptr->m_final.entities)
         {
-            root->append_node(service::entity::ref().createXmlNode(it, doc));
+            root->append_node(service::entity::ref().createXmlNode(entity, doc));
 
-            service::entity::ref().destroyEntity(it);
+            service::entity::ref().registry.destroy(entity);
         }
 
         ptr->m_final.entities.clear();
