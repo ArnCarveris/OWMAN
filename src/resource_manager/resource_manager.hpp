@@ -9,19 +9,19 @@
 #include <entt/locator/locator.hpp>
 #include <entt/resource/registry.hpp>
 
-namespace core::resource
+namespace core::serialization
 {
     template<typename Type>
-    class SerializableHandle final
+    class ResourceHandle final
     {
     public:
         using type = entt::ResourceHandle<Type>;
     public:
-        SerializableHandle() = default;
-        SerializableHandle(const SerializableHandle &) ENTT_NOEXCEPT = default;
-        SerializableHandle(SerializableHandle &&) ENTT_NOEXCEPT = default;
-        SerializableHandle & operator=(const SerializableHandle &) ENTT_NOEXCEPT = default;
-        SerializableHandle & operator=(SerializableHandle &&) ENTT_NOEXCEPT = default;
+        ResourceHandle() = default;
+        ResourceHandle(const ResourceHandle &) ENTT_NOEXCEPT = default;
+        ResourceHandle(ResourceHandle &&) ENTT_NOEXCEPT = default;
+        ResourceHandle & operator=(const ResourceHandle &) ENTT_NOEXCEPT = default;
+        ResourceHandle & operator=(ResourceHandle &&) ENTT_NOEXCEPT = default;
 
         void reset() ENTT_NOEXCEPT { m_instance.reset() }
         inline const Type & get() const ENTT_NOEXCEPT { return m_instance.get(); }
@@ -32,17 +32,17 @@ namespace core::resource
 
         explicit operator bool() const { return m_instance.operator bool(); }
     public:
-        SerializableHandle(const type& proxy) ENTT_NOEXCEPT
+        ResourceHandle(const type& proxy) ENTT_NOEXCEPT
             : m_instance{ proxy }
         { }
-        SerializableHandle(type&& proxy) ENTT_NOEXCEPT
+        ResourceHandle(type&& proxy) ENTT_NOEXCEPT
             : m_instance{ std::move(proxy) }
         { }
-        SerializableHandle & operator=(const type& proxy) ENTT_NOEXCEPT {
+        ResourceHandle & operator=(const type& proxy) ENTT_NOEXCEPT {
             m_instance = proxy;
             return *this;
         }
-        SerializableHandle & operator=(type&& proxy) ENTT_NOEXCEPT {
+        ResourceHandle & operator=(type&& proxy) ENTT_NOEXCEPT {
             m_instance = std::move(proxy);
             return *this;
         }
@@ -64,7 +64,10 @@ namespace core::resource
     private:
         type m_instance;
     };
+}
 
+namespace core::resource
+{
     struct Request;
 
     template<typename> class Loader;struct ILoader
@@ -84,7 +87,7 @@ namespace core::resource
     using Cache = entt::ResourceCache<Type>;
 
     template<typename Type>
-    using Handle = SerializableHandle<Type>;
+    using Handle = core::serialization::ResourceHandle<Type>;
 
     template<typename Type>
     inline TypeID GetTypeID()
