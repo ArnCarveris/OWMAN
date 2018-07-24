@@ -15,10 +15,14 @@ class Position
 	
 public:
 
-	Position(){}
+    Position() = default;
+    Position(Position&&) = default;
+    Position(const Position&) = default;
 	Position(const Vec2i& cell, const Vec2f& offset);
-	Position(const Position& pos);
-	
+
+    Position& operator=(Position&&) = default;
+    Position& operator=(const Position&) = default;
+
 	const Vec2i& getCell()const;
 	const Vec2f& getOffset()const;
 	
@@ -28,7 +32,6 @@ public:
 	void setCell(const Vec2i& cell);
 	void setOffset(const Vec2f& offset);
 	
-	Position operator=(const Position& pos);
 	
 	Position operator+(const Position& pos)const;
 	Position operator-(const Position& pos)const;

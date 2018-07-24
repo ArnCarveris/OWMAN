@@ -12,14 +12,8 @@ using namespace rapidxml;
 
 SpriteStatus::SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite)
 :
-    visible(true),
-    priority(0),
-    scale(1, 1),
     sprite(sprite)
 {
-    currentAnimation = 0;
-    currentFrame = 0;
-    elapsedTime = 0.0f;
     //cout << "-" << endl;
 }
 

@@ -14,9 +14,15 @@ class PhysicsComponent
 
 protected:
 
-    b2Body* body;
+    b2Body* body = nullptr;
 
 public:
+    PhysicsComponent() = default;
+    PhysicsComponent(PhysicsComponent&&) = default;
+    PhysicsComponent(const PhysicsComponent&) = default;
+
+    PhysicsComponent& operator=(PhysicsComponent&&) = default;
+    PhysicsComponent& operator=(const PhysicsComponent&) = default;
 
     Vec2f getPosition()const;
     void setPosition(const Vec2f& v);

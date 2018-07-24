@@ -7,32 +7,20 @@ Vec2i::Vec2i(int x, int y)
 	this->y = y;
 }
 
-Vec2i::Vec2i(const Vec2i& v)
-{
-    this->x = v.x;
-    this->y = v.y;
-}
-
 Vec2i::Vec2i(const Vec2f& v)
 {
    this->x = v.x;
    this->y = v.y;
 }
 
-Vec2i Vec2i::operator=(const Vec2i& vec)
-{
-	this->x = vec.x;
-	this->y = vec.y;
-	return *this;
-}
 
-Vec2i Vec2i::operator+=(const Vec2i& vec)
+Vec2i& Vec2i::operator+=(const Vec2i& vec)
 {
     (*this) = (*this) + vec;
     return *this;
 }
 
-Vec2i Vec2i::operator-=(const Vec2i& vec)
+Vec2i& Vec2i::operator-=(const Vec2i& vec)
 {
     (*this) = (*this) - vec;
     return *this;

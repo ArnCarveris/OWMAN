@@ -18,17 +18,21 @@ public:
     };
 public:
 
-	float x, y;
+	float x = 0.0f, y = 0.0f;
 
-	Vec2f(){}
+    Vec2f() = default;
+    Vec2f(Vec2f&&) = default;
+    Vec2f(const Vec2f&) = default;
+
 	Vec2f(float x, float y);
-	Vec2f(const Vec2f& v);
 	Vec2f(const Vec2i& v);
 
-	Vec2f operator=(const Vec2f& vec);
+    Vec2f& operator=(Vec2f&&) = default;
+    Vec2f& operator=(const Vec2f&) = default;
 
-    Vec2f operator+=(const Vec2f& vec);
-    Vec2f operator-=(const Vec2f& vec);
+
+    Vec2f& operator+=(const Vec2f& vec);
+    Vec2f& operator-=(const Vec2f& vec);
 
 	Vec2f operator+(const Vec2f& vec)const;
 	Vec2f operator-(const Vec2f& vec)const;

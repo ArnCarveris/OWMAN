@@ -8,15 +8,17 @@ class AARect{
 
 public:
 
-    float x, y;
-    float w, h;
+    float x = 0.0f, y = 0.0f;
+    float w = 0.0f, h = 0.0f;
 
-    AARect(){}
+    AARect() = default;
+    AARect(AARect&&) = default;
+    AARect(const AARect&) = default;
+
     AARect(float x, float y, float w, float h);
-    AARect(const AARect& rect);
 
-    AARect operator=(const AARect& rect);
-
+    AARect& operator=(AARect&&) = default;
+    AARect& operator=(const AARect&) = default;
 };
 
 template<typename Archive>

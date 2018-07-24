@@ -7,12 +7,6 @@ Position::Position(const Vec2i& cell, const Vec2f& offset)
 	this->offset = offset;
 }
 
-Position::Position(const Position& pos)
-{
-	cell = pos.cell;
-	offset = pos.offset;
-}
-
 const Vec2i& Position::getCell()const
 {
 	return cell;
@@ -43,14 +37,6 @@ void Position::setOffset(const Vec2f& offset)
 	this->offset = offset;
 }
 
-Position Position::operator=(const Position& pos)
-{
-	
-	cell = pos.cell;
-	offset = pos.offset;
-	return *this;
-	
-}
 
 Position Position::operator+(const Position& pos)const
 {

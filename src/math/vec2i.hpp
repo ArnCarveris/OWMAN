@@ -20,17 +20,19 @@ public:
 
 public:
 
-	int x, y;
+	int x = 0, y = 0;
 
-	Vec2i(){}
+    Vec2i() = default;
+    Vec2i(Vec2i&&) = default;
+    Vec2i(const Vec2i&) = default;
 	Vec2i(int x, int y);
-	Vec2i(const Vec2i& v);
 	Vec2i(const Vec2f& v);
 
-	Vec2i operator=(const Vec2i& vec);
+    Vec2i& operator=(Vec2i&&) = default;
+    Vec2i& operator=(const Vec2i&) = default;
 
-	Vec2i operator+=(const Vec2i& vec);
-	Vec2i operator-=(const Vec2i& vec);
+	Vec2i& operator+=(const Vec2i& vec);
+	Vec2i& operator-=(const Vec2i& vec);
 
 	Vec2i operator+(const Vec2i& vec)const;
 	Vec2i operator-(const Vec2i& vec)const;

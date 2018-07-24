@@ -11,20 +11,26 @@ class GraphicsSystem;
 class SpriteStatus
 {
     friend class GraphicsSystem;
-    bool visible;
-    int priority;	// the higher the more priority
+    bool visible{ true };
+    int priority{ 0 };	// the higher the more priority
 
-    Vec2f scale;
+    Vec2f scale{ 1, 1 };
 
-    unsigned currentAnimation;
-    unsigned currentFrame;
-    float elapsedTime;  //< elapsed time in the current frame
+    unsigned currentAnimation{ 0 };
+    unsigned currentFrame{ 0 };
+    float elapsedTime{ 0.0f };  //< elapsed time in the current frame
 
     core::resource::Handle<Sprite::Resource> sprite;
 public:
     SpriteStatus() = default;
+    SpriteStatus(SpriteStatus&&) = default;
+    SpriteStatus(const SpriteStatus&) = default;
+
     SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite);
-    
+
+    SpriteStatus& operator=(SpriteStatus&&) = default;
+    SpriteStatus& operator=(const SpriteStatus&) = default;
+
     bool isVisible()const;
     void setVisible(bool visible);
 
