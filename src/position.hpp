@@ -36,7 +36,10 @@ public:
 	Position operator-()const;
 
     template<typename Archive>
-    void serialize(Archive &archive);
+    void load(Archive &archive);
+
+    template<typename Archive>
+    void save(Archive &archive) const;
 };
 
 #endif
