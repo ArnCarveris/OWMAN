@@ -1,6 +1,6 @@
 #include <vector>
 #include "math/vec2i.hpp"
-#include "resource_manager/resource_xml.hpp"
+#include "resource_manager/resource_archive.hpp"
 #include "resource_manager/resource_manager.hpp"
 #include "entity.hpp"
 
@@ -19,7 +19,7 @@ public:
         SAVED
     };
 
-    using Resource = core::resource::Data<ResourceXml, WorldCell, Status>;
+    using Resource = core::resource::Data<ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>, WorldCell, Status>;
 
 public:
     std::vector<Entity> entities;
