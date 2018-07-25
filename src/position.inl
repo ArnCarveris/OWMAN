@@ -1,21 +1,12 @@
 
-#include <cereal/cereal.hpp>
+#include "util/xml.hpp"
 #include "util/xmlstr.hpp"
 
 template<typename Archive>
 void Position::load(Archive &archive) 
 {
-    try
-    {
-        archive(cereal::make_nvp(xmlstr::cell_x, cell.x));
-        archive(cereal::make_nvp(xmlstr::cell_y, cell.y));
-    }
-    catch (const std::exception e) 
-    {
-        cell = Vec2i(0, 0); 
-        
-        (void)e;
-    }
+    cereal::make_optional_nvp(archive, xmlstr::cell_x, cell.x);
+    cereal::make_optional_nvp(archive, xmlstr::cell_y, cell.y);
 
     archive(cereal::make_nvp(xmlstr::x, offset.x));
     archive(cereal::make_nvp(xmlstr::y, offset.y));

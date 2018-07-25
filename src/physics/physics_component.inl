@@ -2,7 +2,7 @@
 #include "../math/functions.hpp"
 #include <math.h>
 #include <string>
-#include <cereal/cereal.hpp>
+#include "../util/xml.hpp"
 #include "../engine.hpp"
 #include "physics_system.hpp"
 
@@ -15,12 +15,9 @@ void PhysicsComponent::load(Archive & ar)
     b2FixtureDef fixtureDef;
 
     bool kinematic = false;
-    try
-    {
-        ar(cereal::make_nvp(xmlstr::kinematic, kinematic));
-    }
-    catch (const std::exception e) { (void)e; }
 
+    cereal::make_optional_nvp(ar, xmlstr::kinematic, kinematic);
+    
     ar(cereal::make_nvp(xmlstr::mass, mass));
     ar(cereal::make_nvp(xmlstr::shape, shape));
 

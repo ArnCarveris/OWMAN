@@ -7,6 +7,22 @@
 #include "physics/physics_component.inl"
 #include "renderer/sprite_status.inl"
 
+namespace xmlstr::component
+{
+    template<typename Archive>
+    bool has(Archive& archive, const char* name)
+    {
+        const char* current = archive.getNodeName();
+
+        return current != nullptr && !strcmp(current, name);
+    }
+
+    const std::array<const char*, 3> list = {
+        position,
+        graphics,
+        physics
+    };
+}
 
 namespace core::serialization
 {
@@ -21,13 +37,7 @@ namespace core::serialization
             .importer<const char*, cereal::NameValuePair>()
             .component<Position,SpriteStatus,PhysicsComponent>
             (
-                archive, 
-                entity, 
-                {
-                    xmlstr::position,
-                    xmlstr::graphics,
-                    xmlstr::physics
-                }
+                archive, xmlstr::component::has<Archive>, entity, xmlstr::component::list
             )
         ;
     }
@@ -41,13 +51,7 @@ namespace core::serialization
             .exporter<const char*, cereal::NameValuePair>()
             .component<Position,SpriteStatus,PhysicsComponent>
             (
-                archive, 
-                entity, 
-                {
-                    xmlstr::position,
-                    xmlstr::graphics,
-                    xmlstr::physics
-                }
+                archive, entity, xmlstr::component::list
             )
         ;
     }
@@ -71,12 +75,7 @@ namespace core::serialization
             archive.startNode();
             importer.component<Position, SpriteStatus, PhysicsComponent>
             (
-                archive, entity,
-                {
-                    xmlstr::position,
-                    xmlstr::graphics,
-                    xmlstr::physics
-                }
+                archive, xmlstr::component::has<Archive>, entity, xmlstr::component::list
             );
             archive.finishNode();
         }
@@ -96,12 +95,7 @@ namespace core::serialization
             archive.startNode();
             exporter.component<Position, SpriteStatus, PhysicsComponent>
             (
-                archive, entity,
-                {
-                    xmlstr::position,
-                    xmlstr::graphics,
-                    xmlstr::physics
-                }
+                archive, entity, xmlstr::component::list
             );
             archive.finishNode();
         }
