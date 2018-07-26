@@ -41,29 +41,6 @@ void PositionSystem::recalc(const Vec2f& input, Position& output)
     output.setCell(Vec2i(x / cellSize, y / cellSize));
 }
 
-void PositionSystem::assignComponent(EntityRegistry& registry, Entity entity, rapidxml::xml_node<>* node)
-{
-    Position component;
-
-    rapidxml::xml_node<> *x_position_node = node->first_node(xmlstr::x);
-    rapidxml::xml_node<> *y_position_node = node->first_node(xmlstr::y);
-
-    rapidxml::xml_node<> *cell_x_node = node->first_node(xmlstr::cell_x);
-    rapidxml::xml_node<> *cell_y_node = node->first_node(xmlstr::cell_y);
-
-    if (x_position_node && y_position_node)
-    {
-        component.setOffset(Vec2i(atof(x_position_node->value()), atof(y_position_node->value())));
-    }
-
-    if (cell_x_node && cell_y_node)
-    {
-        component.setCell(Vec2i(atoi(cell_x_node->value()), atoi(cell_y_node->value())));
-    }
-
-    registry.assign<Position>(entity, std::move(component));
-}
-
 void PositionSystem::createdComponent(EntityRegistry& registry, Entity entity)
 {
     auto& component = registry.get<Position>(entity);
@@ -71,67 +48,3 @@ void PositionSystem::createdComponent(EntityRegistry& registry, Entity entity)
     registry.assign<Vec2f>(entity, center + component.getOffset());
 }
 
-
-rapidxml::xml_node<>* PositionSystem::createXmlNode(EntityRegistry& registry, Entity entity, rapidxml::xml_document<>* doc)
-{
-    if (!registry.has<Position>(entity))
-    {
-        return nullptr;
-    }
-    char* s;
-    std::stringstream ss;
-
-    auto& component = registry.get<Position>(entity);
-
-    rapidxml::xml_node<>* pos_node = doc->allocate_node(rapidxml::node_element, xmlstr::position);
-
-#ifdef NOT_USED
-    /// cell_x
-    {
-        ss.str(std::string());
-        ss.clear();
-        ss << component.getCell().x;
-        std::string sx = ss.str();
-        char* s = doc->allocate_string(sx.c_str());
-        rapidxml::xml_node<>* x_node = doc->allocate_node(rapidxml::node_element, xmlstr::cell_x, s);
-        pos_node->append_node(x_node);
-    }
-
-    /// cell_y
-    {
-        ss.str(std::string());
-        ss.clear();
-        ss << component.getCell().y;
-        std::string sy = ss.str();
-        s = doc->allocate_string(sy.c_str());
-        rapidxml::xml_node<>* y_node = doc->allocate_node(rapidxml::node_element, xmlstr::cell_y, s);
-        pos_node->append_node(y_node);
-    }
-#else
-    recalc(registry.get<Vec2f>(entity), component);
-#endif
-    /// x
-    {
-        ss.str(std::string());
-        ss.clear();
-        ss << component.getOffset().x;
-        std::string sx = ss.str();
-        s = doc->allocate_string(sx.c_str());
-        rapidxml::xml_node<>* x_node = doc->allocate_node(rapidxml::node_element, xmlstr::x, s);
-        pos_node->append_node(x_node);
-    }
-
-    /// y
-    {
-        ss.str(std::string());
-        ss.clear();
-        ss << component.getOffset().y;
-        std::string sy = ss.str();
-        s = doc->allocate_string(sy.c_str());
-        rapidxml::xml_node<>* y_node = doc->allocate_node(rapidxml::node_element, xmlstr::y, s);
-        pos_node->append_node(y_node); 
-    }
-
-    return pos_node;
-
-}

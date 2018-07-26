@@ -4,18 +4,7 @@
 #include "animation_frame.hpp"
 #include "../math/functions.hpp"
 #include "texture.hpp"
-#include "../util/xmlstr.hpp"
 #include <iostream>
-
-using namespace std;
-using namespace rapidxml;
-
-SpriteStatus::SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite)
-:
-    sprite(sprite)
-{
-    //cout << "-" << endl;
-}
 
 
 bool SpriteStatus::isVisible()const
@@ -114,7 +103,7 @@ unsigned SpriteStatus::getAnimationIndex()const
     return currentAnimation;
 }
 
-void SpriteStatus::setAnimation(const string& animName)
+void SpriteStatus::setAnimation(const std::string& animName)
 {
     unsigned index = sprite->get().getAnimIndex(animName);
     if(index != currentAnimation)

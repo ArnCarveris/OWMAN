@@ -1,5 +1,4 @@
 #include "entity.hpp"
-#include <rapidxml.hpp>
 
 #include <entt/locator/locator.hpp>
 
@@ -52,17 +51,6 @@ public:
     EntityRegistry registry;
 
 	EntityFactory(Engine* engine);
-
-	/**
-	 * \brief Create an entity
-	 * \param node The root xml node
-	 * \param toCenter Number of cells to the center of the world window
-	 * \return A pointer to the entity. Use destroyEntity() to release.
-	 **/
-	Entity createEntity(rapidxml::xml_node<> *node);
-
-    rapidxml::xml_node<>* createXmlNode(Entity entity, rapidxml::xml_document<>* doc);
-
 };
 
 namespace service

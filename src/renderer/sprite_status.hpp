@@ -26,8 +26,6 @@ public:
     SpriteStatus(SpriteStatus&&) = default;
     SpriteStatus(const SpriteStatus&) = default;
 
-    SpriteStatus(const core::resource::Handle<Sprite::Resource>& sprite);
-
     SpriteStatus& operator=(SpriteStatus&&) = default;
     SpriteStatus& operator=(const SpriteStatus&) = default;
 
