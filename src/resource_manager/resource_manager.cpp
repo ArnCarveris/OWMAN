@@ -3,6 +3,10 @@
 
 using namespace std;
 
+ResourceManager::~ResourceManager()
+{
+    myThread.join();
+}
 bool ResourceManager::synchronize()
 {
     bool res = false;

@@ -320,7 +320,8 @@ class ResourceManager
 
 public:
 
-	ResourceManager(){}
+    ResourceManager() = default;
+    ~ResourceManager();
 
     template<typename Type, typename... Args>
     ResourceManager& deliver(Args&&... args);

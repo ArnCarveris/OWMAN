@@ -176,7 +176,7 @@ void Engine::mainLoop()
         prevTicks = ticks;
 
     }
-
+    while (service::resource::ref().synchronize());
 }
 
 void Engine::prepare(const WorldRepositionEvent& event)
@@ -216,6 +216,7 @@ PhysicsSystem* Engine::getPhysicsSystem()
 void Engine::endGame()
 {
     service::world_streamer::ref().end();
+    service::resource::ref().stop();
     graphicsSystem->end();
     end = true;
 }
@@ -225,8 +226,10 @@ Engine::~Engine()
     if (positionSystem) delete positionSystem;
     if( graphicsSystem ) delete graphicsSystem;
 
-    service::entity::reset();
-    service::resource::reset();
-    service::dispatcher::reset();
     service::world_streamer::reset();
+    service::dispatcher::reset();
+    service::resource::reset();
+    service::entity::reset();
+    service::input::reset();
+
 }
