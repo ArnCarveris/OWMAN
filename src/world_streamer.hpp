@@ -77,7 +77,7 @@ public:
 
 	const Vec2i& getWindowPosition()const;
 
-    const char* getWorldFolder() const;
+    const std::string& getWorldFolder() const;
 
 	float getCellSize()const;
 

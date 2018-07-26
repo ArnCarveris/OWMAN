@@ -428,9 +428,9 @@ const Vec2i& WorldStreamer::getWindowPosition()const
 	return windowPos;
 }
 
-const char* WorldStreamer::getWorldFolder() const
+const std::string& WorldStreamer::getWorldFolder() const
 {
-    return worldFolder.c_str();
+    return worldFolder;
 }
 
 float WorldStreamer::getCellSize()const

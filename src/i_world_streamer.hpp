@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 #include "math/vec2i.hpp"
 #include "math/vec2f.hpp"
 #include "entity.hpp"
@@ -39,7 +40,7 @@ public:
 
     virtual const Vec2i& getWindowPosition() const = 0;
 
-    virtual const char* getWorldFolder() const = 0;
+    virtual const std::string& getWorldFolder() const = 0;
 
 	virtual void end() = 0;
 
