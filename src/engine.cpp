@@ -121,7 +121,7 @@ void Engine::init()
 
         getPositionSystem()->setRelativeCell(Vec2i(0,0));
 
-        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLOutputArchive> archive;
+        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive> archive;
 
         archive.load(path.c_str());
 
@@ -215,6 +215,23 @@ PhysicsSystem* Engine::getPhysicsSystem()
 
 void Engine::endGame()
 {
+    auto mainCharacter = service::entity::ref().attachee<MainCharacter>();
+    {
+        service::entity::ref()
+            .get<Position>(mainCharacter)
+            .setCell(service::world_streamer::ref().getWindowPosition());
+
+        std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
+
+        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive> archive;
+
+        core::serialization::EntityMediator{ mainCharacter }.save(archive.output("main_character"));
+
+        archive.finalize_output();
+
+        archive.save(path.c_str());
+    }
+
     service::world_streamer::ref().end();
     service::resource::ref().stop();
     graphicsSystem->end();
