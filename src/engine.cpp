@@ -148,6 +148,7 @@ void Engine::mainLoop()
 
         // update physics
         physicsSystem->update( ticks - prevTicks );
+        positionSystem->update();
 
         // update world streamer
 
