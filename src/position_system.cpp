@@ -1,7 +1,7 @@
 #include "position_system.hpp"
 #include "util/xmlstr.hpp"
 #include "i_world_streamer.hpp"
-#include "entity_factory.hpp"
+#include "entity.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -9,7 +9,7 @@
 PositionSystem::PositionSystem() :
     center(0,0)
 {
-    service::entity::ref().registry.construction<Position>().connect<PositionSystem, &PositionSystem::createdComponent>(this);
+    service::entity::ref().construction<Position>().connect<PositionSystem, &PositionSystem::createdComponent>(this);
 }
 PositionSystem::~PositionSystem()
 {

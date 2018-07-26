@@ -138,7 +138,7 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="entity_factory.hpp">
+		<Unit filename="entity.hpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>

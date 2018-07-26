@@ -4,7 +4,7 @@
 #include "../renderer/sprite_status.hpp"
 #include "../renderer/graphics_system.hpp"
 #include "../main_character.hpp"
-#include "../entity_factory.hpp"
+#include "../entity.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -20,7 +20,7 @@ EventHandler::EventHandler( Engine* engine )
 void EventHandler::handle()
 {
 
-    Entity mc = service::entity::ref().registry.attachee<MainCharacter>();
+    Entity mc = service::entity::ref().attachee<MainCharacter>();
 
     static const float v = 2000;
     float vx = 0;
@@ -101,7 +101,7 @@ void EventHandler::handle()
 	}
 
 
-    auto& spr = service::entity::ref().registry.get<SpriteStatus>(mc);
+    auto& spr = service::entity::ref().get<SpriteStatus>(mc);
 
     if (!spr.isReady()) return;
 
@@ -140,7 +140,7 @@ void EventHandler::handle()
         spr.setAnimation(animIndex);
     }
 
-    service::entity::ref().registry.get<PhysicsComponent>(mc).setSpeed( Vec2f(vx, vy) );
+    service::entity::ref().get<PhysicsComponent>(mc).setSpeed( Vec2f(vx, vy) );
 }
 
 void EventHandler::poll()

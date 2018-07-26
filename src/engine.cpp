@@ -5,8 +5,8 @@
 #include "renderer/sprite.hpp"
 #include "main_character.hpp"
 #include "IO/event_handler.hpp"
-#include "entity_factory.hpp"
-#include "entity_factory.inl"
+#include "entity.hpp"
+#include "entity.inl"
 #include "position_system.hpp"
 #include "renderer/graphics_system.hpp"
 #include "physics/physics_system.hpp"
@@ -79,7 +79,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     delete initFileText;
 
     service::input::set(this);
-    service::entity::set(this);
+    service::entity::set();
     service::resource::set();
     service::dispatcher::set();
     service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
@@ -127,9 +127,9 @@ void Engine::init()
 
         core::serialization::EntityMediator{ mainCharacter }.load(archive.input("main_character"));
     }
-    service::entity::ref().registry.assign<MainCharacter>(entt::tag_t{}, mainCharacter);
+    service::entity::ref().assign<MainCharacter>(entt::tag_t{}, mainCharacter);
 
-    service::world_streamer::ref().init(service::entity::ref().registry.get<Position>(mainCharacter));
+    service::world_streamer::ref().init(service::entity::ref().get<Position>(mainCharacter));
 }
 
 void Engine::mainLoop()
@@ -151,14 +151,14 @@ void Engine::mainLoop()
 
         // update world streamer
 
-        auto mainCharacter = service::entity::ref().registry.attachee<MainCharacter>();
+        auto mainCharacter = service::entity::ref().attachee<MainCharacter>();
 
-        service::world_streamer::ref().update( service::entity::ref().registry.get<Vec2f>(mainCharacter));
+        service::world_streamer::ref().update( service::entity::ref().get<Vec2f>(mainCharacter));
 
 
 
         // follow main character with the camera
-        graphicsSystem->getCamera()->setPosition( -service::entity::ref().registry.get<Vec2f>(mainCharacter));
+        graphicsSystem->getCamera()->setPosition( -service::entity::ref().get<Vec2f>(mainCharacter));
 
         // update graphics
         graphicsSystem->update(ticks-prevTicks);
@@ -180,7 +180,7 @@ void Engine::mainLoop()
 
 void Engine::prepare(const WorldRepositionEvent& event)
 {
-    service::entity::ref().registry.view<Vec2f>().each
+    service::entity::ref().view<Vec2f>().each
     (
         [delta = event.to - event.from](const Entity entity, Vec2f& position) 
         {
@@ -188,9 +188,9 @@ void Engine::prepare(const WorldRepositionEvent& event)
         }
     );
 
-    auto mainCharacter = service::entity::ref().registry.attachee<MainCharacter>();
+    auto mainCharacter = service::entity::ref().attachee<MainCharacter>();
 
-    service::entity::ref().registry.get<Vec2f>(mainCharacter) = event.to;
+    service::entity::ref().get<Vec2f>(mainCharacter) = event.to;
 }
 
 void Engine::finalize(const WorldRepositionEvent& event)

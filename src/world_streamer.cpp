@@ -2,7 +2,7 @@
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
 #include "math/vec2i.hpp"
-#include "entity_factory.hpp"
+#include "entity.hpp"
 #include "events.hpp"
 #include <fstream>
 #include <sstream>
@@ -227,7 +227,7 @@ void WorldStreamer::update(const Vec2f& position)
         {
             Entity& ent = wc.entities[i];
 
-            Vec2f& pos = service::entity::ref().registry.get<Vec2f>(ent);
+            Vec2f& pos = service::entity::ref().get<Vec2f>(ent);
             Vec2i goodCell = Vec2i( floor(pos.x/cellSize), floor(pos.y/cellSize) );
             goodCell += windowPos;
 

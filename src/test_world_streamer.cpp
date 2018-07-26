@@ -1,6 +1,6 @@
 #include "test_world_streamer.hpp"
 #include "entity.hpp"
-#include "entity_factory.hpp"
+#include "entity.hpp"
 #include <rapidxml.hpp>
 #include <string>
 

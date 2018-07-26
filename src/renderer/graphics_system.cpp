@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include "../entity_factory.hpp"
+#include "../entity.hpp"
 #include "../util/time_conversions.hpp"
 
 GraphicsSystem::GraphicsSystem
@@ -20,7 +20,7 @@ GraphicsSystem::GraphicsSystem
         width, height,
         fullScreen
     );
-    service::entity::ref().registry.destruction<SpriteStatus>().connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
+    service::entity::ref().destruction<SpriteStatus>().connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
 }
 
 void GraphicsSystem::setFullScreen(bool b)
@@ -33,25 +33,25 @@ void GraphicsSystem::update(unsigned int delta)
 
     float deltaSeconds = ticksToSeconds(delta);
 
-    for (auto& it : service::entity::ref().registry.view<SpriteStatus>(entt::raw_t{}))
+    for (auto& it : service::entity::ref().view<SpriteStatus>(entt::raw_t{}))
 	{
 		it.update(deltaSeconds);
 	}
 
-    service::entity::ref().registry.sort<SpriteStatus>
+    service::entity::ref().sort<SpriteStatus>
     (
         [](const SpriteStatus& gc1, const SpriteStatus& gc2) -> bool
         {
             return gc1.getPriority() < gc2.getPriority();
         }
     );
-    service::entity::ref().registry.sort<Vec2f, SpriteStatus>();
+    service::entity::ref().sort<Vec2f, SpriteStatus>();
 }
 
 void GraphicsSystem::draw()
 {
     service::renderer::ref().clear();
-    service::entity::ref().registry.view<SpriteStatus, Vec2f>().each
+    service::entity::ref().view<SpriteStatus, Vec2f>().each
     (
         [](const Entity entity, SpriteStatus& component, Vec2f& position)
         {

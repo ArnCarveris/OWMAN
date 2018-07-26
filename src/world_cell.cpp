@@ -1,6 +1,6 @@
 #include "world_cell.hpp"
-#include "entity_factory.hpp"
-#include "entity_factory.inl"
+#include "entity.hpp"
+#include "entity.inl"
 #include "i_world_streamer.hpp"
 #include "engine.hpp"
 #include "position_system.hpp"
@@ -22,7 +22,7 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::unload_synchronously(Worl
 
     for (auto& entity : ptr->m_final.entities)
     {
-        service::entity::ref().registry.destroy(entity);
+        service::entity::ref().destroy(entity);
     }
 
     ptr->m_final.entities.clear();
