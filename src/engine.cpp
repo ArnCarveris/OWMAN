@@ -6,6 +6,7 @@
 #include "main_character.hpp"
 #include "IO/event_handler.hpp"
 #include "entity_factory.hpp"
+#include "entity_factory.inl"
 #include "position_system.hpp"
 #include "renderer/graphics_system.hpp"
 #include "physics/physics_system.hpp"
@@ -114,26 +115,19 @@ void Engine::init()
     ;
 
     // main character
+    Entity mainCharacter;
+    {
+        std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
 
-    stringstream ss;
-    ss << service::world_streamer::ref().getWorldFolder() << "/" << "main_character.xml";
-    string mcFileName = ss.str();
+        getPositionSystem()->setRelativeCell(Vec2i(0,0));
 
-    char* mcFileText = fileToString(mcFileName.c_str());
+        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLOutputArchive> archive;
 
-    assert(mcFileText && "main_character.xml not found");
+        archive.load(path.c_str());
 
-    xml_document<> mcDoc;
-    mcDoc.parse<0>(mcFileText);
-
-    auto node = mcDoc.first_node("main_character");
-
-    auto mainCharacter = service::entity::ref().createEntity(node);
-   
+        core::serialization::EntityMediator{ mainCharacter }.load(archive.input("main_character"));
+    }
     service::entity::ref().registry.assign<MainCharacter>(entt::tag_t{}, mainCharacter);
-
-    delete mcFileText;
-
 
     service::world_streamer::ref().init(service::entity::ref().registry.get<Position>(mainCharacter));
 }
