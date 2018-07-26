@@ -41,6 +41,17 @@ void PositionSystem::recalc(const Vec2f& input, Position& output)
     output.setCell(Vec2i(x / cellSize, y / cellSize));
 }
 
+void PositionSystem::update()
+{
+    service::entity::ref().view<Vec2f, Position>().each
+    (
+        [](const Entity entity, Vec2f& input, Position& output)
+        {
+            recalc(input, output);
+        }
+    );
+}
+
 void PositionSystem::createdComponent(EntityRegistry& registry, Entity entity)
 {
     auto& component = registry.get<Position>(entity);

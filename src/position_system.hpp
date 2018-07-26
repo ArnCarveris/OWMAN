@@ -15,6 +15,8 @@ public:
 
     static void recalc(const Vec2f& input, Position& output);
 
+    void update();
+
     void createdComponent(EntityRegistry& registry, Entity entity);
 private:
     Vec2i center;
