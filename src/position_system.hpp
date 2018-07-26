@@ -13,7 +13,7 @@ public:
 public:
     void setRelativeCell(const Vec2i& cell);
 
-    void recalc(const Vec2f& input, Position& output);
+    static void recalc(const Vec2f& input, Position& output);
 
     void createdComponent(EntityRegistry& registry, Entity entity);
 private:
