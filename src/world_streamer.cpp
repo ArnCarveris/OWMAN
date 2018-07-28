@@ -170,18 +170,7 @@ worldWindow(windowSize)
 {
 
 	this->worldFolder = worldFolder;
-
-    fstream fs;
-    fs.open("world_folder/world_file.txt", ios::in);
-
-    int x, y;
-    while(fs >> x)
-    {
-        fs >> y;
-        Vec2i cell(x, y);
-        availableCells.insert( cell );
-    }
-
+    loadAvailableCells((worldFolder + "/world_file.txt").c_str());
 }
 
 void WorldStreamer::init(const Position& position)
@@ -469,6 +458,20 @@ void WorldStreamer::end()
 
 }
 
+void WorldStreamer::loadAvailableCells(const char* szListFile)
+{
+    fstream fs;
+    fs.open(szListFile, ios::in);
+
+    int x, y;
+    while (fs >> x)
+    {
+        fs >> y;
+        Vec2i cell(x, y);
+        availableCells.insert(cell);
+    }
+
+}
 void WorldStreamer::loadCellAtPosition(const Vec2i& position)
 {
 

@@ -83,6 +83,7 @@ public:
 
 	void end();
 private:
+    void loadAvailableCells(const char* szListFile);
     void loadCellAtPosition(const Vec2i& position);
 
 };
