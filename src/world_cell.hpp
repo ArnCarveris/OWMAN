@@ -19,7 +19,7 @@ public:
         SAVED
     };
 
-    using Resource = core::resource::Data<ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>, WorldCell, Status>;
+    using Resource = core::resource::Data<ResourceXMLRootArchive, WorldCell, Status>;
 
 public:
     std::vector<Entity> entities;

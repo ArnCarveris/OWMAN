@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../util/xml.hpp"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -83,3 +82,7 @@ private:
     std::unique_ptr<Input>  m_input;
     std::unique_ptr<Output> m_output;
 };
+
+
+#include "../util/xml.hpp"
+using ResourceXMLArchive = ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>;

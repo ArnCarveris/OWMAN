@@ -121,7 +121,7 @@ void Engine::init()
 
         getPositionSystem()->setRelativeCell(Vec2i(0,0));
 
-        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive> archive;
+        ResourceXMLRootArchive archive;
 
         archive.load(path.c_str());
 
@@ -223,7 +223,7 @@ void Engine::endGame()
 
         std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
 
-        ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive> archive;
+        ResourceXMLRootArchive archive;
 
         core::serialization::EntityMediator{ mainCharacter }.save(archive.output("main_character"));
 
