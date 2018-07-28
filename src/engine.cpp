@@ -38,51 +38,29 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         .launch()
     ;
 
-	char* initFileText = fileToString( initFile.c_str() );
+    string title;
+    bool fullscreen;
+    int xResolution;
+    int yResolution;
+    float cellSize;
+    int windowSize;
+    {
+        ResourceXMLRootArchive archive;
 
-	// check errors
-	if( initFileText == 0 )
-	{
+        archive.load(initFile.c_str());
 
-		cerr << "Error loading initialization file: "
-		<< initFile << endl;
+        auto& input = archive.input("init");
 
-		return;
+        input(cereal::make_nvp("window_title", title));
+        input(cereal::make_nvp("fullscreen", fullscreen));
+        input(cereal::make_nvp("x_resolution", xResolution));
+        input(cereal::make_nvp("y_resolution", yResolution));
+        input(cereal::make_nvp("cell_size", cellSize));
+        input(cereal::make_nvp("window_size", windowSize));
 
-	}
+        archive.finalize_input();
+    }
 
-	xml_document<> doc;
-	doc.parse<0>( initFileText );
-
-	xml_node<>* node;
-
-	node = doc.first_node("window_title");
-	string title = node->value();
-
-	node = doc.first_node("fullscreen");
-	string fullscreenString = node->value();
-	bool fullscreen =
-	(
-		(fullscreenString == string("true")) ?
-		true :
-		false
-	);
-
-
-	node = doc.first_node("x_resolution");
-	int xResolution = atof( node->value() );
-
-
-	node = doc.first_node("y_resolution");
-	int yResolution = atof( node->value() );
-
-	node = doc.first_node("cell_size");
-	float cellSize = atof( node->value() );
-
-	node = doc.first_node("window_size");
-	int windowSize = atoi( node->value() );
-
-    delete initFileText;
 
     service::input::set(this);
     service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
