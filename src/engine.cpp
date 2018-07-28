@@ -28,6 +28,15 @@ using namespace rapidxml;
 
 Engine::Engine(std::string initFile, std::string worldFolder)
 {
+    service::entity::set();
+    service::resource::set();
+    service::dispatcher::set();
+    service::resource::ref()
+        .deliver<Texture::Resource>()
+        .deliver<WorldCell::Resource>()
+        .deliver<Sprite::Resource>()
+        .launch()
+    ;
 
 	char* initFileText = fileToString( initFile.c_str() );
 
@@ -76,9 +85,6 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     delete initFileText;
 
     service::input::set(this);
-    service::entity::set();
-    service::resource::set();
-    service::dispatcher::set();
     service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
 
 
@@ -103,13 +109,6 @@ void Engine::init()
 {
 
     SDL_Init(SDL_INIT_TIMER);
-
-    service::resource::ref()
-        .deliver<Texture::Resource>()
-        .deliver<WorldCell::Resource>()
-        .deliver<Sprite::Resource>()
-        .launch()
-    ;
 
     // main character
     Entity mainCharacter;
