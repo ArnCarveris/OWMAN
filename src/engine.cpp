@@ -29,9 +29,6 @@ using namespace rapidxml;
 Engine::Engine(std::string initFile, std::string worldFolder)
 {
 
-    end = false;
-    fps = 60;
-
 	char* initFileText = fileToString( initFile.c_str() );
 
 	// check errors

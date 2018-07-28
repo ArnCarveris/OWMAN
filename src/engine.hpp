@@ -25,8 +25,8 @@ class Engine
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
-	bool end;
-	int fps;
+	bool end = false;
+	int fps = 60;
 
 public:
 
