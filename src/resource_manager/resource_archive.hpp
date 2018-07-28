@@ -85,4 +85,4 @@ private:
 
 
 #include "../util/xml.hpp"
-using ResourceXMLArchive = ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>;
+using ResourceXMLRootArchive = ResourceArchive<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>;
