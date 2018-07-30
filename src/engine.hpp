@@ -21,6 +21,7 @@ class Engine
 
 	WorldWindow worldGrid;
 
+    core::resource::Handle<WorldEntity::Resource> mainCharacterResource;
 	// Systems
     PositionSystem* positionSystem;
 	GraphicsSystem* graphicsSystem;

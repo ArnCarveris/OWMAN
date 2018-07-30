@@ -90,68 +90,101 @@ void Engine::init()
     SDL_Init(SDL_INIT_TIMER);
 
     // main character
-    Entity mainCharacter;
-    {
-        std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
+    std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
 
-        getPositionSystem()->setRelativeCell(Vec2i(0,0));
+    getPositionSystem()->setRelativeCell(Vec2i(0, 0));
 
-        ResourceXMLRootArchive archive;
-
-        archive.load(path.c_str());
-
-        core::serialization::EntityMediator{ mainCharacter }.load(archive.input("main_character"));
-    }
-    service::entity::ref().assign<MainCharacter>(entt::tag_t{}, mainCharacter);
-
-    service::world_streamer::ref().init(service::entity::ref().get<Position>(mainCharacter));
+    mainCharacterResource = service::resource::ref().obtain<WorldEntity::Resource>(core::resource::ID{ path.c_str() });
+    
 }
 
 void Engine::mainLoop()
 {
+    Entity mainCharacter;
 
+    unsigned ticks;
     unsigned prevTicks = SDL_GetTicks();
 
-    while( !end )
+    auto frame_start = [&ticks]()
     {
+        ticks = SDL_GetTicks();
+    };
+    auto frame_sleep = [this, &ticks, &prevTicks]()
+    {
+        unsigned int endTicks = SDL_GetTicks();
+        int sleepTicks = 1000 / fps - (endTicks - ticks);
+        if (sleepTicks > 0)
+            SDL_Delay(sleepTicks);
 
-        unsigned ticks = SDL_GetTicks();
-
+        prevTicks = ticks;
+    };
+    auto frame_tick = [&](unsigned dt)
+    {
         service::input::ref().poll();
 
-        service::resource::ref().synchronize();
-
         // update physics
-        physicsSystem->update( ticks - prevTicks );
+        physicsSystem->update(dt);
         positionSystem->update();
 
         // update world streamer
 
-        auto mainCharacter = service::entity::ref().attachee<MainCharacter>();
-
-        service::world_streamer::ref().update( service::entity::ref().get<Vec2f>(mainCharacter));
-
-
+        service::world_streamer::ref().update(service::entity::ref().get<Vec2f>(mainCharacter));
 
         // follow main character with the camera
-        graphicsSystem->getCamera()->setPosition( -service::entity::ref().get<Vec2f>(mainCharacter));
+        graphicsSystem->getCamera()->setPosition(-service::entity::ref().get<Vec2f>(mainCharacter));
 
         // update graphics
-        graphicsSystem->update(ticks-prevTicks);
+        graphicsSystem->update(dt);
 
         // draw
         graphicsSystem->draw();
         graphicsSystem->swap();
+    };
+    {
+        while (mainCharacterResource->get_status() != WorldEntity::Status::LOADED)
+        {
+            frame_start();
+            service::resource::ref().synchronize();
+            frame_sleep();
+        }
 
-        unsigned int endTicks = SDL_GetTicks();
-		int sleepTicks = 1000/fps - (endTicks-ticks);
-		if(sleepTicks > 0)
-			SDL_Delay( sleepTicks );
+        mainCharacter = mainCharacterResource->get().entity;
 
-        prevTicks = ticks;
+        service::entity::ref().assign<MainCharacter>(entt::tag_t{}, mainCharacter);
 
+        service::world_streamer::ref().init(service::entity::ref().get<Position>(mainCharacter));
     }
-    while (service::resource::ref().synchronize());
+    
+    while( !end )
+    {
+        frame_start();
+
+        service::resource::ref().synchronize();
+
+        frame_tick(ticks - prevTicks);
+
+        frame_sleep();
+    } 
+
+    {
+        service::entity::ref()
+            .get<Position>(mainCharacter)
+            .setCell(service::world_streamer::ref().getWindowPosition());
+
+        service::resource::ref().release(mainCharacterResource);
+
+        service::world_streamer::ref().end();
+        service::resource::ref().stop();
+    }
+
+    while (end)
+    {
+        frame_start();
+        end = service::resource::ref().synchronize();
+        frame_sleep();
+    }
+
+    graphicsSystem->end();
 }
 
 void Engine::prepare(const WorldRepositionEvent& event)
@@ -190,26 +223,6 @@ PhysicsSystem* Engine::getPhysicsSystem()
 
 void Engine::endGame()
 {
-    auto mainCharacter = service::entity::ref().attachee<MainCharacter>();
-    {
-        service::entity::ref()
-            .get<Position>(mainCharacter)
-            .setCell(service::world_streamer::ref().getWindowPosition());
-
-        std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
-
-        ResourceXMLRootArchive archive;
-
-        core::serialization::EntityMediator{ mainCharacter }.save(archive.output("main_character"));
-
-        archive.finalize_output();
-
-        archive.save(path.c_str());
-    }
-
-    service::world_streamer::ref().end();
-    service::resource::ref().stop();
-    graphicsSystem->end();
     end = true;
 }
 
