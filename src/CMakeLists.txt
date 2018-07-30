@@ -30,6 +30,7 @@ add_executable(
 	position.cpp
 	position_system.cpp
 	world_cell.cpp
+	world_entity.cpp
 	world_streamer.cpp
 	world_window.cpp
 )

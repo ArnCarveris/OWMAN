@@ -33,8 +33,9 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     service::dispatcher::set();
     service::resource::ref()
         .deliver<Texture::Resource>()
-        .deliver<WorldCell::Resource>()
         .deliver<Sprite::Resource>()
+        .deliver<WorldEntity::Resource>()
+        .deliver<WorldCell::Resource>()
         .launch()
     ;
 

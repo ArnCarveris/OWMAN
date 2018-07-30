@@ -5,6 +5,7 @@
 
 #include "events.hpp"
 #include "world_window.hpp"
+#include "world_entity.hpp"
 #include <string>
 
 /** \brief encapsulates all systems
