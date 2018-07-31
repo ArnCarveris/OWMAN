@@ -22,8 +22,7 @@ class Engine
 	WorldWindow worldGrid;
 
     core::resource::Handle<WorldEntity::Resource> mainCharacterResource;
-	// Systems
-	PhysicsSystem* physicsSystem;
+
 
 	bool end = false;
 	int fps = 60;

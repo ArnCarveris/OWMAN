@@ -58,19 +58,17 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             input(cereal::make_nvp("y_resolution", yResolution));
 
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
-
-            // init systems
             {
+                // init systems
+
                 auto e = service::entity::ref().create();
 
                 service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e);
 
                 service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen);
+
+                service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e);
             }
-
-
-            physicsSystem = new PhysicsSystem();
-
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
             input(cereal::make_nvp("main_character", mainCharacterResource));
@@ -119,7 +117,7 @@ void Engine::mainLoop()
         service::input::ref().poll();
 
         // update physics
-        physicsSystem->update(dt);
+        getPhysicsSystem()->update(dt);
         getPositionSystem()->update();
 
         // update world streamer
@@ -214,7 +212,7 @@ GraphicsSystem* Engine::getGraphicsSystem()
 
 PhysicsSystem* Engine::getPhysicsSystem()
 {
-    return physicsSystem;
+    return &service::entity::ref().get<PhysicsSystem>();
 }
 
 void Engine::endGame()
