@@ -1,4 +1,4 @@
-#include "i_world_streamer.hpp"
+
 #include "world_window.hpp"
 #include "world_cell.hpp"
 #include "entity.hpp"
@@ -20,7 +20,7 @@ class GraphicsSystem;
 #ifndef WORLD_STREAMER
 #define WORLD_STREAMER
 
-class WorldStreamer : public IWorldStreamer
+class WorldStreamer
 {
 
 	// windowPos is the center of the squared window

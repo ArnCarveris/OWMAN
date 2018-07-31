@@ -68,18 +68,20 @@ Engine::Engine(std::string initFile, std::string worldFolder)
                 service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen);
 
                 service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e);
+                {
+                    float cellSize;
+                    int windowSize;
+
+                    input(cereal::make_nvp("cell_size", cellSize));
+                    input(cereal::make_nvp("window_size", windowSize));
+                    
+                    service::entity::ref().assign<WorldStreamer>(entt::tag_t{}, e, worldFolder, cellSize, windowSize);
+
+                }
             }
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
             input(cereal::make_nvp("main_character", mainCharacterResource));
-        } {
-            float cellSize;
-            int windowSize;
-
-            input(cereal::make_nvp("cell_size", cellSize));
-            input(cereal::make_nvp("window_size", windowSize));
-
-            service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
         }
         archive.finalize_input();
     }
@@ -122,7 +124,7 @@ void Engine::mainLoop()
 
         // update world streamer
 
-        service::world_streamer::ref().update(service::entity::ref().get<Vec2f>(mainCharacter));
+        getWorldStreamer()->update(service::entity::ref().get<Vec2f>(mainCharacter));
 
         // follow main character with the camera
         getGraphicsSystem()->getCamera()->setPosition(-service::entity::ref().get<Vec2f>(mainCharacter));
@@ -146,7 +148,7 @@ void Engine::mainLoop()
 
         service::entity::ref().assign<MainCharacter>(entt::tag_t{}, mainCharacter);
 
-        service::world_streamer::ref().init(service::entity::ref().get<Position>(mainCharacter));
+        getWorldStreamer()->init(service::entity::ref().get<Position>(mainCharacter));
     }
     
     while( !end )
@@ -163,11 +165,11 @@ void Engine::mainLoop()
     {
         service::entity::ref()
             .get<Position>(mainCharacter)
-            .setCell(service::world_streamer::ref().getWindowPosition());
+            .setCell(getWorldStreamer()->getWindowPosition());
 
         service::resource::ref().release(mainCharacterResource);
 
-        service::world_streamer::ref().end();
+        getWorldStreamer()->end();
         service::resource::ref().stop();
     }
 
@@ -214,6 +216,10 @@ PhysicsSystem* Engine::getPhysicsSystem()
 {
     return &service::entity::ref().get<PhysicsSystem>();
 }
+WorldStreamer* Engine::getWorldStreamer()
+{
+    return &service::entity::ref().get<WorldStreamer>();
+}
 
 void Engine::endGame()
 {
@@ -222,7 +228,6 @@ void Engine::endGame()
 
 Engine::~Engine()
 {
-    service::world_streamer::reset();
     service::dispatcher::reset();
     service::resource::reset();
     service::entity::reset();

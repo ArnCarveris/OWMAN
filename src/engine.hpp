@@ -15,6 +15,7 @@
 class PositionSystem;
 class GraphicsSystem;
 class PhysicsSystem;
+class WorldStreamer;
 
 class Engine
 {
@@ -41,6 +42,7 @@ public:
     PositionSystem* getPositionSystem();
     GraphicsSystem* getGraphicsSystem();
     PhysicsSystem* getPhysicsSystem();
+    WorldStreamer* getWorldStreamer();
 
 	void endGame();
 

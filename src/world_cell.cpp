@@ -1,7 +1,6 @@
 #include "world_cell.hpp"
 #include "entity.hpp"
 #include "entity.inl"
-#include "i_world_streamer.hpp"
 #include "engine.hpp"
 #include "position_system.hpp"
 
