@@ -22,6 +22,9 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+#include "position_system.inl"
+#include "renderer/graphics_system.inl"
+#include "physics/physics_system.inl"
 
 using namespace std;
 using namespace rapidxml;
@@ -45,29 +48,14 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         archive.load(initFile.c_str());
 
         auto& input = archive.input("init");
-       
         {
-            string title;
-            bool fullscreen;
-            int xResolution;
-            int yResolution;
-
-            input(cereal::make_nvp("window_title", title));
-            input(cereal::make_nvp("fullscreen", fullscreen));
-            input(cereal::make_nvp("x_resolution", xResolution));
-            input(cereal::make_nvp("y_resolution", yResolution));
-
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
             {
-                // init systems
-
                 auto e = service::entity::ref().create();
 
-                service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e);
-
-                service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen);
-
-                service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e);
+                input(cereal::make_nvp("positioning", service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e)));
+                input(cereal::make_nvp("graphics", service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e)));
+                input(cereal::make_nvp("physics", service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e)));
                 {
                     float cellSize;
                     int windowSize;

@@ -25,6 +25,10 @@ public:
     void createdComponent(EntityRegistry& registry, Entity entity);
 
     void destroyComponent(EntityRegistry& registry, Entity entity);
+
+
+    template<typename Archive>
+    void serialize(Archive&);
 };
 
 #endif

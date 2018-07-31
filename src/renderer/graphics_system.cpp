@@ -8,22 +8,7 @@
 #include "../entity.hpp"
 #include "../util/time_conversions.hpp"
 
-GraphicsSystem::GraphicsSystem
-(
-	std::string windowTitle,
-	unsigned int width, unsigned int height,
-	bool fullScreen
-) {
-    service::renderer::set
-    (
-        windowTitle,
-        width, height,
-        fullScreen
-    );
-
-    camera.setWidth(width / 2);
-    camera.setHeight(height / 2);
-
+GraphicsSystem::GraphicsSystem () {
     service::entity::ref().destruction<SpriteStatus>().connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
 }
 

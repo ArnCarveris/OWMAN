@@ -14,12 +14,7 @@ class GraphicsSystem
 
 public:
 
-	GraphicsSystem
-	(
-		std::string windowTitle,
-		unsigned int width, unsigned int height,
-		bool fullScreen
-	);
+	GraphicsSystem();
 
     /** \brief update animations
      */
@@ -43,6 +38,11 @@ public:
 
 	void end();
 
+    template<typename Archive>
+    void load(Archive& ar);
+
+    template<typename Archive>
+    void save(Archive&) const;
 };
 
 #endif

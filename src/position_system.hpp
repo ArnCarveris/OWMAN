@@ -18,6 +18,9 @@ public:
     void update();
 
     void createdComponent(EntityRegistry& registry, Entity entity);
+
+    template<typename Archive>
+    void serialize(Archive&);
 private:
     Vec2i center;
 };
