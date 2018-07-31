@@ -25,7 +25,6 @@ add_executable(
 	util/file_to_string.cpp
 	util/xmlstr.cpp
 	engine.cpp
-	i_world_streamer.cpp
 	main.cpp
 	position.cpp
 	position_system.cpp
