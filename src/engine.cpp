@@ -28,6 +28,7 @@ using namespace rapidxml;
 
 Engine::Engine(std::string initFile, std::string worldFolder)
 {
+    service::input::set(this);
     service::entity::set();
     service::resource::set();
     service::dispatcher::set();
@@ -38,48 +39,48 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         .deliver<WorldCell::Resource>()
         .launch()
     ;
-
-    string title;
-    bool fullscreen;
-    int xResolution;
-    int yResolution;
-    float cellSize;
-    int windowSize;
     {
         ResourceXMLRootArchive archive;
 
         archive.load(initFile.c_str());
 
         auto& input = archive.input("init");
+       
+        {
+            string title;
+            bool fullscreen;
+            int xResolution;
+            int yResolution;
 
-        input(cereal::make_nvp("window_title", title));
-        input(cereal::make_nvp("fullscreen", fullscreen));
-        input(cereal::make_nvp("x_resolution", xResolution));
-        input(cereal::make_nvp("y_resolution", yResolution));
-        input(cereal::make_nvp("cell_size", cellSize));
-        input(cereal::make_nvp("window_size", windowSize));
+            input(cereal::make_nvp("window_title", title));
+            input(cereal::make_nvp("fullscreen", fullscreen));
+            input(cereal::make_nvp("x_resolution", xResolution));
+            input(cereal::make_nvp("y_resolution", yResolution));
 
+            service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
+
+            // init systems
+            positionSystem = new PositionSystem();
+
+            graphicsSystem = new GraphicsSystem(title, xResolution, yResolution, fullscreen);
+            Camera* camera = graphicsSystem->getCamera();
+            camera->setWidth(xResolution / 2);
+            camera->setHeight(yResolution / 2);
+
+            physicsSystem = new PhysicsSystem();
+
+            service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
+        } {
+            float cellSize;
+            int windowSize;
+
+            input(cereal::make_nvp("cell_size", cellSize));
+            input(cereal::make_nvp("window_size", windowSize));
+
+            service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
+        }
         archive.finalize_input();
     }
-
-
-    service::input::set(this);
-    service::world_streamer::set<WorldStreamer>(worldFolder, cellSize, windowSize);
-
-
-    service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
-
-    // init systems
-    positionSystem = new PositionSystem();
-
-	graphicsSystem = new GraphicsSystem( title, xResolution, yResolution, fullscreen );
-	Camera* camera = graphicsSystem->getCamera();
-	camera->setWidth(xResolution/2);
-	camera->setHeight(yResolution/2);
-
-	physicsSystem = new PhysicsSystem();
-
-    service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
 }
 
 
