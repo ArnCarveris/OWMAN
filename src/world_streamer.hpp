@@ -28,7 +28,7 @@ class WorldStreamer
 	// concides with the cell where the main character is
 	// and with origin of coordinates
 	Vec2i windowPos;
-	const float cellSize = 250;
+	float cellSize = 250;
 
     // data structure where the WorldCells(vector of entities) are located
 	WorldWindow worldWindow;
@@ -46,12 +46,7 @@ class WorldStreamer
 	std::map<Vec2i, core::resource::Handle<WorldCell::Resource>> loadedCellResources;
 public:
 
-	WorldStreamer
-	(
-		std::string worldFolder,
-		float cellSize = 250.f,
-		unsigned int windowSize = 2
-	);
+    WorldStreamer() = default;
 
 	/**
 	 * \brief Inits the world streamer.
@@ -82,6 +77,12 @@ public:
 	float getCellSize()const;
 
 	void end();
+
+    template<typename Archive>
+    void load(Archive& ar);
+
+    template<typename Archive>
+    void save(Archive&) const;
 private:
     void loadAvailableCells(const char* szListFile);
     void loadCellAtPosition(const Vec2i& position);

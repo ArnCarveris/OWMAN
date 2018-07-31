@@ -23,7 +23,7 @@ public:
 
 	WorldWindow();
 
-	WorldWindow(unsigned int windowSize);
+	void setWindowSize(unsigned int windowSize);
 
     std::vector<Entity> getEntities()const;
 

@@ -157,22 +157,6 @@ Vec2i getCell(string fileName)
 
 
 
-
-WorldStreamer::WorldStreamer
-(
-	string worldFolder,
-	float cellSize,
-    unsigned int windowSize
-)
-:
-cellSize(cellSize),
-worldWindow(windowSize)
-{
-
-	this->worldFolder = worldFolder;
-    loadAvailableCells((worldFolder + "/world_file.txt").c_str());
-}
-
 void WorldStreamer::init(const Position& position)
 {
     windowPos = position.getCell();

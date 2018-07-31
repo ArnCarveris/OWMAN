@@ -8,7 +8,7 @@ WorldWindow::WorldWindow()
 
 }
 
-WorldWindow::WorldWindow(unsigned int windowSize)
+void WorldWindow::setWindowSize(unsigned int windowSize)
 {
 
 	this->windowSize = windowSize;

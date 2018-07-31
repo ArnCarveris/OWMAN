@@ -11,6 +11,7 @@
 #include "renderer/graphics_system.hpp"
 #include "physics/physics_system.hpp"
 #include "world_streamer.hpp"
+#include "world_streamer.inl"
 
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
@@ -56,16 +57,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
                 input(cereal::make_nvp("positioning", service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e)));
                 input(cereal::make_nvp("graphics", service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e)));
                 input(cereal::make_nvp("physics", service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e)));
-                {
-                    float cellSize;
-                    int windowSize;
-
-                    input(cereal::make_nvp("cell_size", cellSize));
-                    input(cereal::make_nvp("window_size", windowSize));
-                    
-                    service::entity::ref().assign<WorldStreamer>(entt::tag_t{}, e, worldFolder, cellSize, windowSize);
-
-                }
+                input(cereal::make_nvp("world_streamer", service::entity::ref().assign<WorldStreamer>(entt::tag_t{}, e)));
             }
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
