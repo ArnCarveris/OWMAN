@@ -65,7 +65,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
                 service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e);
 
-                service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen).getCamera();
+                service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen);
             }
 
 
