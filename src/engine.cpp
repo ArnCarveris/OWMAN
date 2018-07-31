@@ -60,7 +60,11 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
 
             // init systems
-            positionSystem = new PositionSystem();
+            {
+                auto e = service::entity::ref().create();
+
+                service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e);
+            }
 
             graphicsSystem = new GraphicsSystem(title, xResolution, yResolution, fullscreen);
             Camera* camera = graphicsSystem->getCamera();
@@ -118,7 +122,7 @@ void Engine::mainLoop()
 
         // update physics
         physicsSystem->update(dt);
-        positionSystem->update();
+        getPositionSystem()->update();
 
         // update world streamer
 
@@ -203,7 +207,7 @@ void Engine::finalize(const WorldRepositionEvent& event)
 
 PositionSystem* Engine::getPositionSystem()
 {
-    return positionSystem;
+    return &service::entity::ref().get<PositionSystem>();;
 }
 GraphicsSystem* Engine::getGraphicsSystem()
 {
@@ -222,7 +226,6 @@ void Engine::endGame()
 
 Engine::~Engine()
 {
-    if (positionSystem) delete positionSystem;
     if( graphicsSystem ) delete graphicsSystem;
 
     service::world_streamer::reset();

@@ -23,7 +23,6 @@ class Engine
 
     core::resource::Handle<WorldEntity::Resource> mainCharacterResource;
 	// Systems
-    PositionSystem* positionSystem;
 	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
