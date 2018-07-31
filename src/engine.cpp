@@ -71,6 +71,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
+            input(cereal::make_nvp("main_character", mainCharacterResource));
+        } {
             float cellSize;
             int windowSize;
 
@@ -87,16 +89,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
 
 void Engine::init()
 {
-
-    SDL_Init(SDL_INIT_TIMER);
-
-    // main character
-    std::string path = service::world_streamer::ref().getWorldFolder() + "/main_character.xml";
-
-    getPositionSystem()->setRelativeCell(Vec2i(0, 0));
-
-    mainCharacterResource = service::resource::ref().obtain<WorldEntity::Resource>(core::resource::ID{ path.c_str() });
-    
+    SDL_Init(SDL_INIT_TIMER);  
 }
 
 void Engine::mainLoop()
