@@ -20,6 +20,10 @@ GraphicsSystem::GraphicsSystem
         width, height,
         fullScreen
     );
+
+    camera.setWidth(width / 2);
+    camera.setHeight(height / 2);
+
     service::entity::ref().destruction<SpriteStatus>().connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
 }
 

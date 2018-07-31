@@ -64,12 +64,10 @@ Engine::Engine(std::string initFile, std::string worldFolder)
                 auto e = service::entity::ref().create();
 
                 service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e);
+
+                service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e, title, xResolution, yResolution, fullscreen).getCamera();
             }
 
-            graphicsSystem = new GraphicsSystem(title, xResolution, yResolution, fullscreen);
-            Camera* camera = graphicsSystem->getCamera();
-            camera->setWidth(xResolution / 2);
-            camera->setHeight(yResolution / 2);
 
             physicsSystem = new PhysicsSystem();
 
@@ -129,14 +127,14 @@ void Engine::mainLoop()
         service::world_streamer::ref().update(service::entity::ref().get<Vec2f>(mainCharacter));
 
         // follow main character with the camera
-        graphicsSystem->getCamera()->setPosition(-service::entity::ref().get<Vec2f>(mainCharacter));
+        getGraphicsSystem()->getCamera()->setPosition(-service::entity::ref().get<Vec2f>(mainCharacter));
 
         // update graphics
-        graphicsSystem->update(dt);
+        getGraphicsSystem()->update(dt);
 
         // draw
-        graphicsSystem->draw();
-        graphicsSystem->swap();
+        getGraphicsSystem()->draw();
+        getGraphicsSystem()->swap();
     };
     {
         while (mainCharacterResource->get_status() != WorldEntity::Status::LOADED)
@@ -182,7 +180,7 @@ void Engine::mainLoop()
         frame_sleep();
     }
 
-    graphicsSystem->end();
+    getGraphicsSystem()->end();
 }
 
 void Engine::prepare(const WorldRepositionEvent& event)
@@ -211,7 +209,7 @@ PositionSystem* Engine::getPositionSystem()
 }
 GraphicsSystem* Engine::getGraphicsSystem()
 {
-	return graphicsSystem;
+    return &service::entity::ref().get<GraphicsSystem>();
 }
 
 PhysicsSystem* Engine::getPhysicsSystem()
@@ -226,8 +224,6 @@ void Engine::endGame()
 
 Engine::~Engine()
 {
-    if( graphicsSystem ) delete graphicsSystem;
-
     service::world_streamer::reset();
     service::dispatcher::reset();
     service::resource::reset();

@@ -23,7 +23,6 @@ class Engine
 
     core::resource::Handle<WorldEntity::Resource> mainCharacterResource;
 	// Systems
-	GraphicsSystem* graphicsSystem;
 	PhysicsSystem* physicsSystem;
 
 	bool end = false;
