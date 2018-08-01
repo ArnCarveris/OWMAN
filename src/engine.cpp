@@ -124,9 +124,7 @@ void Engine::mainLoop()
             frame_sleep();
         }
 
-        mainCharacter = mainCharacterResource->get().entity;
-
-        service::entity::ref().assign<MainCharacter>(entt::tag_t{}, mainCharacter);
+        mainCharacter = service::entity::ref().attachee<MainCharacter>();
 
         getWorldStreamer()->init(service::entity::ref().get<Position>(mainCharacter));
     }

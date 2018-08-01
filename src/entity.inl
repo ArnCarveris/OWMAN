@@ -1,4 +1,7 @@
 
+#include "main_character.hpp"
+#include "main_character.inl"
+
 #include "position.hpp"
 #include "physics/physics_component.hpp"
 #include "renderer/sprite_status.hpp"
@@ -7,7 +10,7 @@
 #include "physics/physics_component.inl"
 #include "renderer/sprite_status.inl"
 
-namespace xmlstr::component
+namespace xmlstr
 {
     template<typename Archive>
     bool has(Archive& archive, const char* name)
@@ -17,7 +20,11 @@ namespace xmlstr::component
         return current != nullptr && !strcmp(current, name);
     }
 
-    const std::array<const char*, 3> list = {
+    const std::array<const char*, 1> tags = {
+        "main_character"
+    };
+
+    const std::array<const char*, 3> components = {
         position,
         graphics,
         physics
@@ -35,9 +42,13 @@ namespace core::serialization
 
         registry
             .importer<const char*, cereal::NameValuePair>()
+            .tag<MainCharacter>
+            (
+                archive, xmlstr::has<Archive>, entity, xmlstr::tags
+            )
             .component<Position,SpriteStatus,PhysicsComponent>
             (
-                archive, xmlstr::component::has<Archive>, entity, xmlstr::component::list
+                archive, xmlstr::has<Archive>, entity, xmlstr::components
             )
         ;
     }
@@ -49,9 +60,13 @@ namespace core::serialization
 
         registry
             .exporter<const char*, cereal::NameValuePair>()
+            .tag<MainCharacter>
+            (
+                archive, entity, xmlstr::tags
+            )
             .component<Position,SpriteStatus,PhysicsComponent>
             (
-                archive, entity, xmlstr::component::list
+                archive, entity, xmlstr::components
             )
         ;
     }
@@ -73,10 +88,16 @@ namespace core::serialization
 
             archive.setNextName("entity");
             archive.startNode();
-            importer.component<Position, SpriteStatus, PhysicsComponent>
-            (
-                archive, xmlstr::component::has<Archive>, entity, xmlstr::component::list
-            );
+            importer
+                .tag<MainCharacter>
+                (
+                    archive, xmlstr::has<Archive>, entity, xmlstr::tags
+                )
+                .component<Position, SpriteStatus, PhysicsComponent>
+                (
+                    archive, xmlstr::has<Archive>, entity, xmlstr::components
+                )
+            ;
             archive.finishNode();
         }
     }
@@ -93,10 +114,16 @@ namespace core::serialization
         {
             archive.setNextName("entity");
             archive.startNode();
-            exporter.component<Position, SpriteStatus, PhysicsComponent>
-            (
-                archive, entity, xmlstr::component::list
-            );
+            exporter
+                .tag<MainCharacter>
+                (
+                    archive, entity, xmlstr::tags
+                )
+                .component<Position, SpriteStatus, PhysicsComponent>
+                (
+                    archive, entity, xmlstr::components
+                )
+            ;
             archive.finishNode();
         }
     }
