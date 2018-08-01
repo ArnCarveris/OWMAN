@@ -33,6 +33,41 @@ namespace xmlstr
 
 namespace core::serialization
 {
+    template<typename... Tag>
+    template<typename Archive>
+    void TagMediator<Tag...>::load(Archive& archive)
+    {
+        auto& registry = service::entity::ref();
+
+        if (!registry.valid(entity))
+        {
+            entity = registry.create();
+        }
+        
+        registry
+            .importer<const char*, cereal::NameValuePair>()
+            .tag<Tag...>
+            (
+                archive, xmlstr::has<Archive>, entity, names
+            )
+        ;
+    }
+
+    template<typename... Tag>
+    template<typename Archive>
+    void TagMediator<Tag...>::save(Archive& archive) const
+    {
+        auto& registry = service::entity::ref();
+
+        registry
+            .exporter<const char*, cereal::NameValuePair>()
+            .tag<Tag...>
+            (
+                archive, xmlstr::has<Archive>, entity, names
+            )
+        ;
+    }
+
     template<typename Archive>
     void EntityMediator::load(Archive& archive)
     {

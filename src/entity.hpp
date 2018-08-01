@@ -8,6 +8,24 @@ using Entity = EntityRegistry::entity_type;
 
 namespace core::serialization
 {
+    template<typename... Tag>
+    struct TagMediator
+    {
+        using Names = std::array<const char*, sizeof...(Tag)>;
+
+        TagMediator() = delete;
+        TagMediator(const TagMediator&) = delete;
+
+        Entity& entity;
+        const Names names;
+
+        template<typename Archive>
+        void load(Archive& archive);
+
+        template<typename Archive>
+        void save(Archive& archive) const;
+    };
+
     struct EntityMediator
     {
         EntityMediator() = delete;
