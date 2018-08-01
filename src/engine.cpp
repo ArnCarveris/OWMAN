@@ -54,10 +54,21 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             {
                 auto e = service::entity::ref().create();
 
-                input(cereal::make_nvp("positioning", service::entity::ref().assign<PositionSystem>(entt::tag_t{}, e)));
-                input(cereal::make_nvp("graphics", service::entity::ref().assign<GraphicsSystem>(entt::tag_t{}, e)));
-                input(cereal::make_nvp("physics", service::entity::ref().assign<PhysicsSystem>(entt::tag_t{}, e)));
-                input(cereal::make_nvp("world_streamer", service::entity::ref().assign<WorldStreamer>(entt::tag_t{}, e)));
+                core::serialization::TagMediator
+                <
+                    PositionSystem, 
+                    GraphicsSystem, 
+                    PhysicsSystem, 
+                    WorldStreamer
+                > {
+                    e, 
+                    {
+                        "positioning",
+                        "graphics",
+                        "physics",
+                        "world_streamer"
+                    }
+                }.load(input);
             }
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
