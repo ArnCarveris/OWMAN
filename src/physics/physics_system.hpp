@@ -8,11 +8,14 @@
 
 class PhysicsSystem
 {
-    b2World* world;
+    std::unique_ptr<b2World> world;
 
 public:
 
     PhysicsSystem();
+    PhysicsSystem(const PhysicsSystem&) = delete;
+    PhysicsSystem(PhysicsSystem&&);
+    ~PhysicsSystem() = default;
 
     void receive(const WorldRepositionEvent& event);
 

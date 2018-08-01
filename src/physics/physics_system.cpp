@@ -1,21 +1,33 @@
 #include "physics_system.hpp"
 #include "../dispatcher.hpp"
 #include "../entity.hpp"
+#include "../events.hpp"
 #include "../math/functions.hpp"
 #include "physics_component.hpp"
 #include <sstream>
 
 PhysicsSystem::PhysicsSystem()
 {
-
     b2Vec2 gravity(0, 0);
-    world = new b2World(gravity);
+    world = std::make_unique<b2World>(gravity);
 
-    service::entity::ref().construction<PhysicsComponent>().connect<PhysicsSystem, &PhysicsSystem::createdComponent>(this);
-    service::entity::ref().destruction<PhysicsComponent>().connect<PhysicsSystem, &PhysicsSystem::destroyComponent>(this);
-    service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>().connect(this);
+ }
+PhysicsSystem::PhysicsSystem(PhysicsSystem&& rhs) :
+    world(std::move(rhs.world))
+{
+    auto* old = &rhs;
+    auto& world_reposition_event = service::dispatcher::ref().sink<Vec2f::RepositionEvent<Entity>>();
+    auto& component_construction = service::entity::ref().construction<PhysicsComponent>();
+    auto& component_destruction = service::entity::ref().destruction<PhysicsComponent>();
+
+    component_construction.disconnect<PhysicsSystem, &PhysicsSystem::createdComponent>(old);
+    component_destruction.disconnect<PhysicsSystem, &PhysicsSystem::destroyComponent>(old);
+    world_reposition_event.disconnect(old);
+    
+    component_construction.connect<PhysicsSystem, &PhysicsSystem::createdComponent>(this);
+    component_destruction.connect<PhysicsSystem, &PhysicsSystem::destroyComponent>(this);
+    world_reposition_event.connect(this);
 }
-
 void PhysicsSystem::receive(const WorldRepositionEvent& event)
 {
     service::entity::ref().view<PhysicsComponent, Vec2f>().each([](const Entity entity, PhysicsComponent& component, Vec2f& position) {
@@ -36,7 +48,7 @@ void PhysicsSystem::update(unsigned int delta)
 
 b2World* PhysicsSystem::getWorld()
 {
-    return world;
+    return world.get();
 }
 
 void PhysicsSystem::createdComponent(EntityRegistry& registry, Entity entity)
