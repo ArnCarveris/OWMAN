@@ -28,14 +28,14 @@ void PhysicsComponent::load(Archive & ar)
     if (kinematic)
     {
         bodyDef.type = b2_dynamicBody;
-        bodyDef.linearDamping = 0.01;
+        bodyDef.linearDamping = 0.01f;
     }
     else
     {
         bodyDef.type = (mass == 0) ? b2_staticBody : b2_dynamicBody;
-        bodyDef.linearDamping = 0.2;
+        bodyDef.linearDamping = 0.2f;
 
-        fixtureDef.restitution = 0.5;
+        fixtureDef.restitution = 0.5f;
     }
 
     body = service::engine::ref().getPhysicsSystem()->getWorld()->CreateBody(&bodyDef);
@@ -50,7 +50,7 @@ void PhysicsComponent::load(Archive & ar)
 
         b2PolygonShape shape;
 
-        shape.SetAsBox(scale.x / 2, scale.y / 2);
+        shape.SetAsBox(scale.x / 2.0f, scale.y / 2.0f);
 
         fixtureDef.density = mass / (scale.x*scale.y);
         fixtureDef.shape = &shape;

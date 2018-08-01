@@ -19,8 +19,8 @@ void GraphicsSystem::load(Archive& ar)
         fullScreen
     );
 
-    camera.setWidth(width / 2);
-    camera.setHeight(height / 2);
+    camera.setWidth(width / 2.0f);
+    camera.setHeight(height / 2.0f);
 }
 
 template<typename Archive>
