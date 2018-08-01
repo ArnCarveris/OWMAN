@@ -7,13 +7,13 @@
 #include <iostream>
 #include <sstream>
 
-PositionSystem::PositionSystem() :
-    center(0,0)
+PositionSystem::PositionSystem(PositionSystem&& rhs) :
+    center(std::move(rhs.center))
 {
-    service::entity::ref().construction<Position>().connect<PositionSystem, &PositionSystem::createdComponent>(this);
-}
-PositionSystem::~PositionSystem()
-{
+    auto& position_construction = service::entity::ref().construction<Position>();
+
+    position_construction.disconnect<PositionSystem, &PositionSystem::createdComponent>(&rhs);
+    position_construction.connect<PositionSystem, &PositionSystem::createdComponent>(this);
 }
 
 void PositionSystem::setRelativeCell(const Vec2i& cell)

@@ -8,8 +8,10 @@
 class PositionSystem
 {
 public:
-    PositionSystem();
-    ~PositionSystem();
+    PositionSystem() = default;
+    PositionSystem(const PositionSystem&) = delete;
+    PositionSystem(PositionSystem&&);
+    ~PositionSystem() = default;
 public:
     void setRelativeCell(const Vec2i& cell);
 
