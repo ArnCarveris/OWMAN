@@ -8,8 +8,13 @@
 #include "../entity.hpp"
 #include "../util/time_conversions.hpp"
 
-GraphicsSystem::GraphicsSystem () {
-    service::entity::ref().destruction<SpriteStatus>().connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
+GraphicsSystem::GraphicsSystem(GraphicsSystem&& rhs) :
+    camera(std::move(rhs.camera))
+{
+    auto& sprite_status_destruction = service::entity::ref().destruction<SpriteStatus>();
+
+    sprite_status_destruction.disconnect<GraphicsSystem, &GraphicsSystem::destroyComponent>(&rhs);
+    sprite_status_destruction.connect<GraphicsSystem, &GraphicsSystem::destroyComponent>(this);
 }
 
 void GraphicsSystem::setFullScreen(bool b)

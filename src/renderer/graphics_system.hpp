@@ -13,8 +13,10 @@ class GraphicsSystem
 	Camera camera;
 
 public:
-
-	GraphicsSystem();
+    GraphicsSystem() = default;
+    GraphicsSystem(const GraphicsSystem&) = delete;
+    GraphicsSystem(GraphicsSystem&&);
+    ~GraphicsSystem() = default;
 
     /** \brief update animations
      */
