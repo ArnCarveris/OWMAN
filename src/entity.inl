@@ -10,27 +10,6 @@
 #include "physics/physics_component.inl"
 #include "renderer/sprite_status.inl"
 
-namespace xmlstr
-{
-    template<typename Archive>
-    bool has(Archive& archive, const char* name)
-    {
-        const char* current = archive.getNodeName();
-
-        return current != nullptr && !strcmp(current, name);
-    }
-
-    const std::array<const char*, 1> tags = {
-        "main_character"
-    };
-
-    const std::array<const char*, 3> components = {
-        position,
-        graphics,
-        physics
-    };
-}
-
 namespace core::serialization
 {
     template<typename... Tag>
