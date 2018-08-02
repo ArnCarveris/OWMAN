@@ -1,19 +1,21 @@
 <init>
-  <positioning/>
-  <graphics>
-    <window_title>OWMAN</window_title>
-    <fullscreen>false</fullscreen>
-    <x_resolution>800</x_resolution>
-    <y_resolution>600</y_resolution>
-  </graphics>
-  <physics/>
-  
-  <world_streamer>
-    <world_folder>world_folder</world_folder>
-    <world_file>world_folder/world_file.txt</world_file>
-    <cell_size>250.0</cell_size>
-    <window_size>2</window_size>
-  </world_streamer>
+  <systems>
+    <positioning/>
+    <graphics>
+      <window_title>OWMAN</window_title>
+      <fullscreen>false</fullscreen>
+      <x_resolution>800</x_resolution>
+      <y_resolution>600</y_resolution>
+    </graphics>
+    <physics/>
+
+    <world_streamer>
+      <world_folder>world_folder</world_folder>
+      <world_file>world_folder/world_file.txt</world_file>
+      <cell_size>250.0</cell_size>
+      <window_size>2</window_size>
+    </world_streamer>
+  </systems>
   
   <main_character>world_folder/main_character.xml</main_character>
  </init>

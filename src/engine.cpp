@@ -3,29 +3,18 @@
 #include "resource_manager/resource_manager.hpp"
 #include "renderer/texture.hpp"
 #include "renderer/sprite.hpp"
-#include "main_character.hpp"
 #include "IO/event_handler.hpp"
-#include "entity.hpp"
-#include "entity.inl"
-#include "position_system.hpp"
-#include "renderer/graphics_system.hpp"
-#include "physics/physics_system.hpp"
-#include "world_streamer.hpp"
-#include "world_streamer.inl"
 
 #include <rapidxml.hpp>
 #include "util/file_to_string.hpp"
-#include "physics/physics_component.hpp"
-#include "renderer/sprite_status.hpp"
 #include <string>
 #include <sstream>
 #include <cstdio>
 #include <iostream>
 #include <SDL2/SDL.h>
 
-#include "position_system.inl"
-#include "renderer/graphics_system.inl"
-#include "physics/physics_system.inl"
+#include "systems.hpp"
+#include "systems.inl"
 
 using namespace std;
 using namespace rapidxml;
@@ -52,23 +41,9 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         {
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::finalize>(this);
             {
-                auto e = service::entity::ref().create();
-
-                core::serialization::TagMediator
-                <
-                    PositionSystem, 
-                    GraphicsSystem, 
-                    PhysicsSystem, 
-                    WorldStreamer
-                > {
-                    e, 
-                    {
-                        "positioning",
-                        "graphics",
-                        "physics",
-                        "world_streamer"
-                    }
-                }.load(input);
+                auto entity = service::entity::ref().create();
+                
+                input(cereal::make_nvp("systems", service::entity::ref().assign<Systems>(entt::tag_t{}, entity)));
             }
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
