@@ -64,6 +64,41 @@ namespace core::serialization
     private:
         type m_instance;
     };
+
+    template<typename Type>
+    struct ResourcesMediator
+    {
+        ResourcesMediator() = delete;
+        ResourcesMediator(const ResourcesMediator&) = delete;
+        ResourcesMediator(ResourcesMediator&&) = default;
+
+        std::vector<ResourceHandle<Type>>& resources;
+
+        template<typename Archive>
+        void load(Archive& archive)
+        {
+            size_t size;
+            archive(cereal::make_size_tag(size));
+
+            resources.resize(size);
+
+            for (auto& resource : resources)
+            {
+                archive(cereal::make_nvp("id", resource));
+            }
+        }
+
+        template<typename Archive>
+        void save(Archive& archive) const
+        {
+            //archive(cereal::make_size_tag(resources.size()));
+
+            for (auto& resource : resources)
+            {
+                archive(cereal::make_nvp("id", resource));
+            }
+        }
+    };
 }
 
 namespace core::resource
