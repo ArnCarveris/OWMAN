@@ -49,7 +49,7 @@ bool core::resource::LoaderProxy<WorldCell::Resource>::unload_asynchronously(Wor
 }
 bool core::resource::LoaderProxy<WorldCell::Resource>::synchronize_loaded(WorldCell::Resource* ptr)
 {
-    service::engine::ref().getPositionSystem()->setRelativeCell(ptr->m_final.position);
+    service::entity::ref().get<PositionSystem>().setRelativeCell(ptr->m_final.position);
 
     core::serialization::EntitiesMediator{ ptr->m_final.entities }.load(ptr->m_intermediate.input("cell"));
 

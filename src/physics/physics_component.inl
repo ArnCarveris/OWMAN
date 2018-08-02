@@ -38,7 +38,7 @@ void PhysicsComponent::load(Archive & ar)
         fixtureDef.restitution = 0.5f;
     }
 
-    body = service::engine::ref().getPhysicsSystem()->getWorld()->CreateBody(&bodyDef);
+    body = service::entity::ref().get<PhysicsSystem>().getWorld()->CreateBody(&bodyDef);
 
 
     if (shape == xmlstr::box)

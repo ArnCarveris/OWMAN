@@ -8,15 +8,6 @@
 #include "world_entity.hpp"
 #include <string>
 
-/** \brief encapsulates all systems
- * Has the main loop. Contains all systems like graphics system
- * and physics system
- */
-class PositionSystem;
-class GraphicsSystem;
-class PhysicsSystem;
-class WorldStreamer;
-
 class Engine
 {
 
@@ -38,11 +29,6 @@ public:
 
     void prepare(const WorldRepositionEvent& event);
     void finalize(const WorldRepositionEvent& event);
-
-    PositionSystem* getPositionSystem();
-    GraphicsSystem* getGraphicsSystem();
-    PhysicsSystem* getPhysicsSystem();
-    WorldStreamer* getWorldStreamer();
 
 	void endGame();
 

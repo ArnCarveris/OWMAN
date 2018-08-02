@@ -1,7 +1,7 @@
 #include "position_system.hpp"
 #include "util/xmlstr.hpp"
 #include "world_streamer.hpp"
-#include "engine.hpp"
+#include "entity.hpp"
 #include "entity.hpp"
 #include <string>
 #include <iostream>
@@ -18,8 +18,8 @@ PositionSystem::PositionSystem(PositionSystem&& rhs) :
 
 void PositionSystem::setRelativeCell(const Vec2i& cell)
 {
-    auto cellSize = service::engine::ref().getWorldStreamer()->getCellSize();
-    auto relativeCell = cell - service::engine::ref().getWorldStreamer()->getWindowPosition();
+    auto cellSize = service::entity::ref().get<WorldStreamer>().getCellSize();
+    auto relativeCell = cell - service::entity::ref().get<WorldStreamer>().getWindowPosition();
 
     center.x = relativeCell.x * cellSize;
     center.y = relativeCell.y * cellSize;
@@ -27,7 +27,7 @@ void PositionSystem::setRelativeCell(const Vec2i& cell)
 
 void PositionSystem::recalc(const Vec2f& input, Position& output)
 {
-    float cellSize = service::engine::ref().getWorldStreamer()->getCellSize();
+    float cellSize = service::entity::ref().get<WorldStreamer>().getCellSize();
 
     float x = input.x;
     float y = input.y;

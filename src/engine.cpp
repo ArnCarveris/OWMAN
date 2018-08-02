@@ -62,6 +62,7 @@ void Engine::init()
 
 void Engine::mainLoop()
 {
+    EntityRegistry& registry = service::entity::ref();
     Entity mainCharacter;
 
     unsigned ticks;
@@ -85,22 +86,22 @@ void Engine::mainLoop()
         service::input::ref().poll();
 
         // update physics
-        getPhysicsSystem()->update(dt);
-        getPositionSystem()->update();
+        registry.get<PhysicsSystem>().update(dt);
+        registry.get<PositionSystem>().update();
 
         // update world streamer
 
-        getWorldStreamer()->update(service::entity::ref().get<Vec2f>(mainCharacter));
+        registry.get<WorldStreamer>().update(registry.get<Vec2f>(mainCharacter));
 
         // follow main character with the camera
-        getGraphicsSystem()->getCamera()->setPosition(-service::entity::ref().get<Vec2f>(mainCharacter));
+        registry.get<GraphicsSystem>().getCamera()->setPosition(-registry.get<Vec2f>(mainCharacter));
 
         // update graphics
-        getGraphicsSystem()->update(dt);
+        registry.get<GraphicsSystem>().update(dt);
 
         // draw
-        getGraphicsSystem()->draw();
-        getGraphicsSystem()->swap();
+        registry.get<GraphicsSystem>().draw();
+        registry.get<GraphicsSystem>().swap();
     };
     {
         while (mainCharacterResource->get_status() != WorldEntity::Status::LOADED)
@@ -110,9 +111,9 @@ void Engine::mainLoop()
             frame_sleep();
         }
 
-        mainCharacter = service::entity::ref().attachee<MainCharacter>();
+        mainCharacter = registry.attachee<MainCharacter>();
 
-        getWorldStreamer()->init(service::entity::ref().get<Position>(mainCharacter));
+        registry.get<WorldStreamer>().init(registry.get<Position>(mainCharacter));
     }
     
     while( !end )
@@ -127,13 +128,13 @@ void Engine::mainLoop()
     } 
 
     {
-        service::entity::ref()
+        registry
             .get<Position>(mainCharacter)
-            .setCell(getWorldStreamer()->getWindowPosition());
+            .setCell(registry.get<WorldStreamer>().getWindowPosition());
 
         service::resource::ref().release(mainCharacterResource);
 
-        getWorldStreamer()->end();
+        registry.get<WorldStreamer>().end();
         service::resource::ref().stop();
     }
 
@@ -144,7 +145,7 @@ void Engine::mainLoop()
         frame_sleep();
     }
 
-    getGraphicsSystem()->end();
+    registry.get<GraphicsSystem>().end();
 }
 
 void Engine::prepare(const WorldRepositionEvent& event)
@@ -165,24 +166,6 @@ void Engine::prepare(const WorldRepositionEvent& event)
 void Engine::finalize(const WorldRepositionEvent& event)
 {
 
-}
-
-PositionSystem* Engine::getPositionSystem()
-{
-    return &service::entity::ref().get<PositionSystem>();;
-}
-GraphicsSystem* Engine::getGraphicsSystem()
-{
-    return &service::entity::ref().get<GraphicsSystem>();
-}
-
-PhysicsSystem* Engine::getPhysicsSystem()
-{
-    return &service::entity::ref().get<PhysicsSystem>();
-}
-WorldStreamer* Engine::getWorldStreamer()
-{
-    return &service::entity::ref().get<WorldStreamer>();
 }
 
 void Engine::endGame()

@@ -35,16 +35,16 @@ void EventHandler::handle()
 
 		case SDL_MOUSEWHEEL:
         {
-            GraphicsSystem* gs = engine->getGraphicsSystem();
-            float w = gs->getCamera()->getWidth();
-            float h = gs->getCamera()->getHeight();
+            auto* camera = service::entity::ref().get<GraphicsSystem>().getCamera();
+            float w = camera->getWidth();
+            float h = camera->getHeight();
 
             float p = pow(1.02f, event.wheel.y);
             w *= p;
             h *= p;
 
-            gs->getCamera()->setWidth(w);
-            gs->getCamera()->setHeight(h);
+            camera->setWidth(w);
+            camera->setHeight(h);
         }
         break;
 
