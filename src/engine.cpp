@@ -47,7 +47,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             }
             service::dispatcher::ref().sink<WorldRepositionEvent>().connect<Engine, &Engine::prepare>(this);
         } {
-            input(cereal::make_nvp("main_character", mainCharacterResource));
+            input(cereal::make_nvp("world_entities", core::serialization::ResourcesMediator<WorldEntity::Resource>{ world_entities }));
         }
         archive.finalize_input();
     }
@@ -104,13 +104,25 @@ void Engine::mainLoop()
         registry.get<GraphicsSystem>().swap();
     };
     {
-        while (mainCharacterResource->get_status() != WorldEntity::Status::LOADED)
+        while (!end)
         {
             frame_start();
             service::resource::ref().synchronize();
+            
+            end = true;
+            
+            for (auto& res : world_entities)
+            {
+                if (res->get_status() != WorldEntity::Status::LOADED)
+                {
+                    end = false; break;
+                }
+            }
+
             frame_sleep();
         }
 
+        end = false;
         mainCharacter = registry.attachee<MainCharacter>();
 
         registry.get<WorldStreamer>().init(registry.get<Position>(mainCharacter));
@@ -132,8 +144,11 @@ void Engine::mainLoop()
             .get<Position>(mainCharacter)
             .setCell(registry.get<WorldStreamer>().getWindowPosition());
 
-        service::resource::ref().release(mainCharacterResource);
-
+        for (auto& res : world_entities)
+        {
+            service::resource::ref().release(res);
+        }
+       
         registry.get<WorldStreamer>().end();
         service::resource::ref().stop();
     }

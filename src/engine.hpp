@@ -13,7 +13,7 @@ class Engine
 
 	WorldWindow worldGrid;
 
-    core::resource::Handle<WorldEntity::Resource> mainCharacterResource;
+    std::vector<core::resource::Handle<WorldEntity::Resource>> world_entities;
 
 
 	bool end = false;

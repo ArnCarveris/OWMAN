@@ -16,6 +16,7 @@
       <window_size>2</window_size>
     </world_streamer>
   </systems>
-  
-  <main_character>world_folder/main_character.xml</main_character>
+  <world_entities>
+    <id>world_folder/main_character.xml</id>
+  </world_entities>
  </init>
