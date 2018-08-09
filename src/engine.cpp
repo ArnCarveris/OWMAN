@@ -16,6 +16,20 @@
 #include "systems.hpp"
 #include "systems.inl"
 
+namespace core
+{
+    using property = core::serialization::EntityPropertyRegistry<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>;
+}
+
+namespace property_type
+{
+    using size = core::property::type<Vec2f, 's', 'i', 'z', 'e'>;
+    using scale = core::property::type<Vec2f, 's', 'c', 'a', 'l', 'e'>;
+    using angle = core::property::type<double, 'a', 'n', 'g', 'l', 'e'>;
+    using position = core::property::type<Vec2f, 'p', 'o', 's', 'i', 't', 'i', 'o', 'n'>;
+    using has_quitted = core::property::type<bool, 'h','a','s','_','q','u','i','t','t','e','d'>;
+}
+
 using namespace std;
 using namespace rapidxml;
 
@@ -50,6 +64,20 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             input(cereal::make_nvp("world_entities", core::serialization::ResourcesMediator<WorldEntity::Resource>{ world_entities }));
         }
         archive.finalize_input();
+    }
+    {
+    
+        property_type::angle{ 3.14 };
+        property_type::position{ 0.0f, 0.0f };
+        property_type::size{ 1.0f, 1.0f };
+        property_type::size{ Vec2i(1.0f, 1.0f) };
+        property_type::angle{ 3.14 *2 };
+        property_type::position{ 0.0f, 0.0f };
+        property_type::size{ 1.0f, 1.0f };
+
+        core::property::each([](auto name, auto type) {
+            printf("<Property Name=\"%s\" Type=\"%d\">\n", name, type);
+        });
     }
 }
 
@@ -140,6 +168,8 @@ void Engine::mainLoop()
     } 
 
     {
+        registry.assign<property_type::has_quitted>(mainCharacter, true);
+
         registry
             .get<Position>(mainCharacter)
             .setCell(registry.get<WorldStreamer>().getWindowPosition());
