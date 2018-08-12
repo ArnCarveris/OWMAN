@@ -13,13 +13,9 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+#include "properties.hpp"
 #include "systems.hpp"
 #include "systems.inl"
-
-namespace core
-{
-    using property = core::serialization::EntityPropertyRegistry<cereal::XMLRootInputArchive, cereal::XMLRootOutputArchive>;
-}
 
 namespace property_type
 {
@@ -45,8 +41,16 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         .deliver<WorldEntity::Resource>()
         .deliver<WorldCell::Resource>()
         .launch()
-    ;
-    {
+    ; {
+        core::property::registrate
+        <
+            property_type::size,
+            property_type::scale,
+            property_type::angle,
+            property_type::position,
+            property_type::has_quitted 
+        >();
+    } {
         ResourceXMLRootArchive archive;
 
         archive.load(initFile.c_str());
@@ -64,17 +68,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
             input(cereal::make_nvp("world_entities", core::serialization::ResourcesMediator<WorldEntity::Resource>{ world_entities }));
         }
         archive.finalize_input();
-    }
-    {
-    
-        property_type::angle{ 3.14 };
-        property_type::position{ 0.0f, 0.0f };
-        property_type::size{ 1.0f, 1.0f };
-        property_type::size{ Vec2i(1.0f, 1.0f) };
-        property_type::angle{ 3.14 *2 };
-        property_type::position{ 0.0f, 0.0f };
-        property_type::size{ 1.0f, 1.0f };
-
+    } {
         core::property::each([](auto name, auto type) {
             printf("<Property Name=\"%s\" Type=\"%d\">\n", name, type);
         });
@@ -168,7 +162,7 @@ void Engine::mainLoop()
     } 
 
     {
-        registry.assign<property_type::has_quitted>(mainCharacter, true);
+        registry.accommodate<property_type::has_quitted>(mainCharacter, true);
 
         registry
             .get<Position>(mainCharacter)

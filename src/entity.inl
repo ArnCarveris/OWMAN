@@ -1,3 +1,4 @@
+#include "properties.hpp"
 
 #include "main_character.hpp"
 #include "main_character.inl"
@@ -12,13 +13,89 @@
 
 namespace core::serialization
 {
+    template<typename Type>
+    template<typename Archive>
+    void EntityPropertyMediator<Type>::load(Archive& archive)
+    {
+        auto& registry = service::entity::ref();
+
+        typename Type::value_type value{};
+
+        auto instance(cereal::make_nvp(name, std::move(value)));
+
+        archive(instance);
+
+        registry.assign<Type>(entity, std::move(instance.value));
+    }
+
+    template<typename Type>
+    template<typename Archive>
+    void EntityPropertyMediator<Type>::save(Archive& archive) const
+    {
+        auto& registry = service::entity::ref();
+
+        if (registry.has<Type>(entity))
+        {
+            typename Type::value_type& value = registry.get<Type>(entity);
+
+            archive(cereal::make_nvp(name, value));
+        }
+    }
 
     template<typename Input, typename Output>
-    std::unordered_map<entt::HashedString::hash_type, typename EntityPropertyRegistry<Input, Output>::Handler> EntityPropertyRegistry<Input, Output>::handlers;
+    std::unordered_map<entt::HashedString::hash_type, typename EntityPropertiesMediator<Input, Output>::Handler> EntityPropertiesMediator<Input, Output>::handlers;
+
+    template<typename Input, typename Output>
+    void EntityPropertiesMediator<Input, Output>::load(Input& archive)
+    {
+        if (auto* current = archive.getNodeName())
+        {
+            if (!strcmp(current, "properties"))
+            {
+                archive.startNode();
+                while (current = archive.getNodeName())
+                {
+                    auto it = handlers.find(entt::HashedString{ current });
+
+                    if (it == handlers.end())
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        it->second.m_load(archive, const_cast<Entity&>(entity), current);
+                    }
+                }
+                archive.finishNode();
+            }
+        }
+    }
+
+    template<typename Input, typename Output>
+    void EntityPropertiesMediator<Input, Output>::save(Output& archive) const
+    {
+        archive.setNextName("properties");
+        archive.startNode();
+        for (auto& handler : handlers)
+        {
+            handler.second.m_save(archive, const_cast<Entity&>(entity), handler.second.m_name);
+        }
+        archive.finishNode();
+    }
+
+
+    template<typename Input, typename Output>
+    template<typename ...Type>
+    void EntityPropertiesMediator<Input, Output>::registrate()
+    {
+        using accumulator_type = int[];
+        accumulator_type accumulator = { (typename Type::auto_register_type{}, 0)... };
+        (void)accumulator;
+    }
 
     template<typename Input, typename Output>
     template<typename Type>
-    void EntityPropertyRegistry<Input, Output>::registrate(const char* name)
+    void EntityPropertiesMediator<Input, Output>::registrate(const char* name)
     {
         handlers.emplace
         (
@@ -29,56 +106,19 @@ namespace core::serialization
                 EntityRegistry::type<Type>(),
                 [](Input& archive, Entity& entity, const char* name)
                 {
-                    auto& registry = service::entity::ref();
-                    
-                    typename Type::value_type value{};
-
-                    auto instance(cereal::make_nvp(name, std::move(value)));
-
-                    archive(instance);
-
-                    registry.assign<Type>(entity, std::move(instance.value));
+                    EntityPropertyMediator<Type>{name, entity}.load(archive);
                 },
-                [](Output& archive, const Entity& entity, const char* name)
+                [](Output& archive, Entity& entity, const char* name)
                 {
-                    auto& registry = service::entity::ref();
-
-                    if (registry.has<Type>(entity))
-                    {
-                        typename Type::value_type& value = registry.get<Type>(entity);
-
-                        archive(cereal::make_nvp(name, value));
-                    }
+                    EntityPropertyMediator<Type>{name, entity}.save(archive);
                 }
             }
         );
     }
-
-    template<typename Input, typename Output>
-    void EntityPropertyRegistry<Input, Output>::load(Input& archive, Entity& entity)
-    {
-        if (auto* current = archive.getNodeName())
-        {
-            auto it = handlers.find(entt::HashedString{ current });
-
-            if (it != handlers.end())
-            {
-                it->second.m_load(archive, entity, current);
-            }
-        }
-    }
-    template<typename Input, typename Output>
-    void EntityPropertyRegistry<Input, Output>::save(Output& archive, const Entity& entity)
-    {
-        for (auto& handler : handlers)
-        {
-            handler.second.m_save(archive, entity, handler.second.m_name);
-        }
-    }
-
+    
     template<typename Input, typename Output>
     template<typename Fn>
-    void EntityPropertyRegistry<Input, Output>::each(Fn&& fn)
+    void EntityPropertiesMediator<Input, Output>::each(Fn&& fn)
     {
         for (auto& handler : handlers)
         {
@@ -140,6 +180,7 @@ namespace core::serialization
                 archive, xmlstr::has<Archive>, entity, xmlstr::components
             )
         ;
+        core::property(const_cast<Entity&>(entity)).load(archive);
     }
 
     template<typename Archive>
@@ -158,6 +199,7 @@ namespace core::serialization
                 archive, entity, xmlstr::components
             )
         ;
+        core::property(const_cast<Entity&>(entity)).save(archive);
     }
 
     template<typename Archive>
