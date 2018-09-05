@@ -2,3 +2,6 @@
 	path = external/entt
 	url = git@github.com:ArnCarveris/entt.git
 	branch = experimental/extensions
+[submodule "external/draft/entt/hierarchy"]
+	path = external/draft/entt/hierarchy
+	url = git@gist.github.com:f88abc33993fb0d2c5790c6ac018cf7b.git

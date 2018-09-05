@@ -12,10 +12,17 @@
 #include <cstdio>
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <entt/hierarchy/hierarchy.hpp>
+#include <entt/hierarchy/test.hpp>
 
 #include "properties.hpp"
 #include "systems.hpp"
 #include "systems.inl"
+
+namespace service
+{
+    using hierarchy = entt::ServiceLocator<entt::Hierarchy<Entity>>;
+}
 
 namespace property_type
 {
@@ -35,6 +42,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     service::entity::set();
     service::resource::set();
     service::dispatcher::set();
+    service::hierarchy::set(service::entity::ref());
+    
     service::resource::ref()
         .deliver<Texture::Resource>()
         .deliver<Sprite::Resource>()
@@ -72,6 +81,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         core::property::each([](auto name, auto type) {
             printf("<Property Name=\"%s\" Type=\"%d\">\n", name, type);
         });
+    } {
+        entt::hierarchy_test(service::entity::ref(), service::hierarchy::ref(), 3, 5);
     }
 }
 
