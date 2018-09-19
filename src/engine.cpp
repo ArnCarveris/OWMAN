@@ -14,6 +14,8 @@
 #include <SDL2/SDL.h>
 #include <entt/hierarchy/hierarchy.hpp>
 #include <entt/hierarchy/test.hpp>
+#include <entt/animation/animation.hpp>
+#include <entt/animation/test.hpp>
 
 #include "properties.hpp"
 #include "systems.hpp"
@@ -21,6 +23,7 @@
 
 namespace service
 {
+    using animation = entt::ServiceLocator<entt::AnimationRegistry<Entity>>;
     using hierarchy = entt::ServiceLocator<entt::Hierarchy<Entity>>;
 }
 
@@ -42,6 +45,7 @@ Engine::Engine(std::string initFile, std::string worldFolder)
     service::entity::set();
     service::resource::set();
     service::dispatcher::set();
+    service::animation::set(service::entity::ref());
     service::hierarchy::set(service::entity::ref());
     
     service::resource::ref()
@@ -83,6 +87,8 @@ Engine::Engine(std::string initFile, std::string worldFolder)
         });
     } {
         entt::hierarchy_test(service::entity::ref(), service::hierarchy::ref(), 3, 5);
+    } {
+        entt::animation_test<core::resource::ID, core::resource::Handle, Texture, AARect>(service::resource::ref(), service::animation::ref(), service::entity::ref());
     }
 }
 
@@ -227,6 +233,7 @@ Engine::~Engine()
 {
     service::dispatcher::reset();
     service::hierarchy::reset();
+    service::animation::reset();
     service::resource::reset();
     service::entity::reset();
     service::input::reset();

@@ -5,3 +5,6 @@
 [submodule "external/draft/entt/hierarchy"]
 	path = external/draft/entt/hierarchy
 	url = git@gist.github.com:f88abc33993fb0d2c5790c6ac018cf7b.git
+[submodule "external/draft/entt/animation"]
+	path = external/draft/entt/animation
+	url = git@gist.github.com:494eaba3bf396ecedaf3a1674fb7a2bf.git
