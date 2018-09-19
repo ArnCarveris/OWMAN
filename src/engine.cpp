@@ -226,6 +226,7 @@ void Engine::endGame()
 Engine::~Engine()
 {
     service::dispatcher::reset();
+    service::hierarchy::reset();
     service::resource::reset();
     service::entity::reset();
     service::input::reset();
