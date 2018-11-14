@@ -8,3 +8,6 @@
 [submodule "external/draft/entt/animation"]
 	path = external/draft/entt/animation
 	url = git@gist.github.com:494eaba3bf396ecedaf3a1674fb7a2bf.git
+[submodule "external/draft/entt/vm"]
+	path = external/draft/entt/vm
+	url = https://gist.github.com/ArnCarveris/fe0743a1023908f97b252949af4dafe8
