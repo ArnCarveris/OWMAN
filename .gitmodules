@@ -11,6 +11,6 @@
 [submodule "external/draft/entt/vm"]
 	path = external/draft/entt/vm
 	url = https://gist.github.com/ArnCarveris/fe0743a1023908f97b252949af4dafe8
-[submodule "extrenal/draft/entt/group"]
-	path = extrenal/draft/entt/group
+[submodule "external/draft/entt/group"]
+	path = external/draft/entt/group
 	url = https://gist.github.com/ArnCarveris/ab673b7d125077a70472f00338574b64
